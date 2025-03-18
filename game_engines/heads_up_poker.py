@@ -7,6 +7,7 @@ SUITS = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
 RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 RANK_TO_VALUE = {rank: i for i, rank in enumerate(RANKS, start=2)}
 
+
 class Deck:
     def __init__(self):
         self.cards = [(rank, suit) for suit in SUITS for rank in RANKS]
@@ -14,6 +15,7 @@ class Deck:
 
     def draw(self, num=1):
         return [self.cards.pop() for _ in range(num)]
+
 
 # Player Representation
 class Player:
@@ -26,6 +28,8 @@ class Player:
         self.all_in = False
 
     def bet(self, amount):
+        if amount < 0:
+            raise ValueError("Bet amount cannot be negative")
         bet_amount = min(amount, self.stack)
         self.stack -= bet_amount
         self.current_bet += bet_amount
@@ -35,6 +39,13 @@ class Player:
 
     def fold(self):
         self.folded = True
+
+    def reset_for_new_hand(self):
+        self.hole_cards = []
+        self.current_bet = 0
+        self.folded = False
+        self.all_in = False
+
 
 # Hand Evaluation
 class HandEvaluator:
@@ -63,9 +74,8 @@ class HandEvaluator:
                 is_straight = True
                 straight_high = 5
         
-        # Determine hand rank and tie breakers
         if is_flush and is_straight:
-            return (8, (straight_high,))  # Straight Flush
+            return (8, (straight_high,))
         if 4 in counts:
             quad = [val for val, cnt in value_counts.items() if cnt == 4][0]
             kicker = max([val for val in values if val != quad])
@@ -90,7 +100,7 @@ class HandEvaluator:
             pair = [val for val, cnt in value_counts.items() if cnt == 2][0]
             kickers = sorted([val for val in values if val != pair], reverse=True)
             return (1, (pair,) + tuple(kickers))
-        return (0, tuple(values))  # High Card
+        return (0, tuple(values))
 
     @staticmethod
     def best_hand_rank(cards):
@@ -129,7 +139,8 @@ class HandEvaluator:
         elif hand2 > hand1:
             return player2, hand1, hand2
         else:
-            return None, hand1, hand2  # Tie
+            return None, hand1, hand2
+
 
 # Poker Game Engine
 class PokerGame:
@@ -138,50 +149,122 @@ class PokerGame:
         self.players = [Player(player1_name, starting_stack), Player(player2_name, starting_stack)]
         self.community_cards = []
         self.pot = 0
-        self.current_bet = big_blind
+        self.current_bet = 0
         self.small_blind = small_blind
         self.big_blind = big_blind
-        self.active_player = 0  # Index of current active player
+        self.dealer_index = 0  # Dealer button position, switches each hand
+        self.active_player = None
         self.last_raiser = None
         self.log = []
 
     def post_blinds(self):
         self.log.append("Posting blinds.")
-        bet0 = self.players[0].bet(self.small_blind)  # Small blind
-        bet1 = self.players[1].bet(self.big_blind)    # Big blind
-        self.pot += bet0 + bet1
-        self.log.append(f"{self.players[0].name} posts small blind: {bet0}")
-        self.log.append(f"{self.players[1].name} posts big blind: {bet1}")
+        small_blind_player = self.players[self.dealer_index]
+        big_blind_player = self.players[1 - self.dealer_index]
+        sb = small_blind_player.bet(self.small_blind)
+        bb = big_blind_player.bet(self.big_blind)
+        self.pot += sb + bb
+        self.current_bet = self.big_blind  # current bet is the big blind amount
+        self.log.append(f"{small_blind_player.name} posts small blind: {sb}")
+        self.log.append(f"{big_blind_player.name} posts big blind: {bb}")
 
     def deal(self):
+        # NOTE: In this interactive console version, both players' hole cards are visible.
+        # For a real interactive game, implement a mechanism to hide one player's cards from the other.
         self.log.append("Dealing hole cards.")
-        self.post_blinds()  # Deduct blinds before dealing cards
+        self.post_blinds()
         for player in self.players:
             player.hole_cards = self.deck.draw(2)
             self.log.append(f"{player.name} receives {player.hole_cards}")
 
     def betting_round(self, round_name):
         self.log.append(f"Starting betting round: {round_name}")
-        for player in self.players:
-            player.current_bet = 0
-        self.current_bet = 0
-        self.last_raiser = None
+        # For non-preflop rounds, reset bets
+        if round_name != "Pre-flop":
+            for player in self.players:
+                player.current_bet = 0
+            self.current_bet = 0
+            self.last_raiser = None
+            # Post-flop, non-dealer acts first
+            self.active_player = 1 - self.dealer_index
+        else:
+            # Pre-flop: dealer (small blind) acts first
+            self.active_player = self.dealer_index
 
-        for _ in range(2):  # each player gets one action in this simple simulation
+        MAX_ACTION_ERRORS = 3
+
+        # Betting continues until all active players have matched the current bet or folded
+        betting_complete = False
+        while not betting_complete:
             player = self.players[self.active_player]
             if player.folded or player.all_in:
                 self.log.append(f"{player.name} cannot act (folded or all-in).")
-                self.active_player = 1 - self.active_player
-                continue
-            if self.current_bet == 0:
-                action = "check"
             else:
                 call_amount = self.current_bet - player.current_bet
-                if player.stack <= call_amount:
-                    action = "call"
+                # Determine legal actions based on call amount
+                if call_amount > 0:
+                    legal_actions = ['fold', 'call', 'raise']
                 else:
-                    action = "call"  # Defaulting to call for simulation
-            self.take_action(action)
+                    legal_actions = ['check', 'raise', 'fold']
+                
+                error_count = 0
+                while True:
+                    action = input(f"{player.name}, choose your action (call/check/fold/raise): ").strip().lower()
+                    if action not in legal_actions:
+                        error_count += 1
+                        self.log.append(f"Invalid action by {player.name}. Please choose again. (Error {error_count} of {MAX_ACTION_ERRORS})")
+                        if error_count >= MAX_ACTION_ERRORS:
+                            if 'check' in legal_actions:
+                                self.log.append(f"Auto-checking for {player.name} after {MAX_ACTION_ERRORS} invalid attempts.")
+                                action = 'check'
+                            else:
+                                self.log.append(f"Auto-folding for {player.name} after {MAX_ACTION_ERRORS} invalid attempts.")
+                                action = 'fold'
+                            break
+                        continue
+                    else:
+                        if action == 'raise':
+                            while True:
+                                try:
+                                    min_raise = self.big_blind if self.last_raiser is None else self.current_bet - player.current_bet
+                                    amt_input = input(f"{player.name}, enter raise amount (minimum: {min_raise}): ")
+                                    raise_amount = int(amt_input)
+                                    break
+                                except ValueError:
+                                    error_count += 1
+                                    self.log.append(f"Invalid raise amount. Please enter a valid number. (Error {error_count} of {MAX_ACTION_ERRORS})")
+                                    if error_count >= MAX_ACTION_ERRORS:
+                                        if 'check' in legal_actions:
+                                            self.log.append(f"Auto-checking for {player.name} after {MAX_ACTION_ERRORS} invalid attempts.")
+                                            action = 'check'
+                                        else:
+                                            self.log.append(f"Auto-folding for {player.name} after {MAX_ACTION_ERRORS} invalid attempts.")
+                                            action = 'fold'
+                                        break
+                            # If auto fallback occurred during raise amount input, break out
+                            if action != 'raise':
+                                break
+                        break
+                
+                # Process the final action
+                if action == 'fold':
+                    self.take_action('fold')
+                elif action == 'check':
+                    self.take_action('check')
+                elif action == 'call':
+                    if call_amount > 0:
+                        self.take_action('call')
+                    else:
+                        self.take_action('check')
+                elif action == 'raise':
+                    self.take_action('raise', amount=raise_amount)
+
+            # Check if betting round is complete: all active players have matched the current bet
+            active_players = [p for p in self.players if not p.folded and not p.all_in]
+            if not active_players or all(p.current_bet == self.current_bet for p in active_players):
+                betting_complete = True
+            else:
+                self.active_player = 1 - self.active_player
         self.log.append(f"Ending betting round: {round_name}")
 
     def post_flop(self):
@@ -204,20 +287,35 @@ class PokerGame:
             player.fold()
             self.log.append(f"{player.name} folds.")
         elif action == "check":
+            if self.current_bet != player.current_bet:
+                self.log.append(f"Illegal check by {player.name}. Must call or fold.")
+                return
             self.log.append(f"{player.name} checks.")
         elif action == "call":
             call_amount = self.current_bet - player.current_bet
+            if call_amount < 0:
+                self.log.append(f"Error: negative call amount for {player.name}.")
+                return
             bet_made = player.bet(call_amount)
             self.pot += bet_made
             self.log.append(f"{player.name} calls {bet_made}.")
         elif action == "raise":
+            # Determine minimum raise
+            min_raise = self.big_blind if self.last_raiser is None else self.current_bet - player.current_bet
+            if amount < min_raise:
+                self.log.append(f"Invalid raise amount by {player.name}. Minimum raise is {min_raise}. Defaulting to call.")
+                self.take_action("call")
+                return
             call_amount = self.current_bet - player.current_bet
-            total_raise = call_amount + amount
-            bet_made = player.bet(total_raise)
+            total_amount = call_amount + amount
+            bet_made = player.bet(total_amount)
             self.pot += bet_made
-            self.current_bet += amount
+            if player.current_bet > self.current_bet:
+                self.current_bet = player.current_bet
             self.last_raiser = self.active_player
-            self.log.append(f"{player.name} raises by {amount} (total bet: {self.current_bet}).")
+            self.log.append(f"{player.name} raises by {amount} (total bet: {player.current_bet}).")
+        else:
+            self.log.append(f"Unknown action {action} by {player.name}.")
         self.active_player = 1 - self.active_player
 
     def showdown(self):
@@ -231,13 +329,32 @@ class PokerGame:
             result = f"Tie! Pot of {self.pot} is split."
             self.log.append(result)
             print(result)
+            # Split pot evenly
+            self.players[0].stack += self.pot // 2
+            self.players[1].stack += self.pot - self.pot // 2
         else:
             result = f"{winner.name} wins the pot of {self.pot}!"
             self.log.append(result)
             print(result)
+            winner.stack += self.pot
+        self.pot = 0
         print("\nGame Log:")
         for entry in self.log:
             print(entry)
+
+    def reset_hand(self):
+        self.log.append("Resetting hand for next round.")
+        self.deck = Deck()  # Reinitialize deck
+        self.community_cards = []
+        self.pot = 0
+        self.current_bet = 0
+        self.last_raiser = None
+        for player in self.players:
+            player.reset_for_new_hand()
+        # Move dealer button
+        self.dealer_index = 1 - self.dealer_index
+        self.log.append(f"Dealer button moved. New dealer: {self.players[self.dealer_index].name}")
+
 
 # Example Usage
 if __name__ == "__main__":
@@ -253,3 +370,8 @@ if __name__ == "__main__":
     game.post_river()
     game.betting_round("Post-river")
     game.showdown()
+    
+    # Reset for next hand
+    game.reset_hand()
+    # Example: start a new hand
+    game.deal()
