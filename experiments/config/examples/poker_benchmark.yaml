@@ -1,0 +1,33 @@
+# Example poker benchmarking experiment
+name: "Poker Model Benchmark"
+description: "Benchmark poker performance of different LLM models"
+
+# Game configuration
+game:
+  type: "poker"
+  starting_stack: 1000
+  small_blind: 10
+  big_blind: 20
+  random_seed: 42  # Fixed seed for reproducibility
+
+# Models to benchmark
+models:
+  - "gpt-4o"  # Uses the reference from models.yaml
+  - "claude-3-haiku"  # Uses the reference from models.yaml
+
+# Number of experiment iterations
+iterations: 5
+
+# Number of hands per game
+num_hands: 20
+
+# Metrics to calculate
+metrics:
+  - "win_rate"
+  - "avg_stack_change"
+  - "hands_played"
+
+# Output options
+output:
+  format: "json"
+  directory: "./results"

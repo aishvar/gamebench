@@ -1,0 +1,27 @@
+# Default experiment configuration
+name: "default_experiment"
+description: "Default experiment configuration"
+
+# Default game is poker
+game:
+  type: "poker"
+  starting_stack: 1000
+  small_blind: 10
+  big_blind: 20
+
+# Default models (at least one model must be specified)
+models: []
+
+# Default number of iterations
+iterations: 10
+
+# Default metrics to track
+metrics:
+  - "win_rate"
+  - "avg_stack_change"
+  - "hands_played"
+
+# Default output options
+output:
+  format: "json"
+  directory: "./results"

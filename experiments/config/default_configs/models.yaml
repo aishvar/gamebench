@@ -1,0 +1,60 @@
+# Default model configurations
+
+# OpenAI models
+gpt-4o:
+  name: "gpt-4o"
+  provider: "openai"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
+
+gpt-4o-mini:
+  name: "gpt-4o-mini"
+  provider: "openai"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
+
+# Anthropic models
+claude-3-opus:
+  name: "claude-3-opus-20240229"
+  provider: "anthropic"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
+
+claude-3-sonnet:
+  name: "claude-3-sonnet-20240229"
+  provider: "anthropic"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
+
+claude-3-haiku:
+  name: "claude-3-haiku-20240307"
+  provider: "anthropic"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
+
+# OpenRouter models
+llama-3-8b:
+  name: "meta-llama/llama-3-8b-instruct"
+  provider: "openrouter"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
+
+gemini-pro:
+  name: "google/gemini-1.5-pro-latest"
+  provider: "openrouter"
+  max_tokens: 1000
+  temperature: 0.7
+  max_retries: 3
+  timeout: 60
