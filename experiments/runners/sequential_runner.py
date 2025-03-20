@@ -232,12 +232,47 @@ class SequentialRunner(ExperimentRunner):
         system_prompt = adapter.prepare_system_prompt()
         
         def agent_fn(state, valid_actions):
+            # Skip LLM call if no valid actions are available
+            if not valid_actions:
+                logger.warning(f"No valid actions available for {model_id}")
+                return None
+                
+            # Create a temporary adapter with the current state
+            temp_adapter = GameAdapter(adapter.game, game_type=adapter.game_type)
+            
+            # Manually update the state in the adapter to match what we received
+            # This ensures we're using the correct state from run_non_interactive_game
+            if hasattr(temp_adapter.game, 'get_state'):
+                # Update game state based on what we received
+                for key, value in state.items():
+                    if hasattr(temp_adapter.game, key):
+                        setattr(temp_adapter.game, key, value)
+            
+            # Format valid actions for inclusion in the prompt
+            valid_actions_str = "Valid actions:\n"
+            for action in valid_actions:
+                action_type = action.get("action_type", "").capitalize()
+                if action_type == "Fold":
+                    valid_actions_str += "- Fold your hand\n"
+                elif action_type == "Check":
+                    valid_actions_str += "- Check (pass)\n"
+                elif action_type == "Call":
+                    amount = action.get("amount", 0)
+                    valid_actions_str += f"- Call {amount} chips\n"
+                elif action_type == "Raise":
+                    min_amount = action.get("min_amount", 0)
+                    max_amount = action.get("max_amount", "all-in")
+                    valid_actions_str += f"- Raise between {min_amount} and {max_amount} chips\n"
+            
             # Use adapter to create prompt for this state
-            prompt = adapter.prepare_prompt(model_id)
+            prompt = temp_adapter.prepare_prompt(model_id)
+            
+            # Ensure the valid actions are clearly communicated
+            prompt = prompt.replace("Valid actions you can take now:", valid_actions_str)
             
             # Call LLM
             llm_response = llm_client.call_llm(
-                developer_message="You are playing poker. Please select a valid action based on the current game state.",
+                developer_message="You are playing poker. Please select a valid action from the list of valid actions based on the current game state.",
                 user_message=prompt,
                 system_message=system_prompt
             )

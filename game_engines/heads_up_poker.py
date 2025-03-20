@@ -285,10 +285,7 @@ class HeadsUpPoker(BaseGame):
             player.hole_cards = self.deck.draw(2)
         
         # Log dealing
-        self.log_event("hole_cards_dealt", {
-            "hand_number": self.hand_number,
-            player.name: player.hole_cards for player in self.players_obj
-        })
+        self.log_event("hole_cards_dealt", {"hand_number": self.hand_number, **{player.name: player.hole_cards for player in self.players_obj}})
         
         # Set stage to pre-flop
         self.stage = "pre-flop"
