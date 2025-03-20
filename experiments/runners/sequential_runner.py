@@ -7,21 +7,21 @@ import sys
 from typing import Dict, Any, List, Tuple, Optional, Union
 import random
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Add project root directory to Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from game_engines.base_game import BaseGame
 from game_engines.heads_up_poker import HeadsUpPoker, run_non_interactive_game
 import game_engines.heads_up_poker
+
 game_engines.heads_up_poker.logger = logger
+
 from model_orchestrator.llm_client import LLMClient, parse_response_text
 from model_orchestrator.game_adapter import GameAdapter
-
 from experiments.runners.base_runner import ExperimentRunner
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 class SequentialRunner(ExperimentRunner):
     """

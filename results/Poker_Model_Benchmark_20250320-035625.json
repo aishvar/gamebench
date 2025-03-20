@@ -1,0 +1,96 @@
+{
+  "experiment": {
+    "name": "Poker Model Benchmark",
+    "description": "Benchmark poker performance of different LLM models",
+    "timestamp": "20250320-035625",
+    "iterations": 1,
+    "duration_seconds": 10.759010076522827
+  },
+  "results": [
+    {
+      "status": "complete",
+      "players": {
+        "Player1": {
+          "final_stack": 940,
+          "net_winnings": -60
+        },
+        "Player2": {
+          "final_stack": 1060,
+          "net_winnings": 60
+        }
+      },
+      "hands_played": 3,
+      "hand_results": [
+        {
+          "hand_number": 1,
+          "players": {
+            "Player1": {
+              "stack": 980,
+              "net_change": -20
+            },
+            "Player2": {
+              "stack": 1020,
+              "net_change": 20
+            }
+          },
+          "winner": "Player2"
+        },
+        {
+          "hand_number": 2,
+          "players": {
+            "Player1": {
+              "stack": 960,
+              "net_change": -40
+            },
+            "Player2": {
+              "stack": 1040,
+              "net_change": 40
+            }
+          },
+          "winner": "Player2"
+        },
+        {
+          "hand_number": 3,
+          "players": {
+            "Player1": {
+              "stack": 940,
+              "net_change": -60
+            },
+            "Player2": {
+              "stack": 1060,
+              "net_change": 60
+            }
+          },
+          "winner": "Player2"
+        }
+      ],
+      "winner": "Player2",
+      "win_rates": {
+        "Player1": 0.0,
+        "Player2": 1.0
+      },
+      "iteration": 1,
+      "player_models": {
+        "model_1": "gpt-4o-mini",
+        "model_2": "claude-3-haiku-20240307"
+      }
+    }
+  ],
+  "analysis": {
+    "experiment": {
+      "name": "Poker Model Benchmark",
+      "total_iterations": 1,
+      "duration_seconds": 10.759010076522827
+    },
+    "metrics": {
+      "win_rate": {
+        "Player2": 1.0
+      },
+      "avg_stack_change": {
+        "Player1": -60.0,
+        "Player2": 60.0
+      },
+      "hands_played": 3
+    }
+  }
+}
