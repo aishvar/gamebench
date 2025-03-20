@@ -103,11 +103,11 @@ class GameAdapter:
         return render_template(self.prompt_template, variables)
     
     def _prepare_poker_variables(
-        self, 
-        state: Dict[str, Any], 
-        valid_actions: List[Dict[str, Any]], 
-        player_id: str
-    ) -> Dict[str, Any]:
+    self, 
+    state: Dict[str, Any], 
+    valid_actions: List[Dict[str, Any]], 
+    player_id: str
+) -> Dict[str, Any]:
         """
         Prepare variables for poker prompt template.
         
@@ -119,15 +119,25 @@ class GameAdapter:
         Returns:
             Dictionary of variables for template substitution
         """
+        import logging
+        logger = logging.getLogger(__name__)
+        
         # Get player-specific information
         player_info = state["players"].get(player_id, {})
+        
+        # Log player info for debugging
+        logger.info(f"Preparing prompt for player {player_id}")
+        logger.info(f"Player info: {player_info}")
         
         # Find opponent info
         opponent_id = next((p for p in state["players"].keys() if p != player_id), None)
         opponent_info = state["players"].get(opponent_id, {}) if opponent_id else {}
         
         # Format cards nicely
-        player_cards = self._format_cards(player_info.get("hole_cards", []))
+        hole_cards = player_info.get("hole_cards", [])
+        logger.info(f"Player {player_id} hole cards: {hole_cards}")
+        
+        player_cards = self._format_cards(hole_cards)
         community_cards = self._format_cards(state.get("community_cards", []))
         
         # Format valid actions

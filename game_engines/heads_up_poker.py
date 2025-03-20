@@ -355,7 +355,7 @@ class HeadsUpPoker(BaseGame):
             "current_bet": self.current_bet,
             "players": {}
         }
-        
+    
         # Add player information
         for player in self.players_obj:
             player_info = {
@@ -740,6 +740,11 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
         game.start_hand()
         total_hands_played += 1
         
+        # DEBUG: Log hole cards after starting the hand
+        logger.info(f"Hand {game.hand_number} started")
+        logger.info(f"Player 1 ({game.players_obj[0].name}) cards: {game.players_obj[0].hole_cards}")
+        logger.info(f"Player 2 ({game.players_obj[1].name}) cards: {game.players_obj[1].hole_cards}")
+        
         while not game.hand_complete:
             # Get current player
             active_idx = game.active_player_index
@@ -754,6 +759,11 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
                 
             # Get game state from player perspective
             state = game.get_state(active_player.name)
+            
+            # DEBUG: Verify hole cards in the state
+            player_info = state["players"].get(active_player.name, {})
+            logger.info(f"Agent {active_player.name} state has hole cards: {player_info.get('hole_cards', None)}")
+            
             valid_actions = game.get_valid_actions(active_player.name)
             
             if not valid_actions:
@@ -768,7 +778,7 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
             success = game.apply_action(action, active_player.name)
             if not success:
                 # If invalid action, default to least risky action
-                if "check" in [a.get("action_type") for a in valid_actions]:
+                if any(a.get("action_type") == "check" for a in valid_actions):
                     game.apply_action({"action_type": "check"}, active_player.name)
                 else:
                     # Find a call action if available
@@ -783,7 +793,8 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
         winner_name = None
         for event in reversed(game.history):
             if event.get("event_type") == "hand_result":
-                winner_name = event.get("data", {}).get("winner")
+                data = event.get("data", {})
+                winner_name = data.get("winner")
                 if winner_name:
                     break
         
@@ -837,12 +848,6 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
             player1.name: p1_wins / total_hands_played,
             player2.name: p2_wins / total_hands_played
         }
-    
-    # Add player model information for metrics
-    final_result["player_models"] = {
-        player1.name: "model_1",
-        player2.name: "model_2"
-    }
     
     return final_result
 
