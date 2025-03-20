@@ -2,15 +2,20 @@
 
 import logging
 import time
+import os
+import sys
 from typing import Dict, Any, List, Tuple, Optional, Union
 import random
+
+# Add project root directory to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from game_engines.base_game import BaseGame
 from game_engines.heads_up_poker import HeadsUpPoker, run_non_interactive_game
 from model_orchestrator.llm_client import LLMClient, parse_response_text
 from model_orchestrator.game_adapter import GameAdapter
 
-from .base_runner import ExperimentRunner
+from experiments.runners.base_runner import ExperimentRunner
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -229,35 +234,56 @@ class SequentialRunner(ExperimentRunner):
             Agent function that takes state and valid_actions and returns an action
         """
         import re
-        import logging
-        import copy
-        import json
-    
-        logger = logging.getLogger(__name__)
         llm_client = model["client"]
         system_prompt = adapter.prepare_system_prompt()
     
-        def agent_fn(state, valid_actions, logger=logger):
+        def agent_fn(state, valid_actions):
             # Skip LLM call if no valid actions are available
             if not valid_actions:
                 logger.warning(f"No valid actions available for {model_id}")
                 return None
             
-            # DEBUG: Check what we're getting in the state
-            logger.info(f"Agent {model_id} received state: {json.dumps(state, default=str)[:500]}...")
+            # Create a new adapter for this specific prompt
+            # This is to avoid any potential state conflicts
+            from game_engines.heads_up_poker import HeadsUpPoker
             
-            # Get player info from state
-            player_info = state["players"].get(model_id, {})
-            logger.info(f"Player info for {model_id}: {json.dumps(player_info, default=str)}")
+            # Create a new game instance for this prompt
+            new_game = HeadsUpPoker(
+                random_seed=adapter.game.random_seed,
+                player1_name=adapter.game.player1_name,
+                player2_name=adapter.game.player2_name,
+                starting_stack=adapter.game.starting_stack,
+                small_blind=adapter.game.small_blind,
+                big_blind=adapter.game.big_blind
+            )
             
-            # Check if hole cards are in the player info
-            if "hole_cards" not in player_info:
-                logger.error(f"No hole cards found for player {model_id}!")
-                logger.error(f"Available player data: {json.dumps(state['players'], default=str)}")
+            # Update the new game's state based on the state parameter
+            new_game.stage = state.get('stage', 'pre-flop')
+            new_game.community_cards = state.get('community_cards', [])
+            new_game.pot = state.get('pot', 0)
+            new_game.current_bet = state.get('current_bet', 0)
+            new_game.hand_number = state.get('hand_number', 1)
             
-            # Create a modified state for formatting the prompt
-            # This ensures we don't modify the original state
-            prompt_state = copy.deepcopy(state)
+            # Find the active player index and dealer index
+            new_game.dealer_index = 0 if state.get('dealer') == new_game.player1_name else 1
+            if state.get('active_player'):
+                new_game.active_player_index = 0 if state.get('active_player') == new_game.player1_name else 1
+            
+            # Update player information
+            player_data = state.get('players', {})
+            for i, player in enumerate(new_game.players_obj):
+                player_info = player_data.get(player.name, {})
+                player.stack = player_info.get('stack', new_game.starting_stack)
+                player.current_bet = player_info.get('current_bet', 0)
+                player.folded = player_info.get('folded', False)
+                player.all_in = player_info.get('all_in', False)
+                
+                # Ensure hole cards are correctly set
+                if 'hole_cards' in player_info:
+                    player.hole_cards = player_info['hole_cards']
+            
+            # Create a new adapter with the updated game state
+            temp_adapter = GameAdapter(new_game, game_type=adapter.game_type)
             
             # Format valid actions for inclusion in the prompt
             valid_actions_str = "Valid actions:\n"
@@ -275,68 +301,12 @@ class SequentialRunner(ExperimentRunner):
                     max_amount = action.get("max_amount", "all-in")
                     valid_actions_str += f"- Raise between {min_amount} and {max_amount} chips\n"
             
-            # Create a temporary adapter specifically for formatting the prompt
-            from model_orchestrator.prompt_templates.template_loader import load_template, render_template
-            prompt_template = load_template(f"{adapter.game_type}_prompt")
+            # Use the updated adapter to create the prompt
+            prompt = temp_adapter.prepare_prompt(model_id)
             
-            # Manually prepare the variables for template substitution
-            # This ensures we have direct control over what's in the prompt
-            player_info = state["players"].get(model_id, {})
-            
-            # Find opponent info
-            opponent_id = next((p for p in state["players"].keys() if p != model_id), None)
-            opponent_info = state["players"].get(opponent_id, {}) if opponent_id else {}
-            
-            # Format cards for prompt
-            from model_orchestrator.game_adapter import GameAdapter
-            temp_adapter = GameAdapter(adapter.game, game_type=adapter.game_type)
-            
-            # Format hole cards and ensure they are included
-            hole_cards = player_info.get("hole_cards", [])
-            player_cards_str = temp_adapter._format_cards(hole_cards)
-            logger.info(f"Formatted player cards: {player_cards_str}")
-            
-            community_cards_str = temp_adapter._format_cards(state.get("community_cards", []))
-            if not community_cards_str:
-                community_cards_str = "None yet"
-                
-            # Direct template variables
-            vars = {
-                "hand_number": state.get("hand_number", 1),
-                "stage": state.get("stage", "unknown").replace("pre-", "").capitalize(),
-                "player_stack": player_info.get("stack", 0),
-                "opponent_stack": opponent_info.get("stack", 0),
-                "pot": state.get("pot", 0),
-                "current_bet": state.get("current_bet", 0),
-                "player_cards": player_cards_str,
-                "community_cards": community_cards_str,
-                "recent_actions": "No previous actions",  # Simplified for now
-                "valid_actions": valid_actions_str
-            }
-            
-            # Manually render the template
-            try:
-                prompt = render_template(prompt_template, vars)
-                logger.info(f"Final prompt for {model_id}: {prompt}")
-            except Exception as e:
-                logger.error(f"Error rendering prompt: {e}")
-                # Fallback simple prompt
-                prompt = f"""
-                Current game state:
-                Hand #{vars['hand_number']} | Stage: {vars['stage']}
-                
-                Your stack: {vars['player_stack']} chips
-                Opponent stack: {vars['opponent_stack']} chips
-                Pot: {vars['pot']} chips
-                Current bet: {vars['current_bet']} chips
-                
-                Your cards: {vars['player_cards']}
-                Community cards: {vars['community_cards']}
-                
-                {valid_actions_str}
-                
-                What is your action? Reply ONLY with a valid action in JSON format.
-                """
+            # Replace the valid actions section with our formatted valid actions
+            # Use regex to replace the entire section, not just the heading
+            prompt = re.sub(r"Valid actions you can take now:.*", valid_actions_str, prompt, flags=re.DOTALL)
             
             # Call LLM
             llm_response = llm_client.call_llm(
