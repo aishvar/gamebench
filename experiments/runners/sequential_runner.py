@@ -12,6 +12,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 
 from game_engines.base_game import BaseGame
 from game_engines.heads_up_poker import HeadsUpPoker, run_non_interactive_game
+import game_engines.heads_up_poker
+game_engines.heads_up_poker.logger = logger
 from model_orchestrator.llm_client import LLMClient, parse_response_text
 from model_orchestrator.game_adapter import GameAdapter
 
@@ -234,13 +236,15 @@ class SequentialRunner(ExperimentRunner):
             Agent function that takes state and valid_actions and returns an action
         """
         import re
+        # Ensure the logger is accessible here:
+        logger = logging.getLogger(__name__)
         llm_client = model["client"]
         system_prompt = adapter.prepare_system_prompt()
     
         def agent_fn(state, valid_actions):
             # Skip LLM call if no valid actions are available
             if not valid_actions:
-                logger.warning(f"No valid actions available for {model_id}")
+                logging.getLogger(__name__).warning(f"No valid actions available for {model_id}")
                 return None
             
             # Create a new adapter for this specific prompt
@@ -320,7 +324,7 @@ class SequentialRunner(ExperimentRunner):
             
             if not response_text:
                 # If we couldn't parse a response, use fallback
-                logger.warning(f"Failed to parse response from {model_id}")
+                logging.getLogger(__name__).warning(f"Failed to parse response from {model_id}")
                 return adapter.response_parser.get_fallback_action(valid_actions)
             
             # Parse and validate action
@@ -328,7 +332,7 @@ class SequentialRunner(ExperimentRunner):
                 action = adapter.parse_response(response_text, valid_actions)
                 return action
             except Exception as e:
-                logger.error(f"Error parsing agent action for {model_id}: {e}")
+                logging.getLogger(__name__).error(f"Error parsing agent action for {model_id}: {e}")
                 return adapter.response_parser.get_fallback_action(valid_actions)
                 
         return agent_fn
