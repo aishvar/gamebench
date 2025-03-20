@@ -728,12 +728,17 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
     
     agents = [player1_agent, player2_agent]
     
-    for _ in range(num_hands):
+    # Track results for each hand
+    hand_results = []
+    total_hands_played = 0
+    
+    for i in range(num_hands):
         if game.is_terminal():
             break
             
         # Start a new hand
         game.start_hand()
+        total_hands_played += 1
         
         while not game.hand_complete:
             # Get current player
@@ -774,11 +779,72 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
                         # Last resort: fold
                         game.apply_action({"action_type": "fold"}, active_player.name)
         
+        # Record hand result before resetting
+        winner_name = None
+        for event in reversed(game.history):
+            if event.get("event_type") == "hand_result":
+                winner_name = event.get("data", {}).get("winner")
+                if winner_name:
+                    break
+        
+        hand_result = {
+            "hand_number": game.hand_number,
+            "players": {
+                player.name: {
+                    "stack": player.stack,
+                    "net_change": player.stack - game.starting_stack
+                }
+                for player in game.players_obj
+            },
+            "winner": winner_name
+        }
+        hand_results.append(hand_result)
+        
         # Reset for next hand
         game.reset_hand()
     
-    return game.get_result()
-
+    # Create final result with detailed information
+    final_result = {
+        "status": "complete",
+        "players": {
+            player.name: {
+                "final_stack": player.stack,
+                "net_winnings": player.stack - game.starting_stack
+            }
+            for player in game.players_obj
+        },
+        "hands_played": total_hands_played,
+        "hand_results": hand_results
+    }
+    
+    # Determine overall winner
+    player1 = game.players_obj[0]
+    player2 = game.players_obj[1]
+    
+    if player1.stack > player2.stack:
+        final_result["winner"] = player1.name
+    elif player2.stack > player1.stack:
+        final_result["winner"] = player2.name
+    else:
+        final_result["winner"] = None  # Tie
+        
+    # Calculate win rates
+    p1_wins = sum(1 for result in hand_results if result["winner"] == player1.name)
+    p2_wins = sum(1 for result in hand_results if result["winner"] == player2.name)
+    
+    if total_hands_played > 0:
+        final_result["win_rates"] = {
+            player1.name: p1_wins / total_hands_played,
+            player2.name: p2_wins / total_hands_played
+        }
+    
+    # Add player model information for metrics
+    final_result["player_models"] = {
+        player1.name: "model_1",
+        player2.name: "model_2"
+    }
+    
+    return final_result
 
 # Example Usage
 if __name__ == "__main__":

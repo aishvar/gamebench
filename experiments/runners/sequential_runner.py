@@ -228,46 +228,57 @@ class SequentialRunner(ExperimentRunner):
         Returns:
             Agent function that takes state and valid_actions and returns an action
         """
+        import re
         llm_client = model["client"]
         system_prompt = adapter.prepare_system_prompt()
-        
+    
         def agent_fn(state, valid_actions):
             # Skip LLM call if no valid actions are available
             if not valid_actions:
                 logger.warning(f"No valid actions available for {model_id}")
                 return None
-                
-            # Create a temporary adapter with the current state
-            temp_adapter = GameAdapter(adapter.game, game_type=adapter.game_type)
             
-            # Update the game state in the temp_adapter with the received state
-            # This is critical for making sure cards are properly displayed
-            if hasattr(temp_adapter.game, 'community_cards'):
-                temp_adapter.game.community_cards = state.get('community_cards', [])
+            # Create a new adapter for this specific prompt
+            # This is to avoid any potential state conflicts
+            from game_engines.heads_up_poker import HeadsUpPoker
             
-            # Update player information including hole cards
+            # Create a new game instance for this prompt
+            new_game = HeadsUpPoker(
+                random_seed=adapter.game.random_seed,
+                player1_name=adapter.game.player1_name,
+                player2_name=adapter.game.player2_name,
+                starting_stack=adapter.game.starting_stack,
+                small_blind=adapter.game.small_blind,
+                big_blind=adapter.game.big_blind
+            )
+            
+            # Update the new game's state based on the state parameter
+            new_game.stage = state.get('stage', 'pre-flop')
+            new_game.community_cards = state.get('community_cards', [])
+            new_game.pot = state.get('pot', 0)
+            new_game.current_bet = state.get('current_bet', 0)
+            new_game.hand_number = state.get('hand_number', 1)
+            
+            # Find the active player index and dealer index
+            new_game.dealer_index = 0 if state.get('dealer') == new_game.player1_name else 1
+            if state.get('active_player'):
+                new_game.active_player_index = 0 if state.get('active_player') == new_game.player1_name else 1
+            
+            # Update player information
             player_data = state.get('players', {})
-            for player_name, player_info in player_data.items():
-                # Find the player object
-                for p in temp_adapter.game.players_obj:
-                    if p.name == player_name:
-                        # Update the player's hole cards if they're in the state
-                        if 'hole_cards' in player_info:
-                            p.hole_cards = player_info['hole_cards']
-                        # Update other player attributes
-                        if 'stack' in player_info:
-                            p.stack = player_info['stack']
-                        if 'current_bet' in player_info:
-                            p.current_bet = player_info['current_bet']
-                        if 'folded' in player_info:
-                            p.folded = player_info['folded']
-                        if 'all_in' in player_info:
-                            p.all_in = player_info['all_in']
+            for i, player in enumerate(new_game.players_obj):
+                player_info = player_data.get(player.name, {})
+                player.stack = player_info.get('stack', new_game.starting_stack)
+                player.current_bet = player_info.get('current_bet', 0)
+                player.folded = player_info.get('folded', False)
+                player.all_in = player_info.get('all_in', False)
+                
+                # Ensure hole cards are correctly set
+                if 'hole_cards' in player_info:
+                    player.hole_cards = player_info['hole_cards']
             
-            # Update other game state attributes
-            for key, value in state.items():
-                if key not in ['community_cards', 'players'] and hasattr(temp_adapter.game, key):
-                    setattr(temp_adapter.game, key, value)
+            # Create a new adapter with the updated game state
+            temp_adapter = GameAdapter(new_game, game_type=adapter.game_type)
             
             # Format valid actions for inclusion in the prompt
             valid_actions_str = "Valid actions:\n"
@@ -285,14 +296,12 @@ class SequentialRunner(ExperimentRunner):
                     max_amount = action.get("max_amount", "all-in")
                     valid_actions_str += f"- Raise between {min_amount} and {max_amount} chips\n"
             
-            # Use adapter to create prompt for this state
+            # Use the updated adapter to create the prompt
             prompt = temp_adapter.prepare_prompt(model_id)
             
-            # Ensure the valid actions are clearly communicated
-            prompt = prompt.replace("Valid actions you can take now:", valid_actions_str)
-            
-            # Fix: Remove any contradictory "No valid actions available" message
-            prompt = prompt.replace("No valid actions available", "")
+            # Replace the valid actions section with our formatted valid actions
+            # Use regex to replace the entire section, not just the heading
+            prompt = re.sub(r"Valid actions you can take now:.*", valid_actions_str, prompt, flags=re.DOTALL)
             
             # Call LLM
             llm_response = llm_client.call_llm(
