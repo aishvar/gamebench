@@ -240,13 +240,34 @@ class SequentialRunner(ExperimentRunner):
             # Create a temporary adapter with the current state
             temp_adapter = GameAdapter(adapter.game, game_type=adapter.game_type)
             
-            # Manually update the state in the adapter to match what we received
-            # This ensures we're using the correct state from run_non_interactive_game
-            if hasattr(temp_adapter.game, 'get_state'):
-                # Update game state based on what we received
-                for key, value in state.items():
-                    if hasattr(temp_adapter.game, key):
-                        setattr(temp_adapter.game, key, value)
+            # Update the game state in the temp_adapter with the received state
+            # This is critical for making sure cards are properly displayed
+            if hasattr(temp_adapter.game, 'community_cards'):
+                temp_adapter.game.community_cards = state.get('community_cards', [])
+            
+            # Update player information including hole cards
+            player_data = state.get('players', {})
+            for player_name, player_info in player_data.items():
+                # Find the player object
+                for p in temp_adapter.game.players_obj:
+                    if p.name == player_name:
+                        # Update the player's hole cards if they're in the state
+                        if 'hole_cards' in player_info:
+                            p.hole_cards = player_info['hole_cards']
+                        # Update other player attributes
+                        if 'stack' in player_info:
+                            p.stack = player_info['stack']
+                        if 'current_bet' in player_info:
+                            p.current_bet = player_info['current_bet']
+                        if 'folded' in player_info:
+                            p.folded = player_info['folded']
+                        if 'all_in' in player_info:
+                            p.all_in = player_info['all_in']
+            
+            # Update other game state attributes
+            for key, value in state.items():
+                if key not in ['community_cards', 'players'] and hasattr(temp_adapter.game, key):
+                    setattr(temp_adapter.game, key, value)
             
             # Format valid actions for inclusion in the prompt
             valid_actions_str = "Valid actions:\n"
@@ -269,6 +290,9 @@ class SequentialRunner(ExperimentRunner):
             
             # Ensure the valid actions are clearly communicated
             prompt = prompt.replace("Valid actions you can take now:", valid_actions_str)
+            
+            # Fix: Remove any contradictory "No valid actions available" message
+            prompt = prompt.replace("No valid actions available", "")
             
             # Call LLM
             llm_response = llm_client.call_llm(
