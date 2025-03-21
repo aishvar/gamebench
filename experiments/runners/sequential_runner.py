@@ -198,7 +198,11 @@ class SequentialRunner(ExperimentRunner):
             game.player1_name = model_ids[0]
             game.player2_name = model_ids[1]
             game.reset()  # Reset again with new player names
-            
+
+            # This ensures the player names in the game state match the model IDs
+            game.players_obj[0].name = model_ids[0]
+            game.players_obj[1].name = model_ids[1]
+
             # Set game to non-interactive mode
             game.set_interactive_mode(False)
             
