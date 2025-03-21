@@ -37,6 +37,10 @@ class SequentialRunner(ExperimentRunner):
             config: Experiment configuration
         """
         super().__init__(config)
+        # Initialize the game log
+        log_dir = config.get("output", {}).get("directory", "./logs")
+        from model_orchestrator.utils import init_game_log
+        init_game_log(log_dir)
     
     def run(self) -> Dict[str, Any]:
         """
@@ -244,7 +248,8 @@ class SequentialRunner(ExperimentRunner):
         logger = logging.getLogger(__name__)
         llm_client = model["client"]
         system_prompt = adapter.prepare_system_prompt()
-    
+        from model_orchestrator.utils import log_llm_call, log_action_result
+
         def agent_fn(state, valid_actions):
             # Skip LLM call if no valid actions are available
             if not valid_actions:
@@ -325,18 +330,24 @@ class SequentialRunner(ExperimentRunner):
             
             # Parse response text
             response_text = parse_response_text(llm_response)
-            
+            # Log the LLM call
+            log_llm_call(model_id, prompt, response_text)
+
             if not response_text:
-                # If we couldn't parse a response, use fallback
+                fallback = adapter.response_parser.get_fallback_action(valid_actions)
+                log_llm_call(model_id, prompt, "Failed to parse response", fallback, is_retry=True)
                 logging.getLogger(__name__).warning(f"Failed to parse response from {model_id}")
-                return adapter.response_parser.get_fallback_action(valid_actions)
+                return fallback
             
             # Parse and validate action
             try:
                 action = adapter.parse_response(response_text, valid_actions)
+                log_action_result(model_id, action, state)
                 return action
             except Exception as e:
+                fallback = adapter.response_parser.get_fallback_action(valid_actions)
+                log_llm_call(model_id, prompt, response_text, fallback, is_retry=True)
                 logging.getLogger(__name__).error(f"Error parsing agent action for {model_id}: {e}")
-                return adapter.response_parser.get_fallback_action(valid_actions)
+                return fallback
                 
         return agent_fn

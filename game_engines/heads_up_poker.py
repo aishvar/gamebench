@@ -720,6 +720,7 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
     Returns:
         Game result data
     """
+    from model_orchestrator.utils import log_initial_state, log_hand_result, close_game_log
     if not player1_agent or not player2_agent:
         raise ValueError("Both player agents must be provided")
         
@@ -738,6 +739,7 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
             
         # Start a new hand
         game.start_hand()
+        log_initial_state(game.get_state(), game.hand_number)
         total_hands_played += 1
         
         # DEBUG: Log hole cards after starting the hand
@@ -810,6 +812,8 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
             "winner": winner_name
         }
         hand_results.append(hand_result)
+        if hand_result:
+            log_hand_result(hand_result, game.get_state())
         
         # Reset for next hand
         game.reset_hand()
@@ -849,6 +853,7 @@ def run_non_interactive_game(player1_agent=None, player2_agent=None, num_hands=1
             player2.name: p2_wins / total_hands_played
         }
     
+    close_game_log()
     return final_result
 
 # Example Usage
