@@ -3,16 +3,19 @@ Hand #{hand_number} | Stage: {stage}
 
 Your stack: {player_stack} chips
 Opponent stack: {opponent_stack} chips
+
 Pot: {pot} chips
-Current bet: {current_bet} chips
+Current total bet to match: {current_bet_level} chips
+Your bet this round: {player_current_bet} chips
+Amount needed to call: {call_amount_needed} chips
 
 Your cards: {player_cards}
 Community cards: {community_cards}
 
-Recent actions:
+Recent actions this hand:
 {recent_actions}
 
 Valid actions you can take now:
 {valid_actions}
 
-What is your action? Reply ONLY with a valid action in JSON format.
+Choose your action. Reply ONLY with the action in JSON format (e.g., {{"action": "fold"}}, {{"action": "call"}}, {{"action": "raise", "amount": 50}}).
