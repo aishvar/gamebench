@@ -31,7 +31,7 @@ def init_game_log(output_dir: str = "./logs") -> str:
             return ""
 
     # Close any existing log file handle
-    if _log_file is not None:
+    if _log_file is not None and not _log_file.closed:
         try:
             _log_file.close()
             logger.debug("Closed existing game log file.")
@@ -109,8 +109,15 @@ def log_initial_state(state: Dict[str, Any], hand_number: int, stage: str):
     valid_actions = state.get('valid_actions', [])
     if valid_actions:
          lines.append("Valid Actions:")
+         # Format actions slightly better for the log
          for action in valid_actions:
-              lines.append(f"  - {action}") # Log the action dict representation
+              action_str = f"  - {action['action_type']}"
+              if action['action_type'] == 'call':
+                   action_str += f" (Amount: {action.get('amount', '?')})"
+              elif action['action_type'] == 'raise':
+                   action_str += f" (Min: {action.get('min_amount', '?')}, Max: {action.get('max_amount', '?')})"
+              lines.append(action_str)
+         # lines.append(f"  - {action}") # Old way: Log the action dict representation
     lines.append("="*80 + "\n")
 
     log_event_to_game_file("\n".join(lines))
@@ -137,7 +144,19 @@ def log_llm_call(model_id: str, prompt: str, response_text: Optional[str],
     # Response (truncated)
     lines.append("--- RESPONSE --->")
     if response_text:
-        response_lines = response_text.splitlines()
+        # Handle potential multi-line JSON within response text for logging
+        try:
+            # Attempt to format if it looks like JSON
+            if (response_text.strip().startswith('{') and response_text.strip().endswith('}')) or \
+               (response_text.strip().startswith('[') and response_text.strip().endswith(']')):
+                parsed_json = json.loads(response_text.strip())
+                response_log_text = json.dumps(parsed_json, indent=2)
+            else:
+                 response_log_text = response_text
+        except json.JSONDecodeError:
+             response_log_text = response_text # Log as is if not valid JSON
+
+        response_lines = response_log_text.splitlines()
         lines.extend(response_lines[:20]) # Limit response lines
         if len(response_lines) > 20:
              lines.append("... [response truncated]")
@@ -147,7 +166,8 @@ def log_llm_call(model_id: str, prompt: str, response_text: Optional[str],
 
     # Parsed Action
     if parsed_action:
-        lines.append(f"--- PARSED ACTION: {parsed_action} ---\n")
+        # Log parsed action cleanly
+        lines.append(f"--- PARSED ACTION: {json.dumps(parsed_action)} ---\n")
     elif not response_text: # Check if response_text was None/empty
         lines.append("--- PARSED ACTION: N/A (LLM Call Failed or No Response Text) ---\n")
     else: # If response_text existed but parsing failed
@@ -158,22 +178,26 @@ def log_llm_call(model_id: str, prompt: str, response_text: Optional[str],
 
 
 def log_action_result(player_id: str, action_type: str, amount: Optional[Union[int, float]], updated_state: Dict[str, Any]):
-    """Log the result of applying an action."""
+    """Log the result of applying an action, reflecting the state *after* the action."""
     if not _log_file or _log_file.closed: return
 
-    lines = ["\n" + "-"*30 + f" ACTION APPLIED: {player_id} " + "-"*30]
+    lines = ["\n" + "-"*30 + f" ACTION RESULT: {player_id} " + "-"*30] # Changed title for clarity
     action_desc = action_type.upper()
-    if amount is not None:
+    if amount is not None and action_type in ['call', 'raise']: # Show amount only for call/raise
          action_desc += f" {amount}"
-    lines.append(f"Action: {action_desc}")
+    lines.append(f"Action By: {player_id} -> {action_desc}") # Clarify who acted
 
-    # Log key state changes
+    # Log key state changes affecting the player who acted
     player_state = updated_state.get("players", {}).get(player_id, {})
-    lines.append(f"  New Stack: {player_state.get('stack', '?')}")
-    lines.append(f"  Bet This Round: {player_state.get('current_bet', '?')}")
+    lines.append(f"  {player_id} New Stack: {player_state.get('stack', '?')}")
+    lines.append(f"  {player_id} Bet This Round: {player_state.get('current_bet', '?')}")
+
+    # Overall state AFTER action and player switch
     lines.append(f"New Pot Size: {updated_state.get('pot', '?')}")
-    lines.append(f"New Bet Level: {updated_state.get('current_bet', '?')}") # Current bet TO CALL
-    lines.append(f"Next Stage: {updated_state.get('stage', '?')}")
+    # Use consistent naming - get 'current_bet' from state as it's the canonical value
+    lines.append(f"New Bet Level: {updated_state.get('current_bet', '?')}")
+    lines.append(f"Current Stage: {updated_state.get('stage', '?')}") # Show current stage
+    # This uses the active_player from the state *after* the switch happened in apply_action
     lines.append(f"Next Active Player: {updated_state.get('active_player', 'N/A')}")
     lines.append("-"*80 + "\n")
 
@@ -187,31 +211,64 @@ def log_hand_result(final_state: Dict[str, Any], hand_number: int):
     lines = ["\n" + "="*30 + f" HAND {hand_number} RESULT " + "="*30]
 
     # Find winner/reason from history if possible (more reliable than inferring from state)
-    winner = "Unknown"
+    winner_name = "Unknown"
     reason = "Unknown"
     winning_hand_desc = ""
+    hand1_desc = ""
+    hand2_desc = ""
+    pot_awarded = final_state.get("pot", 0) # Pot should be 0 after award, get from history?
+
     # Look backwards in history for 'hand_result' event for this hand
     history = final_state.get('history', []) # Get history from state if available
+    hand_result_event_data = None
+    showdown_event_data = None
+
     for event in reversed(history):
          # Ensure event is a dict and has the expected keys
-         if isinstance(event, dict) and event.get('event_type') == 'hand_result' and event.get('hand') == hand_number:
-              data = event.get('data', {})
-              winner = data.get('winner', 'Tie') # Default to Tie if winner key missing
-              reason = data.get('reason', '?')
-              winning_hand_desc = data.get('winning_hand_desc', '')
-              # Ensure winner is None if it's 'Tie' or explicitly None in data
-              if winner == 'Tie' or winner is None:
-                   winner = None
-              break # Found the result event
+         if isinstance(event, dict) and event.get('hand') == hand_number:
+              if event.get('event_type') == 'hand_result' and not hand_result_event_data:
+                    hand_result_event_data = event.get('data', {})
+              elif event.get('event_type') == 'showdown' and not showdown_event_data:
+                   showdown_event_data = event.get('data', {})
+         # Stop if we have both or go back too far
+         if hand_result_event_data and showdown_event_data: break
+         if isinstance(event, dict) and event.get('hand') is not None and event.get('hand') < hand_number: break
 
 
-    lines.append(f"Winner: {'Tie' if winner is None else winner}") # Display 'Tie' if winner is None
+    if hand_result_event_data:
+        winner_from_event = hand_result_event_data.get('winner') # Can be None for tie
+        winner_name = 'Tie' if winner_from_event is None else winner_from_event
+        reason = hand_result_event_data.get('reason', '?')
+        winning_hand_desc = hand_result_event_data.get('winning_hand_desc', '')
+        # Get hand descriptions from result event if present (for ties)
+        hand1_desc = hand_result_event_data.get('hand1_desc', '')
+        hand2_desc = hand_result_event_data.get('hand2_desc', '')
+        pot_awarded = hand_result_event_data.get('pot_awarded', pot_awarded)
+
+
+    # Get player names from state if needed
+    player_names = list(final_state.get("players", {}).keys())
+    p1_name = player_names[0] if len(player_names) > 0 else "Player1"
+    p2_name = player_names[1] if len(player_names) > 1 else "Player2"
+
+    # Try getting hand descriptions from showdown event if not in result event
+    if not hand1_desc and showdown_event_data:
+         hand1_desc = showdown_event_data.get("players", {}).get(p1_name, {}).get("hand_description", "")
+    if not hand2_desc and showdown_event_data:
+         hand2_desc = showdown_event_data.get("players", {}).get(p2_name, {}).get("hand_description", "")
+
+
+    lines.append(f"Winner: {winner_name}") # Display 'Tie' or player name
     lines.append(f"Reason: {reason}")
     if winning_hand_desc:
-        lines.append(f"Winning Hand: {winning_hand_desc}")
+        lines.append(f"Winning Hand Desc: {winning_hand_desc}")
+    elif reason == "tie_showdown":
+         lines.append(f"  {p1_name} Hand: {hand1_desc}")
+         lines.append(f"  {p2_name} Hand: {hand2_desc}")
+    lines.append(f"Pot Awarded: {pot_awarded}")
 
     # Show final stacks
-    lines.append("Final Stacks:")
+    lines.append("Final Stacks After Hand:")
     for p_name, p_data in final_state.get("players", {}).items():
         lines.append(f"  {p_name}: {p_data.get('stack', '?')}")
 
@@ -248,6 +305,8 @@ def format_cards(cards: List[Tuple[str, str]]) -> str:
             rank, suit = card
             suit_symbol = suit_map.get(suit, suit[0]) # Fallback to first letter
             formatted.append(f"{rank}{suit_symbol}")
+        elif isinstance(card, str) and card == "Hidden": # Handle the 'Hidden' placeholder
+            formatted.append("[Hidden]")
         else:
             logger.warning(f"Unexpected card format in format_cards: {card}")
             formatted.append("?")
@@ -261,33 +320,39 @@ def parse_response_text(response_json: Dict[str, Any]) -> Optional[str]:
     if not response_json: return None
     content = None
     try:
-        # OpenAI / OpenRouter (common format)
+        # OpenAI / OpenRouter (common format) - Check 'message' first for non-streaming
         if "choices" in response_json and isinstance(response_json["choices"], list) and response_json["choices"]:
             choice = response_json["choices"][0]
-            # Check delta for streaming response chunk
-            if "delta" in choice and isinstance(choice["delta"], dict):
-                content = choice["delta"].get("content")
-                if content: return str(content)
             # Check message for complete response
             if "message" in choice and isinstance(choice["message"], dict):
                 content = choice["message"].get("content")
                 if content: return str(content)
+            # Check delta for streaming response chunk
+            if "delta" in choice and isinstance(choice["delta"], dict):
+                content = choice["delta"].get("content")
+                if content: return str(content)
 
-        # Anthropic Claude
+
+        # Anthropic Claude - Check list structure first
         if "content" in response_json and isinstance(response_json["content"], list) and response_json["content"]:
             first_block = response_json["content"][0]
             if isinstance(first_block, dict) and first_block.get("type") == "text":
                  content = first_block.get("text")
                  if content: return str(content)
-            # Check for Pydantic model attribute if not dict (less common for final response)
+            # Check for Pydantic model attribute if not dict (seen with Anthropic client)
             elif hasattr(first_block, 'text'):
                  content = first_block.text
                  if content: return str(content)
+
         # Anthropic streaming delta
         if "delta" in response_json and isinstance(response_json["delta"], dict):
              if response_json["delta"].get("type") == "text_delta":
                   content = response_json["delta"].get("text")
                   if content: return str(content)
+             # Handle Anthropic message_delta (for message completion events)
+             elif response_json["delta"].get("type") == "message_delta":
+                  # Usage info might be here, but not text content itself
+                  pass
 
 
         # Older / Other formats (add as needed)
@@ -302,11 +367,13 @@ def parse_response_text(response_json: Dict[str, Any]) -> Optional[str]:
                   return response_json # If the whole thing is just a string
 
              logger.warning(f"Could not extract text content from LLM response structure: Keys={list(response_json.keys())}")
+             # Log the structure for debugging
+             # logger.debug(f"Full response structure for parsing failure: {json.dumps(response_json, default=str)}")
              return None
 
     except Exception as e:
         logger.error(f"Error parsing LLM response text: {e}. Response keys: {list(response_json.keys())}")
+        # logger.debug(f"Full response structure during parsing error: {json.dumps(response_json, default=str)}")
         return None
 
     return str(content) if content is not None else None
-
