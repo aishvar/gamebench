@@ -262,11 +262,11 @@ class SequentialRunner(ExperimentRunner):
         model_id = model_data["id"]
         model_name = model_data["name"]
         system_prompt = adapter.prepare_system_prompt()
-
+ 
         def agent_fn(game_state_dict: Dict[str, Any], valid_actions: List[Dict[str, Any]]) -> Dict[str, Any]:
             """ The actual function called by the game loop. """
             logger.debug(f"Agent {model_id} ({model_name}) invoked. Stage: {game_state_dict.get('stage')}")
-
+ 
             temp_prompt_adapter = GameAdapter(game_type="poker")
             try:
                 game_history_list = game_state_dict.get("history", [])
@@ -276,12 +276,11 @@ class SequentialRunner(ExperimentRunner):
                      player_id=model_id,
                      game_history=game_history_list
                 )
-                # --- Use imported render_template ---
                 prompt = render_template(temp_prompt_adapter.prompt_template, prompt_vars)
             except Exception as prompt_err:
                  logger.exception(f"Agent {model_id}: Error preparing prompt variables: {prompt_err}")
                  return adapter.response_parser.get_fallback_action(valid_actions)
-
+ 
             raw_response_dict = llm_client.call_llm(
                 developer_message=(
                     f"You are {model_id} playing heads-up Texas Hold'em poker. "
@@ -291,15 +290,9 @@ class SequentialRunner(ExperimentRunner):
                 user_message=prompt,
                 system_message=system_prompt
             )
-
+ 
             response_text = parse_response_text(raw_response_dict)
-            log_llm_call(
-                model_id=f"{model_id}({model_name})",
-                prompt=prompt,
-                response_text=response_text if response_text else "No response text",
-                parsed_action=None
-            )
-
+            
             if not response_text:
                 logger.warning(f"Agent {model_id}: LLM call failed or returned no text content. Using fallback.")
                 action = adapter.response_parser.get_fallback_action(valid_actions)
@@ -307,22 +300,22 @@ class SequentialRunner(ExperimentRunner):
                     model_id=f"{model_id}({model_name})",
                     prompt=prompt,
                     response_text="LLM Call Failed/Empty",
-                    parsed_action=action,
-                    is_retry=True
+                    parsed_action=action
                 )
                 return action
-
+ 
+            # Parse the response and log everything in a single entry
             action = adapter.parse_and_validate_response(response_text, valid_actions)
             log_llm_call(
                  model_id=f"{model_id}({model_name})",
-                 prompt="See previous LLM Call entry",
+                 prompt=prompt,
                  response_text=response_text,
                  parsed_action=action
             )
-
+ 
             logger.debug(f"Agent {model_id} chose action: {action}")
             return action
-
+ 
         return agent_fn
 
     # --- Override analyze_results and save_results to use Tracker/Storage ---

@@ -697,6 +697,23 @@ class HeadsUpPoker(BaseGame):
 
         round_closed = False
         if bets_matched:
+            # Special pre-flop SB calls BB case - Fix for Issue #2
+            if self.stage == "pre-flop":
+                sb_player_index = self.dealer_index
+                bb_player_index = 1 - self.dealer_index
+                
+                # Check if we're in the situation where SB just called BB's blind
+                last_action_player = self.players_obj[1 - self.active_player_index]
+                
+                # If SB just called BB's blind and BB hasn't acted yet
+                if last_action_player.name == self.players_obj[sb_player_index].name and \
+                   last_action_player.last_action == "call" and \
+                   self.active_player_index == bb_player_index and \
+                   self.players_obj[bb_player_index].last_action is None:
+                    # BB needs to act - don't close the round yet
+                    logger.debug("Pre-flop: SB called BB, BB still needs to act. Round continues.")
+                    return False
+
             # Action completes if the aggressor's action is closed (by a call) OR
             # if the Big Blind checks pre-flop OR if a player checks back post-flop.
 
@@ -780,7 +797,6 @@ class HeadsUpPoker(BaseGame):
 
         logger.debug(f"Betting round continues. Active player: {self.players_obj[self.active_player_index].name}")
         return False # Round continues
-
 
     def _advance_to_showdown(self):
         if self.hand_complete: return # Avoid advancing if already done
