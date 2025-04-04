@@ -204,7 +204,7 @@ def log_action_result(player_id: str, action_type: str, amount: Optional[Union[i
     log_event_to_game_file("\n".join(lines))
 
 
-def log_hand_result(final_state: Dict[str, Any], hand_number: int):
+def log_hand_result(final_state: Dict[str, Any], hand_number: int, hand_outcome: Optional[Dict[str, Any]] = None):
     """Log the result of a completed hand using final state."""
     if not _log_file or _log_file.closed: return
 
