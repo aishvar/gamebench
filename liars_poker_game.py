@@ -750,8 +750,8 @@ def get_player_configurations() -> List[Dict[str, Any]]:
     common_configs = {
         "N": {"strategy_type": "naive_5050"},
         # OpenAI models
-        "1": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o"},
-        "2": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini"},
+        "1": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
+        "2": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
         # Anthropic models
         "3": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
         "4": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
@@ -765,7 +765,8 @@ def get_player_configurations() -> List[Dict[str, Any]]:
         "11": {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
         "12": {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
         "13": {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
-        "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"}       
+        "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},   
+        "15": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"}       
     }
 
     for i in range(num_players):
