@@ -7,6 +7,9 @@ from trueskill_minimal import Rating, rate
 LOG_PATH = os.path.join("data", "hands_log.json")
 RATINGS_PATH = "model_ratings.json"
 
+def canonical_name(model_name):
+    return model_name.split(":", 1)[0]
+
 def main():
     # 1) Load existing ratings (if any)
     try:
@@ -14,10 +17,13 @@ def main():
             stored = json.load(f)
         processed_timestamps = set(stored.get("processed_timestamps", []))
         model_ratings_data = stored.get("model_ratings", {})
-        model_ratings = {
-            model: Rating(mu=vals["mu"], sigma=vals["sigma"])
-            for model, vals in model_ratings_data.items()
-        }
+        # Convert stored ratings into Rating objects, ensuring canonical naming
+        model_ratings = {}
+        for m, vals in model_ratings_data.items():
+            c = canonical_name(m)
+            # If collisions happen, you might merge or skip. 
+            # For simplicity, we overwrite; adjust logic as needed.
+            model_ratings[c] = Rating(mu=vals["mu"], sigma=vals["sigma"])
     except FileNotFoundError:
         model_ratings = {}
         processed_timestamps = set()
@@ -33,8 +39,8 @@ def main():
         if ts in processed_timestamps:
             continue
 
-        winner_model = entry["winner"]
-        loser_models = entry["losers"]
+        winner_model = canonical_name(entry["winner"])
+        loser_models = [canonical_name(l) for l in entry["losers"]]
 
         # Make sure all involved models have a rating object
         if winner_model not in model_ratings:
@@ -60,19 +66,21 @@ def main():
     processed_timestamps.update(new_timestamps)
     with open(RATINGS_PATH, "w") as f:
         json.dump({
-            "model_ratings": {m: {"mu": r.mu, "sigma": r.sigma} for m, r in model_ratings.items()},
+            "model_ratings": {
+                m: {"mu": r.mu, "sigma": r.sigma}
+                for m, r in model_ratings.items()
+            },
             "processed_timestamps": sorted(list(processed_timestamps))
         }, f, indent=2)
 
-    # Print top models by (mu - 3*sigma) if you want
+    # Print top models by mu
     sorted_models = sorted(
         model_ratings.items(),
-        key=lambda kv: (kv[1].mu - 3*kv[1].sigma),
+        key=lambda kv: kv[1].mu,
         reverse=True
     )
     for model, r in sorted_models:
-        #skill = r.mu - 3*r.sigma #don't need skill for now
-        print(f"{model:<50} mu={r.mu:.2f}, sigma={r.sigma:.2f}")#, skill≈{skill:.2f}")
+        print(f"{model:<50} mu={r.mu:.2f}, sigma={r.sigma:.2f}")
 
 if __name__ == "__main__":
     main()
