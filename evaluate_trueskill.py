@@ -4,7 +4,7 @@ import os
 import json
 from trueskill_minimal import Rating, rate
 
-LOG_PATH = os.path.join("data", "hands_log.json")
+LOG_PATH = os.path.join("data", "two_player_hands_log.json")
 RATINGS_PATH = "model_ratings.json"
 
 def canonical_name(model_name):
