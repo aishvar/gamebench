@@ -79,6 +79,10 @@ except ImportError:
          else:
              print("Dummy LLM Call Logged: Failed call")
 
+# Override LOGS_DIR to save logs in the 'data' directory within the current folder
+LOGS_DIR = os.path.join(os.path.dirname(__file__), "data")
+os.makedirs(LOGS_DIR, exist_ok=True)
+
 # Configure logging for the game
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("LiarsPokerGame")
