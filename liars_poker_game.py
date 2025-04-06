@@ -655,12 +655,16 @@ def get_player_configurations() -> List[Dict[str, str]]:
         "1": ("openai", "gpt-4o-mini"),
         "2": ("anthropic", "claude-3-7-sonnet-20250219"),
         "3": ("openrouter", "google/gemini-2.5-pro-exp-03-25:free"),
-        "4": ("openrouter", "deepseek/deepseek-chat-v3-0324:free"),
+        "4": ("openrouter", "deepseek/deepseek-chat-v3-0324:floor"),
         "5": ("openai", "gpt-4o"),
         "6": ("anthropic", "claude-3-5-sonnet-20241022"),
-        "7": ("openrouter", "meta-llama/llama-4-maverick:free"),
-        "8": ("openrouter", "meta-llama/llama-4-scout:free"),
-        "9": ("openrouter", "google/gemma-3-27b-it:free"),
+        "7": ("openrouter", "meta-llama/llama-4-maverick:floor"),
+        "8": ("openrouter", "meta-llama/llama-4-scout:floor"),
+        "9": ("openrouter", "google/gemma-3-27b-it:floor"),
+        "10": ("openrouter", "openrouter/quasar-alpha"),
+        "11": ("openrouter", "mistralai/mistral-small-3.1-24b-instruct:floor"),
+        "12": ("openrouter", "deepseek/deepseek-r1:floor"),  
+        "13": ("openrouter", "qwen/qwq-32b:nitro"),           
     }
 
     for i in range(num_players):
