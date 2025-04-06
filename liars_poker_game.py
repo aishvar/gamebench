@@ -440,12 +440,12 @@ class LiarsPokerGame:
         logger.debug(f"Counting digit {digit} across hands:{all_hands_str} -> Count: {count}")
         return count
 
-    def _resolve_challenge(self) -> Tuple[int, int]:
+    def _resolve_challenge(self) -> Tuple[int, List[int]]:
         """
         Resolves a challenge by counting digits and determining the winner/loser.
 
         Returns:
-            Tuple[int, int]: (winner_player_id, loser_player_id)
+            Tuple[int, List[int]]: (winner_player_id, loser_player_ids)
         """
         if not self.current_bid or not self.bid_history:
              # This should be caught earlier, but defensive check
@@ -471,36 +471,41 @@ class LiarsPokerGame:
         actual_count = self._count_digit_occurrences(challenged_bid.digit)
         self._log_round_event(f"Actual count of {challenged_bid.digit}s across all hands: {actual_count}")
 
+        winner_id = None
+        # Get all player IDs to identify losers (everyone except winner)
+        all_player_ids = [p.player_id for p in self.players]
+
         if actual_count >= challenged_bid.quantity:
             # Bidder was correct (or understated), challenger loses
             winner_id = challenged_bidder_id
-            loser_id = challenger_id
             self._log_round_event(f"Challenge Failed! Actual count ({actual_count}) >= Bid quantity ({challenged_bid.quantity}).")
             self._log_round_event(f"Winner: Player {winner_id} ({challenged_bidder_model})")
-            self._log_round_event(f"Loser: Player {loser_id} ({challenger_model})")
         else:
             # Bidder was wrong (overstated), challenger wins
             winner_id = challenger_id
-            loser_id = challenged_bidder_id
             self._log_round_event(f"Challenge Successful! Actual count ({actual_count}) < Bid quantity ({challenged_bid.quantity}).")
             self._log_round_event(f"Winner: Player {winner_id} ({challenger_model})")
-            self._log_round_event(f"Loser: Player {loser_id} ({challenged_bidder_model})")
+
+        # Everyone except the winner is a loser
+        loser_ids = [pid for pid in all_player_ids if pid != winner_id]
+        loser_models = [next(p.model_config['model'] for p in self.players if p.player_id == pid) for pid in loser_ids]
+        self._log_round_event(f"Losers: Players {', '.join([f'{pid} ({model})' for pid, model in zip(loser_ids, loser_models)])}")
 
         self.game_active = False # Mark game as finished for this round
-        return winner_id, loser_id
+        return winner_id, loser_ids
 
-    def play_round(self) -> Tuple[Optional[int], Optional[int], List[str]]:
+    def play_round(self) -> Tuple[Optional[int], List[int], List[str]]:
         """
         Plays a single round of Liar's Poker.
 
         Returns:
-            Tuple[Optional[int], Optional[int], List[str]]:
-                (winner_player_original_order, loser_player_original_order, round_log)
-                Returns (None, None, log) if round ends prematurely due to forfeit.
+            Tuple[Optional[int], List[int], List[str]]:
+                (winner_player_original_order, loser_player_original_orders, round_log)
+                Returns (None, list_of_loser_original_orders, log) if round ends with a forfeit.
         """
         self._setup_round()
         winner_id: Optional[int] = None
-        loser_id: Optional[int] = None
+        loser_ids: List[int] = []
 
         while self.game_active:
             current_player = self.players[self.current_player_index]
@@ -511,19 +516,19 @@ class LiarsPokerGame:
             if action is None:
                 # Player failed to provide a valid action after retries -> Forfeits
                 self._log_round_event(f"Player {current_player.player_id} ({current_player.model_config['model']}) forfeits the round due to invalid/failed action.")
-                # In a multi-round game, this player might be penalized.
-                # For this single round, we declare no winner/loser from the challenge mechanism.
+                # In a forfeit, the forfeiting player is the sole loser
                 self.game_active = False
-                winner_id, loser_id = None, None # No winner/loser determined by challenge
+                winner_id = None
+                loser_ids = [current_player.player_id]  # Only the forfeiting player is a loser
                 break # End the round
 
             elif action == "CHALLENGE":
                 # Resolve the challenge and end the round
                 try:
-                    winner_id, loser_id = self._resolve_challenge()
+                    winner_id, loser_ids = self._resolve_challenge()
                 except RuntimeError as e:
                     self._log_round_event(f"Error resolving challenge: {e}. Ending round abnormally.")
-                    winner_id, loser_id = None, None
+                    winner_id, loser_ids = None, []
                 # self.game_active is set to False inside _resolve_challenge (or above on error)
                 break # Exit the loop
 
@@ -544,7 +549,8 @@ class LiarsPokerGame:
 
         # Map round winner/loser IDs back to original player order
         winner_original_order = next((p.original_order for p in self.players if p.player_id == winner_id), None) if winner_id is not None else None
-        loser_original_order = next((p.original_order for p in self.players if p.player_id == loser_id), None) if loser_id is not None else None
+        loser_original_orders = [next((p.original_order for p in self.players if p.player_id == loser_id), None) for loser_id in loser_ids]
+        loser_original_orders = [order for order in loser_original_orders if order is not None]  # Filter out any None values
 
         # Save the round log to a file
         timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -556,8 +562,35 @@ class LiarsPokerGame:
         except Exception as e:
             logger.error(f"Failed to save round log: {e}")
 
+        # Save hand result to hands_log.json
+        hands_log_path = os.path.join(LOGS_DIR, "hands_log.json")
+        hand_entry = {
+            "timestamp": timestamp,
+            "winner": winner_original_order,
+            "losers": loser_original_orders,
+            "round_log_file": os.path.basename(log_filename)
+        }
 
-        return winner_original_order, loser_original_order, self.round_log
+        try:
+            # Read existing log entries or create a new list
+            if os.path.exists(hands_log_path):
+                with open(hands_log_path, "r") as f:
+                    hands_log = json.load(f)
+            else:
+                hands_log = []
+            
+            # Append new entry
+            hands_log.append(hand_entry)
+            
+            # Write updated log
+            with open(hands_log_path, "w") as f:
+                json.dump(hands_log, f, indent=2)
+            
+            logger.info(f"Hand log updated in {hands_log_path}")
+        except Exception as e:
+            logger.error(f"Failed to update hands log: {e}")
+
+        return winner_original_order, loser_original_orders, self.round_log
 
 
 # --- Main Execution ---
@@ -659,23 +692,27 @@ if __name__ == "__main__":
         game = LiarsPokerGame(player_configs=player_configs)
 
         print("\nStarting game round...")
-        winner_original_order, loser_original_order, round_log = game.play_round()
+        winner_original_order, loser_original_orders, round_log = game.play_round()
 
         print("\n--- Game Round Finished ---")
-        if winner_original_order is not None and loser_original_order is not None:
-             # Find the original config using original_order
-             winner_config = next(cfg for i, cfg in enumerate(player_configs) if i == winner_original_order)
-             loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_original_order)
-             print(f"Winner: Player {winner_original_order} ({winner_config['provider']}/{winner_config['model']})")
-             print(f"Loser: Player {loser_original_order} ({loser_config['provider']}/{loser_config['model']})")
-        elif winner_original_order is None and loser_original_order is None:
-             # This case now covers both forfeit and abnormal end (e.g., challenge resolution error)
-             print("Round ended without a winner/loser declared via challenge (e.g., player forfeit or error).")
+        if winner_original_order is not None:
+            # Find the original config using original_order
+            winner_config = next(cfg for i, cfg in enumerate(player_configs) if i == winner_original_order)
+            print(f"Winner: Player {winner_original_order} ({winner_config['provider']}/{winner_config['model']})")
+            print("Losers:")
+            for loser_order in loser_original_orders:
+                loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
+                print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
         else:
-             # Should not happen with current logic, but good to have a catch-all
-             print(f"Round ended with an unexpected state (Winner: {winner_original_order}, Loser: {loser_original_order}).")
+            # No winner (forfeit case)
+            print("No winner declared.")
+            print("Losers (forfeited):")
+            for loser_order in loser_original_orders:
+                loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
+                print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
 
         print(f"\nFull round log saved in {GAME_LOGS_DIR}")
+        print(f"Cumulative game results saved in {os.path.join(LOGS_DIR, 'hands_log.json')}")
         # print("\n".join(round_log)) # Uncomment to print full log to console as well
 
     except (ValueError, RuntimeError, KeyError) as e:
