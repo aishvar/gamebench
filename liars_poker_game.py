@@ -154,10 +154,13 @@ class Player:
         if self.strategy_type == 'llm' and self.model_config:
             provider = self.model_config.get('provider', 'unknown')
             model = self.model_config.get('model', 'unknown')
+            if provider == "openrouter":
+                return model
             if model.startswith(provider + "/"):
                 return model
             else:
                 return f"{provider}/{model}"
+                
         elif self.strategy_type == 'naive_5050':
             return "Naive 50/50"
         else:
