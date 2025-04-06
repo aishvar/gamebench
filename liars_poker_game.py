@@ -159,7 +159,7 @@ class Player:
             if model.startswith(provider + "/"):
                 return model
             else:
-                return f"{provider}/{model}"
+                return f"{model}"
                 
         elif self.strategy_type == 'naive_5050':
             return "Naive 50/50"
