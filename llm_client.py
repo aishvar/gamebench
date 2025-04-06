@@ -492,7 +492,7 @@ if __name__ == "__main__":
     openrouter_client = LLMClient(
         provider="openrouter", 
         model="meta-llama/llama-3-8b-instruct",
-        max_tokens=500,
+        max_tokens=1000,
         temperature=0.7,
         max_retries=2
     )
@@ -508,7 +508,7 @@ if __name__ == "__main__":
     claude_client = LLMClient(
         provider="anthropic", 
         model="claude-3-haiku-20240307",
-        max_tokens=500,
+        max_tokens=1000,
         temperature=0.7
     )
     
@@ -524,7 +524,7 @@ if __name__ == "__main__":
     openai_client = LLMClient(
         provider="openai", 
         model="gpt-4o-mini",
-        max_tokens=500,
+        max_tokens=1000,
         temperature=0.7
     )
     
