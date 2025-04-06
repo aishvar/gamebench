@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import random
 import logging
 import time
@@ -66,10 +69,10 @@ except ImportError:
 
     def parse_response_text(response_json: Optional[Dict[str, Any]]) -> Optional[str]:
          if response_json and "choices" in response_json and response_json["choices"]:
-              message = response_json["choices"][0].get("message", {})
-              content = message.get("content")
-              if content:
-                  return str(content).strip()
+             message = response_json["choices"][0].get("message", {})
+             content = message.get("content")
+             if content:
+                 return str(content).strip()
          return None
 
     def log_llm_call(provider: str, model: str, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> str:
@@ -113,30 +116,47 @@ class Bid(NamedTuple):
 class Player:
     """Represents a player in the game."""
     player_id: int
-    model_config: Dict[str, str] # e.g., {"provider": "openai", "model": "gpt-4o-mini"}
-    client: LLMClient = field(init=False)
+    strategy_type: str # 'llm' or 'naive_5050'
+    model_config: Optional[Dict[str, str]] = None # e.g., {"provider": "openai", "model": "gpt-4o-mini"}, only for 'llm'
+    client: Optional[LLMClient] = field(default=None, init=False)
     hand: List[int] = field(default_factory=list)
     original_order: int = 0 # To track initial position if needed
 
     def __post_init__(self):
-        """Initialize the LLM client after dataclass initialization."""
-        logger.info(f"Initializing LLM client for Player {self.player_id}: {self.model_config}")
-        try:
-            self.client = LLMClient(
-                provider=self.model_config["provider"],
-                model=self.model_config["model"],
-                max_tokens=8192, # Increased slightly for JSON + reasoning
-                temperature=0.5, # Encourage more deterministic actions
-                max_retries=2,
-                timeout=60 # Increased slightly for potentially longer reasoning
-            )
-        except ValueError as e:
-            logger.error(f"Failed to initialize LLM client for Player {self.player_id}: {e}")
-            # Re-raise or handle appropriately - for now, re-raise to stop setup
-            raise
-        except KeyError as e:
-            logger.error(f"Missing key in model_config for Player {self.player_id}: {e}")
-            raise ValueError(f"Invalid model_config for Player {self.player_id}: {self.model_config}")
+        """Initialize the LLM client after dataclass initialization, if applicable."""
+        if self.strategy_type == 'llm':
+            if not self.model_config:
+                raise ValueError(f"Player {self.player_id} has strategy 'llm' but no model_config provided.")
+            logger.info(f"Initializing LLM client for Player {self.player_id}: {self.model_config}")
+            try:
+                self.client = LLMClient(
+                    provider=self.model_config["provider"],
+                    model=self.model_config["model"],
+                    max_tokens=8192, # Increased slightly for JSON + reasoning
+                    temperature=0.5, # Encourage more deterministic actions
+                    max_retries=2,
+                    timeout=60 # Increased slightly for potentially longer reasoning
+                )
+            except ValueError as e:
+                logger.error(f"Failed to initialize LLM client for Player {self.player_id}: {e}")
+                # Re-raise or handle appropriately - for now, re-raise to stop setup
+                raise
+            except KeyError as e:
+                logger.error(f"Missing key in model_config for Player {self.player_id}: {e}")
+                raise ValueError(f"Invalid model_config for Player {self.player_id}: {self.model_config}")
+        elif self.strategy_type == 'naive_5050':
+             logger.info(f"Player {self.player_id} initialized with Naive 50/50 strategy.")
+        else:
+             raise ValueError(f"Unknown strategy_type '{self.strategy_type}' for Player {self.player_id}")
+
+    def get_display_name(self) -> str:
+        """Returns a string representation of the player for logging/display."""
+        if self.strategy_type == 'llm' and self.model_config:
+            return f"{self.model_config.get('provider', 'unknown')}/{self.model_config.get('model', 'unknown')}"
+        elif self.strategy_type == 'naive_5050':
+            return "Naive 50/50"
+        else:
+            return f"Unknown Strategy ({self.strategy_type})"
 
 
 # --- Game Logic ---
@@ -147,22 +167,29 @@ class LiarsPokerGame:
     MAX_DIGITS_PER_HAND = 8
     MAX_ACTION_PARSE_ATTEMPTS = 2 # How many times to re-prompt if action is invalid
 
-    def __init__(self, player_configs: List[Dict[str, str]]):
+    def __init__(self, player_configs: List[Dict[str, Any]]):
         """
         Initializes the game with player configurations.
 
         Args:
-            player_configs: A list of dictionaries, each specifying
-                            {"provider": <provider_name>, "model": <model_name>}
-                            for a player.
+            player_configs: A list of dictionaries, each specifying a player.
+                            For LLM players: {"strategy_type": "llm", "provider": <str>, "model": <str>}
+                            For Naive players: {"strategy_type": "naive_5050"}
         """
         if not (2 <= len(player_configs) <= 6):
             raise ValueError("Number of players must be between 2 and 6.")
 
         self.players: List[Player] = []
         for i, config in enumerate(player_configs):
-             # Add original_order before shuffling
-            self.players.append(Player(player_id=i, model_config=config, original_order=i))
+            strategy = config.get("strategy_type")
+            if strategy == 'llm':
+                model_cfg = {"provider": config["provider"], "model": config["model"]}
+                self.players.append(Player(player_id=i, strategy_type='llm', model_config=model_cfg, original_order=i))
+            elif strategy == 'naive_5050':
+                self.players.append(Player(player_id=i, strategy_type='naive_5050', original_order=i))
+            else:
+                raise ValueError(f"Invalid player configuration at index {i}: missing or unknown strategy_type. Config: {config}")
+
 
         self.current_player_index: int = 0
         self.current_bid: Optional[Bid] = None
@@ -212,14 +239,14 @@ class LiarsPokerGame:
         for i, player in enumerate(self.players):
             player.player_id = i # This ID is relative to the current round's turn order
 
-        self._log_round_event(f"Player order: {[p.model_config['model'] for p in self.players]}")
+        self._log_round_event(f"Player order: {[p.get_display_name() for p in self.players]}")
 
         # 2. Generate and assign hands
         hands = self._generate_hands()
         for i, player in enumerate(self.players):
             player.hand = hands[i]
             # Log hands only to file, not console by default unless debugging
-            logger.debug(f"Player {player.player_id} ({player.model_config['model']}) Hand: {''.join(map(str, player.hand))}")
+            logger.debug(f"Player {player.player_id} ({player.get_display_name()}) Hand: {''.join(map(str, player.hand))}")
         self._log_round_event(f"Hands dealt to {len(self.players)} players.")
 
         # 3. Reset round state
@@ -274,20 +301,20 @@ class LiarsPokerGame:
 
         # Construct user message with current game state
         hand_str = "".join(map(str, player.hand))
-        player_list_str = ", ".join([f"Player {p.player_id} ({p.model_config['model']})" for p in self.players])
+        player_list_str = ", ".join([f"Player {p.player_id} ({p.get_display_name()})" for p in self.players])
         history_str = "\n".join([f"  - Player {pid} bid: {bid}" for pid, bid in self.bid_history]) if self.bid_history else "  - No bids yet."
 
         user_message = (
             f"Game State:\n"
             f"- Your Hand: {hand_str}\n"
             f"- Players: {player_list_str}\n"
-            f"- Your Turn: Player {player.player_id} ({player.model_config['model']})\n"
+            f"- Your Turn: Player {player.player_id} ({player.get_display_name()})\n"
             f"- Current Bid: {self.current_bid or 'None'}"
         )
         if self.current_bid:
-             last_bidder_id = self.bid_history[-1][0]
-             last_bidder_model = next(p.model_config['model'] for p in self.players if p.player_id == last_bidder_id)
-             user_message += f" (made by Player {last_bidder_id} - {last_bidder_model})"
+            last_bidder_id = self.bid_history[-1][0]
+            last_bidder = next(p for p in self.players if p.player_id == last_bidder_id)
+            user_message += f" (made by Player {last_bidder_id} - {last_bidder.get_display_name()})"
 
         user_message += f"\n- Bid History:\n{history_str}\n\n"
         user_message += "What is your action? Provide your reasoning and action in the specified JSON format."
@@ -343,12 +370,16 @@ class LiarsPokerGame:
         self._log_round_event("Parse Error: Action string did not match 'CHALLENGE' or 'BID: [quantity] [digit]s' format.")
         return None
 
-    def _get_player_action(self, player: Player) -> Union[Bid, str, None]:
+    def _get_llm_action(self, player: Player) -> Union[Bid, str, None]:
         """Gets and validates an action from the specified player's LLM (expecting JSON)."""
+        if not player.client: # Should not happen if __post_init__ worked
+            self._log_round_event(f"Error: Player {player.player_id} is LLM type but has no client.")
+            return None
+
         developer_msg, user_msg, system_msg = self._get_prompt_context(player)
 
         for attempt in range(self.MAX_ACTION_PARSE_ATTEMPTS + 1):
-            self._log_round_event(f"Requesting action from Player {player.player_id} ({player.model_config['model']}), Attempt {attempt + 1}/{self.MAX_ACTION_PARSE_ATTEMPTS + 1}")
+            self._log_round_event(f"Requesting action from Player {player.player_id} ({player.get_display_name()}), Attempt {attempt + 1}/{self.MAX_ACTION_PARSE_ATTEMPTS + 1}")
 
             start_time = time.time()
             response_payload = player.client.call_llm(
@@ -366,7 +397,7 @@ class LiarsPokerGame:
                     "temperature": player.client.temperature
                 }
                 # Log the LLM call properly (matching log_llm_call's signature)
-                if response_payload is not None:
+                if response_payload is not None and player.model_config: # Ensure model_config exists
                     log_llm_call(
                         player.model_config["provider"],
                         player.model_config["model"],
@@ -382,7 +413,7 @@ class LiarsPokerGame:
             if response_payload is None:
                 self._log_round_event(f"Player {player.player_id} LLM call failed after retries.")
                 if attempt == self.MAX_ACTION_PARSE_ATTEMPTS:
-                     return None # Forfeit on final attempt failure
+                    return None # Forfeit on final attempt failure
                 continue # Try prompting again
 
             response_text = parse_response_text(response_payload) # Get the raw text content from the payload
@@ -442,7 +473,45 @@ class LiarsPokerGame:
         # If loop finishes without returning, all attempts failed
         self._log_round_event(f"Player {player.player_id} failed to provide a valid action after {self.MAX_ACTION_PARSE_ATTEMPTS + 1} attempts.")
         return None # Player forfeits
-    
+
+    def _get_naive_action(self, player: Player) -> Union[Bid, str, None]:
+        """Gets an action from the Naive 50/50 strategy."""
+        self._log_round_event(f"Calculating action for Player {player.player_id} (Naive 50/50)")
+
+        if self.current_bid is None:
+            # Must make the first bid
+            naive_bid = Bid(quantity=1, digit=0)
+            self._log_round_event(f"Player {player.player_id} (Naive) making initial bid: {naive_bid}")
+            return naive_bid
+        else:
+            # 50% chance to challenge
+            if random.random() < 0.5:
+                self._log_round_event(f"Player {player.player_id} (Naive) chose to CHALLENGE.")
+                return "CHALLENGE"
+            else:
+                # Try to make a minimally higher bid
+                current_qty = self.current_bid.quantity
+                current_digit = self.current_bid.digit
+
+                # Option 1: Increase digit
+                if current_digit < 9:
+                    naive_bid = Bid(quantity=current_qty, digit=current_digit + 1)
+                # Option 2: Increase quantity, reset digit
+                else:
+                    naive_bid = Bid(quantity=current_qty + 1, digit=0)
+
+                # Check if the naive bid is possible
+                if naive_bid.quantity > self.total_digits_in_play:
+                    # Cannot make a valid higher bid, must challenge instead
+                    self._log_round_event(f"Player {player.player_id} (Naive) wanted to bid {naive_bid}, but quantity exceeds max ({self.total_digits_in_play}). Forcing CHALLENGE.")
+                    return "CHALLENGE"
+                else:
+                    self._log_round_event(f"Player {player.player_id} (Naive) chose to BID: {naive_bid}")
+                    return naive_bid
+
+        # Should not be reached
+        return None
+
     def _count_digit_occurrences(self, digit: int) -> int:
         """Counts the total occurrences of a digit across all player hands."""
         count = 0
@@ -458,7 +527,7 @@ class LiarsPokerGame:
         Resolves a challenge by counting digits and determining the winner/loser.
 
         Returns:
-            Tuple[int, List[int]]: (winner_player_id, loser_player_ids)
+            Tuple[int, List[int]]: (winner_player_id, loser_player_ids) based on current round IDs.
         """
         if not self.current_bid or not self.bid_history:
              # This should be caught earlier, but defensive check
@@ -467,42 +536,40 @@ class LiarsPokerGame:
         challenger_id = self.current_player_index
         challenged_bidder_id, challenged_bid = self.bid_history[-1]
 
-        challenger_model = self.players[challenger_id].model_config['model']
+        challenger = self.players[challenger_id]
         # Find the player object corresponding to the challenged bidder ID
         challenged_bidder_player = next((p for p in self.players if p.player_id == challenged_bidder_id), None)
         if not challenged_bidder_player:
              raise RuntimeError(f"Could not find player object for challenged bidder ID {challenged_bidder_id}")
-        challenged_bidder_model = challenged_bidder_player.model_config['model']
 
-
-        self._log_round_event(f"Player {challenger_id} ({challenger_model}) challenges Player {challenged_bidder_id}'s ({challenged_bidder_model}) bid of {challenged_bid}.")
+        self._log_round_event(f"Player {challenger_id} ({challenger.get_display_name()}) challenges Player {challenged_bidder_id}'s ({challenged_bidder_player.get_display_name()}) bid of {challenged_bid}.")
 
         # Reveal hands for verification logging
-        hands_reveal_log = "Revealed Hands: " + " | ".join([f"P{p.player_id}({p.model_config['model']}):{''.join(map(str,p.hand))}" for p in self.players])
+        hands_reveal_log = "Revealed Hands: " + " | ".join([f"P{p.player_id}({p.get_display_name()}):{''.join(map(str,p.hand))}" for p in self.players])
         self._log_round_event(hands_reveal_log)
 
         actual_count = self._count_digit_occurrences(challenged_bid.digit)
         self._log_round_event(f"Actual count of {challenged_bid.digit}s across all hands: {actual_count}")
 
         winner_id = None
-        # Get all player IDs
+        # Get all player IDs for the current round
         all_player_ids = [p.player_id for p in self.players]
 
         if actual_count >= challenged_bid.quantity:
             # Bidder was correct, challenger loses
             winner_id = challenged_bidder_id
             self._log_round_event(f"Challenge Failed! Actual count ({actual_count}) >= Bid quantity ({challenged_bid.quantity}).")
-            self._log_round_event(f"Winner: Player {winner_id} ({challenged_bidder_model})")
+            self._log_round_event(f"Winner: Player {winner_id} ({challenged_bidder_player.get_display_name()})")
         else:
             # Bidder was wrong, challenger wins
             winner_id = challenger_id
             self._log_round_event(f"Challenge Successful! Actual count ({actual_count}) < Bid quantity ({challenged_bid.quantity}).")
-            self._log_round_event(f"Winner: Player {winner_id} ({challenger_model})")
+            self._log_round_event(f"Winner: Player {winner_id} ({challenger.get_display_name()})")
 
-        # Everyone except the winner is a loser
+        # Everyone except the winner is a loser in this round's ID space
         loser_ids = [pid for pid in all_player_ids if pid != winner_id]
-        loser_models = [next(p.model_config['model'] for p in self.players if p.player_id == pid) for pid in loser_ids]
-        self._log_round_event(f"Losers: Players {', '.join([f'{pid} ({model})' for pid, model in zip(loser_ids, loser_models)])}")
+        loser_display_names = [next(p.get_display_name() for p in self.players if p.player_id == pid) for pid in loser_ids]
+        self._log_round_event(f"Losers: Players {', '.join([f'{pid} ({name})' for pid, name in zip(loser_ids, loser_display_names)])}")
 
         self.game_active = False # Mark game as finished for this round
         return winner_id, loser_ids
@@ -513,63 +580,81 @@ class LiarsPokerGame:
 
         Returns:
             Tuple[Optional[int], List[int], List[str]]:
-                (winner_player_original_order, loser_player_original_orders, round_log)
-                Returns (None, list_of_loser_original_orders, log) if round ends with a forfeit.
+                 (winner_player_original_order, loser_player_original_orders, round_log)
+                 Returns (None, list_of_loser_original_orders, log) if round ends with a forfeit.
         """
         self._setup_round()
-        winner_id: Optional[int] = None
-        loser_ids: List[int] = []
+        winner_round_id: Optional[int] = None
+        loser_round_ids: List[int] = []
 
         while self.game_active:
             current_player = self.players[self.current_player_index]
-            self._log_round_event(f"\n--- Turn: Player {current_player.player_id} ({current_player.model_config['model']}) ---")
+            self._log_round_event(f"\n--- Turn: Player {current_player.player_id} ({current_player.get_display_name()}) ---")
 
-            action = self._get_player_action(current_player)
+            action: Union[Bid, str, None] = None
+            if current_player.strategy_type == 'llm':
+                action = self._get_llm_action(current_player)
+            elif current_player.strategy_type == 'naive_5050':
+                action = self._get_naive_action(current_player)
+            else:
+                # Should not happen due to checks in __init__
+                self._log_round_event(f"Error: Player {current_player.player_id} has unknown strategy '{current_player.strategy_type}'. Forfeiting.")
+                action = None # Treat as forfeit
 
             if action is None:
-                # Player failed to provide a valid action => Forfeits
-                self._log_round_event(f"Player {current_player.player_id} ({current_player.model_config['model']}) forfeits the round due to invalid/failed action.")
-                # In a forfeit, only the forfeiting player is a loser
+                # Player failed to provide a valid action (LLM failure or error) => Forfeits
+                self._log_round_event(f"Player {current_player.player_id} ({current_player.get_display_name()}) forfeits the round due to invalid/failed action.")
+                # In a forfeit, only the forfeiting player is a loser (in round IDs)
                 self.game_active = False
-                winner_id = None
-                loser_ids = [current_player.player_id]
+                winner_round_id = None
+                loser_round_ids = [current_player.player_id]
                 break
 
             elif action == "CHALLENGE":
                 # Resolve the challenge and end the round
                 try:
-                    winner_id, loser_ids = self._resolve_challenge()
+                    winner_round_id, loser_round_ids = self._resolve_challenge()
                 except RuntimeError as e:
                     self._log_round_event(f"Error resolving challenge: {e}. Ending round abnormally.")
-                    winner_id, loser_ids = None, []
-                break
+                    winner_round_id, loser_round_ids = None, [] # Consider all losers? Or just challenger/challenged? Let's say no winner.
+                    loser_round_ids = [p.player_id for p in self.players] # Mark all as losers on error
+                break # End loop after challenge resolution
 
             elif isinstance(action, Bid):
                 # Player made a valid bid
                 self.current_bid = action
                 self.bid_history.append((current_player.player_id, action))
-                self._log_round_event(f"Player {current_player.player_id} ({current_player.model_config['model']}) bids: {action}")
+                self._log_round_event(f"Player {current_player.player_id} ({current_player.get_display_name()}) bids: {action}")
                 # Move to the next player
                 self.current_player_index = (self.current_player_index + 1) % len(self.players)
 
             # Optional: slow down real LLM calls
-            if 'Dummy LLMClient' not in str(self.players[0].client.__class__):
-                 time.sleep(1.0) # Slightly longer delay for real LLMs
+            if current_player.strategy_type == 'llm' and 'Dummy LLMClient' not in str(current_player.client.__class__):
+                time.sleep(1.0) # Slightly longer delay for real LLMs
+            elif current_player.strategy_type == 'naive_5050':
+                time.sleep(0.1) # Small delay for naive player for readability
 
         # --- Round End ---
         self._log_round_event("--- Round Ended ---")
 
-        winner_model: Optional[str] = None
-        if winner_id is not None:
-            winner_model = next((p.model_config["model"] for p in self.players
-                                 if p.player_id == winner_id), None)
+        # Map round IDs back to original player identities (using original_order)
+        # Find the original configuration/name based on the winning/losing round IDs
+        winner_original_order: Optional[int] = None
+        winner_display_name: Optional[str] = None
+        if winner_round_id is not None:
+            winner_player = next((p for p in self.players if p.player_id == winner_round_id), None)
+            if winner_player:
+                 winner_original_order = winner_player.original_order
+                 winner_display_name = winner_player.get_display_name() # Get display name for saving
 
-        loser_models: List[str] = []
-        for loser_id in loser_ids:
-            loser_model = next((p.model_config["model"] for p in self.players
-                                if p.player_id == loser_id), None)
-            if loser_model is not None:
-                loser_models.append(loser_model)
+        loser_original_orders: List[int] = []
+        loser_display_names: List[str] = []
+        for loser_id in loser_round_ids:
+            loser_player = next((p for p in self.players if p.player_id == loser_id), None)
+            if loser_player:
+                loser_original_orders.append(loser_player.original_order)
+                loser_display_names.append(loser_player.get_display_name()) # Get display name for saving
+
 
         # Save the round log
         timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -581,12 +666,12 @@ class LiarsPokerGame:
         except Exception as e:
             logger.error(f"Failed to save round log: {e}")
 
-        # Save hand result to hands_log.json
-        hands_log_path = os.path.join(LOGS_DIR, "hands_log.json")
+        # Save hand result to hands_log.json using display names
+        hands_log_path = os.path.join(LOGS_DIR, "hands_log.json") # Use LOGS_DIR redefined earlier
         hand_entry = {
             "timestamp": timestamp,
-            "winner": winner_model,
-            "losers": loser_models,
+            "winner": winner_display_name, # Store the display name (model or strategy)
+            "losers": loser_display_names, # Store list of display names
             "round_log_file": os.path.basename(log_filename)
         }
 
@@ -598,6 +683,9 @@ class LiarsPokerGame:
                         existing_content = f.read().strip()
                         if existing_content:
                             hands_log = json.loads(existing_content)
+                            if not isinstance(hands_log, list): # Ensure it's a list
+                                logger.warning(f"Hands log file '{hands_log_path}' was not a JSON list. Resetting.")
+                                hands_log = []
                         else:
                             # File is empty
                             hands_log = []
@@ -618,14 +706,13 @@ class LiarsPokerGame:
         except Exception as e:
             logger.error(f"Failed to update hands log: {e}")
 
-        winner_original_order = self.players[winner_id].original_order
-        loser_original_orders = [self.players[loser_id].original_order for loser_id in loser_ids]
+        # Return original orders and the log
         return winner_original_order, loser_original_orders, self.round_log
 
 # --- Main Execution ---
 
-def get_player_configurations() -> List[Dict[str, str]]:
-    """Gets player model configurations from the user."""
+def get_player_configurations() -> List[Dict[str, Any]]:
+    """Gets player model/strategy configurations from the user."""
     configs = []
     while True:
         try:
@@ -642,46 +729,58 @@ def get_player_configurations() -> List[Dict[str, str]]:
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-    print("\nEnter LLM configurations for each player.")
+    print("\nEnter configurations for each player.")
     # Adjusted default/example providers and models
-    print("Supported providers: openai, anthropic, openrouter (or others supported by your llm_client.py)")
+    print("Supported LLM providers: openai, anthropic, openrouter (or others supported by your llm_client.py)")
     print("Example model for openai: gpt-4o-mini")
     print("Example model for anthropic: claude-3-haiku-20240307")
     print("Example model for openrouter: meta-llama/llama-3-8b-instruct, google/gemini-flash-1.5")
-    print("Ensure API keys (e.g., OPENAI_API_KEY, ANTHROPIC_API_KEY, OPENROUTER_API_KEY) are set as environment variables as needed by llm_client.py.")
+    print("Ensure API keys (e.g., OPENAI_GAMEBENCH_KEY, ANTHROPIC_API_KEY, OPENROUTER_API_KEY) are set as environment variables as needed by llm_client.py.")
+    print("Internal Strategies: Naive 50/50 (Challenges or minimally increases bid 50% of the time)")
 
     # Pre-defined common configs for easier input
     common_configs = {
-        "1": ("openai", "gpt-4o-mini"),
-        "2": ("anthropic", "claude-3-7-sonnet-20250219"),
-        "3": ("openrouter", "google/gemini-2.5-pro-exp-03-25:free"),
-        "4": ("openrouter", "deepseek/deepseek-chat-v3-0324:floor"),
-        "5": ("openai", "gpt-4o"),
-        "6": ("anthropic", "claude-3-5-sonnet-20241022"),
-        "7": ("openrouter", "meta-llama/llama-4-maverick:floor"),
-        "8": ("openrouter", "meta-llama/llama-4-scout:floor"),
-        "9": ("openrouter", "google/gemma-3-27b-it:floor"),
-        "10": ("openrouter", "openrouter/quasar-alpha"),
-        "11": ("openrouter", "mistralai/mistral-small-3.1-24b-instruct:floor"),
-        "12": ("openrouter", "deepseek/deepseek-r1:floor"),  
-        "13": ("openrouter", "qwen/qwq-32b:nitro"),           
+        "N": {"strategy_type": "naive_5050"},
+        # OpenAI models
+        "1": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o"},
+        "2": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini"},
+        # Anthropic models
+        "3": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
+        "4": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
+        # OpenRouter models
+        "5": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
+        "6": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1:floor"},
+        "7": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-exp-03-25:free"},
+        "8": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
+        "9": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
+        "10": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
+        "11": {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
+        "12": {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
+        "13": {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
+        "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"}       
     }
 
     for i in range(num_players):
         while True:
             print(f"\n--- Player {i+1} ---")
             print("Common Choices:")
-            for key, (prov, mod) in common_configs.items():
-                print(f"  {key}: {prov}/{mod}")
-            print("  C: Custom input")
+            print(f"  N: Naive 50/50 Strategy")
+            llm_keys = sorted([k for k in common_configs if k != 'N'], key=int)
+            for key in llm_keys:
+                 cfg = common_configs[key]
+                 print(f"  {key}: {cfg['provider']}/{cfg['model']}")
+            print("  C: Custom LLM input")
 
-            choice = input(f"Select configuration for Player {i+1} (1-{len(common_configs)}) or C: ").strip().upper()
+            choice = input(f"Select configuration for Player {i+1} (N, {', '.join(llm_keys)}) or C: ").strip().upper()
 
             selected_config = None
             if choice in common_configs:
                 selected_config = common_configs[choice]
-                provider, model = selected_config
-                print(f"Selected: {provider}/{model}")
+                if selected_config["strategy_type"] == 'llm':
+                    print(f"Selected LLM: {selected_config['provider']}/{selected_config['model']}")
+                else:
+                    print(f"Selected Strategy: Naive 50/50")
+
             elif choice == 'C':
                 provider = input(f"Enter provider for Player {i+1}: ").lower().strip()
                 if not provider:
@@ -692,14 +791,16 @@ def get_player_configurations() -> List[Dict[str, str]]:
                 if not model:
                     print("Model name cannot be empty.")
                     continue
-                selected_config = (provider, model)
+                selected_config = {"strategy_type": "llm", "provider": provider, "model": model}
+                print(f"Selected Custom LLM: {provider}/{model}")
             else:
                 print("Invalid choice.")
                 continue
 
             if selected_config:
-                configs.append({"provider": selected_config[0], "model": selected_config[1]})
-                print(f"Player {i+1} configured: Provider={selected_config[0]}, Model={selected_config[1]}")
+                configs.append(selected_config)
+                player_desc = f"Strategy=Naive 50/50" if selected_config['strategy_type'] == 'naive_5050' else f"Provider={selected_config.get('provider')}, Model={selected_config.get('model')}"
+                print(f"Player {i+1} configured: {player_desc}")
                 break
     return configs
 
@@ -708,16 +809,31 @@ if __name__ == "__main__":
 
     try:
         # Check if running with dummy client
-        if 'Dummy LLMClient' in str(LLMClient):
-            print("\nWARNING: Running with DUMMY LLM Client. No real API calls will be made.\n")
-            # Use default dummy configs if running dummy
+        is_dummy = False
+        try:
+            # Try initializing a dummy client to see if the real one is missing
+            _ = LLMClient(provider="dummy", model="dummy", max_tokens=1, temperature=1, max_retries=0, timeout=1)
+            if 'Dummy LLMClient' in str(LLMClient):
+                is_dummy = True
+        except (ImportError, NameError, ValueError):
+             # If LLMClient itself is the dummy class or init fails because it's dummy
+             if 'Dummy LLMClient' in str(LLMClient):
+                 is_dummy = True
+
+        if is_dummy:
+            print("\nWARNING: Running with DUMMY LLM Client. No real API calls will be made for LLM players.\n")
+            # Use default dummy configs if running dummy, including a naive player
             player_configs = [
-                {"provider": "dummy_openai", "model": "dummy_gpt4"},
-                {"provider": "dummy_anthropic", "model": "dummy_claude3"}
+                {"strategy_type": "naive_5050"},
+                {"strategy_type": "llm", "provider": "dummy_openai", "model": "dummy_gpt4"}
+                #{"strategy_type": "llm", "provider": "dummy_anthropic", "model": "dummy_claude3"}
             ]
             print("Using default dummy configurations:")
             for i, cfg in enumerate(player_configs):
-                 print(f" Player {i+1}: {cfg['provider']}/{cfg['model']}")
+                if cfg['strategy_type'] == 'llm':
+                    print(f" Player {i+1}: LLM ({cfg['provider']}/{cfg['model']})")
+                else:
+                    print(f" Player {i+1}: Naive 50/50")
         else:
              player_configs = get_player_configurations()
 
@@ -730,28 +846,36 @@ if __name__ == "__main__":
         print("\nInitializing game...")
         game = LiarsPokerGame(player_configs=player_configs)
 
+        # Get the display names based on initial config order for final summary
+        initial_player_display_names = {}
+        for i, config in enumerate(player_configs):
+            if config['strategy_type'] == 'llm':
+                initial_player_display_names[i] = f"{config.get('provider', 'unk')}/{config.get('model', 'unk')}"
+            else:
+                initial_player_display_names[i] = "Naive 50/50"
+
+
         for round_index in range(num_rounds):
             print(f"\n--- Starting Round {round_index + 1}/{num_rounds} ---")
             winner_original_order, loser_original_orders, round_log = game.play_round()
 
             print("\n--- Round Finished ---")
             if winner_original_order is not None:
-                # Find the original config using original_order
-                winner_config = next(cfg for i, cfg in enumerate(player_configs) if i == winner_original_order)
-                print(f"Winner: Player {winner_original_order} ({winner_config['provider']}/{winner_config['model']})")
+                winner_name = initial_player_display_names.get(winner_original_order, f"Unknown Player {winner_original_order}")
+                print(f"Winner: Player {winner_original_order} ({winner_name})")
                 print("Losers:")
                 for loser_order in loser_original_orders:
-                    loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
-                    print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
+                     loser_name = initial_player_display_names.get(loser_order, f"Unknown Player {loser_order}")
+                     print(f" - Player {loser_order} ({loser_name})")
             else:
                 # No winner (forfeit case)
-                print("No winner declared.")
-                print("Losers (forfeited):")
+                print("No winner declared (likely forfeit).")
+                print("Losers:")
                 for loser_order in loser_original_orders:
-                    loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
-                    print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
+                     loser_name = initial_player_display_names.get(loser_order, f"Unknown Player {loser_order}")
+                     print(f" - Player {loser_order} ({loser_name})")
 
-        print(f"\nAll rounds finished. Full logs saved in {GAME_LOGS_DIR}")
+        print(f"\nAll {num_rounds} rounds finished. Full logs saved in {GAME_LOGS_DIR}")
         print(f"Cumulative game results saved in {os.path.join(LOGS_DIR, 'hands_log.json')}")
 
     except (ValueError, RuntimeError, KeyError) as e:
