@@ -618,8 +618,9 @@ class LiarsPokerGame:
         except Exception as e:
             logger.error(f"Failed to update hands log: {e}")
 
-        return winner_id, loser_ids, self.round_log
-
+        winner_original_order = self.players[winner_id].original_order
+        loser_original_orders = [self.players[loser_id].original_order for loser_id in loser_ids]
+        return winner_original_order, loser_original_orders, self.round_log
 
 # --- Main Execution ---
 
