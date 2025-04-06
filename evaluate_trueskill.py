@@ -71,8 +71,8 @@ def main():
         reverse=True
     )
     for model, r in sorted_models:
-        skill = r.mu - 3*r.sigma
-        print(f"{model:<50} mu={r.mu:.2f}, sigma={r.sigma:.2f}, skill≈{skill:.2f}")
+        #skill = r.mu - 3*r.sigma #don't need skill for now
+        print(f"{model:<50} mu={r.mu:.2f}, sigma={r.sigma:.2f}")#, skill≈{skill:.2f}")
 
 if __name__ == "__main__":
     main()

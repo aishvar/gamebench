@@ -717,41 +717,45 @@ if __name__ == "__main__":
         else:
              player_configs = get_player_configurations()
 
+        num_rounds_str = input("\nHow many hands/rounds do you want to play? [default: 1]: ")
+        if not num_rounds_str.strip():
+            num_rounds = 1
+        else:
+            num_rounds = int(num_rounds_str)
 
         print("\nInitializing game...")
         game = LiarsPokerGame(player_configs=player_configs)
 
-        print("\nStarting game round...")
-        winner_original_order, loser_original_orders, round_log = game.play_round()
+        for round_index in range(num_rounds):
+            print(f"\n--- Starting Round {round_index + 1}/{num_rounds} ---")
+            winner_original_order, loser_original_orders, round_log = game.play_round()
 
-        print("\n--- Game Round Finished ---")
-        if winner_original_order is not None:
-            # Find the original config using original_order
-            winner_config = next(cfg for i, cfg in enumerate(player_configs) if i == winner_original_order)
-            print(f"Winner: Player {winner_original_order} ({winner_config['provider']}/{winner_config['model']})")
-            print("Losers:")
-            for loser_order in loser_original_orders:
-                loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
-                print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
-        else:
-            # No winner (forfeit case)
-            print("No winner declared.")
-            print("Losers (forfeited):")
-            for loser_order in loser_original_orders:
-                loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
-                print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
+            print("\n--- Round Finished ---")
+            if winner_original_order is not None:
+                # Find the original config using original_order
+                winner_config = next(cfg for i, cfg in enumerate(player_configs) if i == winner_original_order)
+                print(f"Winner: Player {winner_original_order} ({winner_config['provider']}/{winner_config['model']})")
+                print("Losers:")
+                for loser_order in loser_original_orders:
+                    loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
+                    print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
+            else:
+                # No winner (forfeit case)
+                print("No winner declared.")
+                print("Losers (forfeited):")
+                for loser_order in loser_original_orders:
+                    loser_config = next(cfg for i, cfg in enumerate(player_configs) if i == loser_order)
+                    print(f" - Player {loser_order} ({loser_config['provider']}/{loser_config['model']})")
 
-        print(f"\nFull round log saved in {GAME_LOGS_DIR}")
+        print(f"\nAll rounds finished. Full logs saved in {GAME_LOGS_DIR}")
         print(f"Cumulative game results saved in {os.path.join(LOGS_DIR, 'hands_log.json')}")
-        # print("\n".join(round_log)) # Uncomment to print full log to console as well
 
     except (ValueError, RuntimeError, KeyError) as e:
         logger.error(f"Game setup or execution failed: {e}", exc_info=True)
         print(f"\nError: {e}")
     except ImportError:
-         # Already handled by the dummy client check, but good practice
-         logger.error("Failed to import llm_client. Please ensure it's available.")
-         print("\nError: Could not import llm_client.py.")
+        logger.error("Failed to import llm_client. Please ensure it's available.")
+        print("\nError: Could not import llm_client.py.")
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}", exc_info=True)
         print(f"\nAn unexpected error occurred: {e}")
