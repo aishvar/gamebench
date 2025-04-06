@@ -72,12 +72,10 @@ except ImportError:
                   return str(content).strip()
          return None
 
-    def log_llm_call(response_json: Optional[Dict[str, Any]], prompt_messages: Dict[str, str], start_time: float):
+    def log_llm_call(provider: str, model: str, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> str:
          # Dummy logging function
-         if response_json:
-             print(f"Dummy LLM Call Logged: Model={response_json.get('model', 'N/A')}, Time={time.time() - start_time:.2f}s")
-         else:
-             print("Dummy LLM Call Logged: Failed call")
+         print(f"Dummy LLM Call Logged for provider={provider}, model={model}")
+         return "dummy_log_file.json"
 
 # Override LOGS_DIR to save logs in the 'data' directory within the current folder
 LOGS_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -228,7 +226,7 @@ class LiarsPokerGame:
         self.current_player_index = 0
         self.current_bid = None
         self.bid_history = []
-        self.round_log = [ # Keep only recent setup logs
+        self.round_log = [
             self.round_log[0], # "--- Starting New Round ---"
             self.round_log[1], # "Player order: ..."
             self.round_log[2]  # "Hands dealt..."
@@ -356,17 +354,27 @@ class LiarsPokerGame:
                 user_message=user_msg,
                 system_message=system_msg
             )
-            # Assuming log_llm_call is defined elsewhere and handles the payload
+            # Attempt to log the call with the correct signature
             try:
-                 log_llm_call(
-                     response_json=response_payload,
-                     prompt_messages={"developer": developer_msg, "user": user_msg, "system": system_msg},
-                     start_time=start_time
-                 )
+                request_data = {
+                    "developer_message": developer_msg,
+                    "user_message": user_msg,
+                    "system_message": system_msg,
+                    "max_tokens": player.client.max_tokens,
+                    "temperature": player.client.temperature
+                }
+                # Log the LLM call properly (matching log_llm_call's signature)
+                if response_payload is not None:
+                    log_llm_call(
+                        player.model_config["provider"],
+                        player.model_config["model"],
+                        request_data,
+                        response_payload
+                    )
             except NameError:
-                 logger.warning("log_llm_call function not found, skipping LLM call logging.")
+                logger.warning("log_llm_call function not found, skipping LLM call logging.")
             except Exception as log_err:
-                 logger.error(f"Error during LLM call logging: {log_err}")
+                logger.error(f"Error during LLM call logging: {log_err}")
 
 
             if response_payload is None:
@@ -382,7 +390,7 @@ class LiarsPokerGame:
                      return None
                  continue # Try prompting again
 
-            # --- MODIFIED: Clean and Parse JSON ---
+            # --- Clean and Parse JSON ---
             parsed_action = None
             cleaned_response_text = response_text.strip()
 
@@ -411,7 +419,7 @@ class LiarsPokerGame:
                     reasoning_str = llm_output.get("reasoning", "[No reasoning provided]")
                     self._log_round_event(f"Player {player.player_id} Reasoning: {reasoning_str}")
 
-                    # Now parse the extracted action string using the original logic
+                    # Now parse the extracted action string
                     parsed_action = self._parse_action_string(action_str)
 
             except json.JSONDecodeError:
@@ -427,7 +435,6 @@ class LiarsPokerGame:
             else:
                  # Invalid action format/logic OR JSON parsing failed
                  self._log_round_event(f"Player {player.player_id} provided invalid action or malformed/unparsable JSON. Re-prompting...")
-                 # Modify user message slightly to emphasize format on retry
                  user_msg += "\n\n**Please ensure your output is ONLY the valid JSON object with 'reasoning' and 'action' keys, and the 'action' value follows the required format ('BID: ...' or 'CHALLENGE'). Do not include explanations outside the JSON or markdown formatting like ```json.**"
 
         # If loop finishes without returning, all attempts failed
@@ -476,16 +483,16 @@ class LiarsPokerGame:
         self._log_round_event(f"Actual count of {challenged_bid.digit}s across all hands: {actual_count}")
 
         winner_id = None
-        # Get all player IDs to identify losers (everyone except winner)
+        # Get all player IDs
         all_player_ids = [p.player_id for p in self.players]
 
         if actual_count >= challenged_bid.quantity:
-            # Bidder was correct (or understated), challenger loses
+            # Bidder was correct, challenger loses
             winner_id = challenged_bidder_id
             self._log_round_event(f"Challenge Failed! Actual count ({actual_count}) >= Bid quantity ({challenged_bid.quantity}).")
             self._log_round_event(f"Winner: Player {winner_id} ({challenged_bidder_model})")
         else:
-            # Bidder was wrong (overstated), challenger wins
+            # Bidder was wrong, challenger wins
             winner_id = challenger_id
             self._log_round_event(f"Challenge Successful! Actual count ({actual_count}) < Bid quantity ({challenged_bid.quantity}).")
             self._log_round_event(f"Winner: Player {winner_id} ({challenger_model})")
@@ -518,13 +525,13 @@ class LiarsPokerGame:
             action = self._get_player_action(current_player)
 
             if action is None:
-                # Player failed to provide a valid action after retries -> Forfeits
+                # Player failed to provide a valid action => Forfeits
                 self._log_round_event(f"Player {current_player.player_id} ({current_player.model_config['model']}) forfeits the round due to invalid/failed action.")
-                # In a forfeit, the forfeiting player is the sole loser
+                # In a forfeit, only the forfeiting player is a loser
                 self.game_active = False
                 winner_id = None
-                loser_ids = [current_player.player_id]  # Only the forfeiting player is a loser
-                break # End the round
+                loser_ids = [current_player.player_id]
+                break
 
             elif action == "CHALLENGE":
                 # Resolve the challenge and end the round
@@ -533,8 +540,7 @@ class LiarsPokerGame:
                 except RuntimeError as e:
                     self._log_round_event(f"Error resolving challenge: {e}. Ending round abnormally.")
                     winner_id, loser_ids = None, []
-                # self.game_active is set to False inside _resolve_challenge (or above on error)
-                break # Exit the loop
+                break
 
             elif isinstance(action, Bid):
                 # Player made a valid bid
@@ -544,23 +550,29 @@ class LiarsPokerGame:
                 # Move to the next player
                 self.current_player_index = (self.current_player_index + 1) % len(self.players)
 
-            # Optional: Add a small delay between turns if not using dummy client
+            # Optional: slow down real LLM calls
             if 'Dummy LLMClient' not in str(self.players[0].client.__class__):
                  time.sleep(1.0) # Slightly longer delay for real LLMs
 
         # --- Round End ---
         self._log_round_event("--- Round Ended ---")
 
-        # Map round winner/loser IDs back to original player order
-        winner_original_order = next((p.original_order for p in self.players if p.player_id == winner_id), None) if winner_id is not None else None
-        loser_original_orders = [next((p.original_order for p in self.players if p.player_id == loser_id), None) for loser_id in loser_ids]
-        loser_original_orders = [order for order in loser_original_orders if order is not None]  # Filter out any None values
+        winner_original_order = None
+        if winner_id is not None:
+            # Map winner ID to original_order
+            winner_original_order = next((p.original_order for p in self.players if p.player_id == winner_id), None)
 
-        # Save the round log to a file
+        loser_original_orders = [
+            next((p.original_order for p in self.players if p.player_id == loser_id), None)
+            for loser_id in loser_ids
+        ]
+        loser_original_orders = [order for order in loser_original_orders if order is not None]
+
+        # Save the round log
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         log_filename = os.path.join(GAME_LOGS_DIR, f"liars_poker_round_{timestamp}.log")
         try:
-            with open(log_filename, "w", encoding='utf-8') as f: # Ensure utf-8 encoding
+            with open(log_filename, "w", encoding='utf-8') as f:
                 f.write("\n".join(self.round_log))
             logger.info(f"Round log saved to {log_filename}")
         except Exception as e:
@@ -576,20 +588,29 @@ class LiarsPokerGame:
         }
 
         try:
-            # Read existing log entries or create a new list
+            # Safely read existing JSON (handle empty or invalid file)
             if os.path.exists(hands_log_path):
-                with open(hands_log_path, "r") as f:
-                    hands_log = json.load(f)
+                try:
+                    with open(hands_log_path, "r", encoding='utf-8') as f:
+                        existing_content = f.read().strip()
+                        if existing_content:
+                            hands_log = json.loads(existing_content)
+                        else:
+                            # File is empty
+                            hands_log = []
+                except Exception as e:
+                    logger.warning(f"Hands log file '{hands_log_path}' is empty or invalid JSON. Overwriting. Error: {e}")
+                    hands_log = []
             else:
                 hands_log = []
-            
+
             # Append new entry
             hands_log.append(hand_entry)
-            
+
             # Write updated log
-            with open(hands_log_path, "w") as f:
+            with open(hands_log_path, "w", encoding='utf-8') as f:
                 json.dump(hands_log, f, indent=2)
-            
+
             logger.info(f"Hand log updated in {hands_log_path}")
         except Exception as e:
             logger.error(f"Failed to update hands log: {e}")
@@ -653,7 +674,6 @@ def get_player_configurations() -> List[Dict[str, str]]:
                 print(f"Selected: {provider}/{model}")
             elif choice == 'C':
                 provider = input(f"Enter provider for Player {i+1}: ").lower().strip()
-                # Basic validation - allow any non-empty string if llm_client is flexible
                 if not provider:
                     print("Provider cannot be empty.")
                     continue
@@ -670,7 +690,7 @@ def get_player_configurations() -> List[Dict[str, str]]:
             if selected_config:
                 configs.append({"provider": selected_config[0], "model": selected_config[1]})
                 print(f"Player {i+1} configured: Provider={selected_config[0]}, Model={selected_config[1]}")
-                break # Exit inner loop once valid config is added
+                break
     return configs
 
 if __name__ == "__main__":
