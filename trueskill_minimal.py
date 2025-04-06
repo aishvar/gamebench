@@ -490,7 +490,7 @@ MU               = 25.0
 SIGMA            = MU/3.0
 BETA             = SIGMA/2.0
 TAU              = SIGMA/100.0
-DRAW_PROBABILITY = 0.0 # strip out draw references maybe? 
+DRAW_PROBABILITY = 0.0 # No Draws in Liars Poker, but could change for other games.
 DELTA            = 0.0001
 
 def calc_draw_margin(draw_probability, num_players, beta):
