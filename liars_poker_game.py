@@ -152,7 +152,12 @@ class Player:
     def get_display_name(self) -> str:
         """Returns a string representation of the player for logging/display."""
         if self.strategy_type == 'llm' and self.model_config:
-            return f"{self.model_config.get('provider', 'unknown')}/{self.model_config.get('model', 'unknown')}"
+            provider = self.model_config.get('provider', 'unknown')
+            model = self.model_config.get('model', 'unknown')
+            if model.startswith(provider + "/"):
+                return model
+            else:
+                return f"{provider}/{model}"
         elif self.strategy_type == 'naive_5050':
             return "Naive 50/50"
         else:
