@@ -125,7 +125,7 @@ class Player:
             self.client = LLMClient(
                 provider=self.model_config["provider"],
                 model=self.model_config["model"],
-                max_tokens=10000, # Increased slightly for JSON + reasoning
+                max_tokens=8192, # Increased slightly for JSON + reasoning
                 temperature=0.5, # Encourage more deterministic actions
                 max_retries=2,
                 timeout=60 # Increased slightly for potentially longer reasoning
@@ -653,11 +653,11 @@ def get_player_configurations() -> List[Dict[str, str]]:
     # Pre-defined common configs for easier input
     common_configs = {
         "1": ("openai", "gpt-4o-mini"),
-        "2": ("anthropic", "claude-3-haiku-20240307"),
+        "2": ("anthropic", "claude-3-7-sonnet-20250219"),
         "3": ("openrouter", "google/gemini-2.5-pro-exp-03-25:free"),
         "4": ("openrouter", "deepseek/deepseek-chat-v3-0324:free"),
         "5": ("openai", "gpt-4o"),
-        "6": ("anthropic", "claude-3-sonnet-20240229"),
+        "6": ("anthropic", "claude-3-5-sonnet-20241022"),
         "7": ("openrouter", "meta-llama/llama-4-maverick:free"),
         "8": ("openrouter", "meta-llama/llama-4-scout:free"),
         "9": ("openrouter", "google/gemma-3-27b-it:free"),
