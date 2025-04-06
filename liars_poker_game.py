@@ -123,7 +123,7 @@ class Player:
             self.client = LLMClient(
                 provider=self.model_config["provider"],
                 model=self.model_config["model"],
-                max_tokens=2500, # Increased slightly for JSON + reasoning
+                max_tokens=10000, # Increased slightly for JSON + reasoning
                 temperature=0.5, # Encourage more deterministic actions
                 max_retries=2,
                 timeout=60 # Increased slightly for potentially longer reasoning
@@ -374,14 +374,25 @@ class LiarsPokerGame:
                      return None
                  continue # Try prompting again
 
-            # --- NEW: Parse JSON and extract action ---
+            # --- MODIFIED: Clean and Parse JSON ---
             parsed_action = None
+            cleaned_response_text = response_text.strip()
+
+            # Remove Markdown code fences (common pattern)
+            if cleaned_response_text.startswith("```json"):
+                cleaned_response_text = cleaned_response_text[len("```json"):].strip()
+            if cleaned_response_text.startswith("```"): # Handle case without 'json' tag
+                cleaned_response_text = cleaned_response_text[len("```"):].strip()
+            if cleaned_response_text.endswith("```"):
+                cleaned_response_text = cleaned_response_text[:-len("```")].strip()
+
             try:
-                # Attempt to parse the entire response text as JSON
-                llm_output = json.loads(response_text)
+                # Attempt to parse the cleaned response text as JSON
+                llm_output = json.loads(cleaned_response_text)
 
                 if not isinstance(llm_output, dict):
-                     self._log_round_event(f"Player {player.player_id} response is not a JSON object: '{response_text}'")
+                     # Log both original and cleaned text for easier debugging
+                     self._log_round_event(f"Player {player.player_id} response is not a JSON object after cleaning: '{cleaned_response_text}' (Original: '{response_text}')")
                 elif "action" not in llm_output or "reasoning" not in llm_output:
                      self._log_round_event(f"Player {player.player_id} JSON response missing 'action' or 'reasoning' key: {llm_output}")
                 elif not isinstance(llm_output.get("action"), str):
@@ -396,7 +407,8 @@ class LiarsPokerGame:
                     parsed_action = self._parse_action_string(action_str)
 
             except json.JSONDecodeError:
-                self._log_round_event(f"Player {player.player_id} response was not valid JSON: '{response_text}'")
+                # Log both original and cleaned text for easier debugging
+                self._log_round_event(f"Player {player.player_id} response was not valid JSON after cleaning: '{cleaned_response_text}' (Original: '{response_text}')")
             except Exception as e:
                  self._log_round_event(f"Player {player.player_id} unexpected error processing JSON response: {e}")
             # --- End JSON Parsing ---
@@ -406,14 +418,14 @@ class LiarsPokerGame:
                 return parsed_action
             else:
                  # Invalid action format/logic OR JSON parsing failed
-                 self._log_round_event(f"Player {player.player_id} provided invalid action or malformed JSON. Re-prompting...")
+                 self._log_round_event(f"Player {player.player_id} provided invalid action or malformed/unparsable JSON. Re-prompting...")
                  # Modify user message slightly to emphasize format on retry
-                 user_msg += "\n\n**Please ensure your output is a valid JSON object with 'reasoning' and 'action' keys, and the 'action' value follows the required format ('BID: ...' or 'CHALLENGE').**"
+                 user_msg += "\n\n**Please ensure your output is ONLY the valid JSON object with 'reasoning' and 'action' keys, and the 'action' value follows the required format ('BID: ...' or 'CHALLENGE'). Do not include explanations outside the JSON or markdown formatting like ```json.**"
 
         # If loop finishes without returning, all attempts failed
         self._log_round_event(f"Player {player.player_id} failed to provide a valid action after {self.MAX_ACTION_PARSE_ATTEMPTS + 1} attempts.")
         return None # Player forfeits
-
+    
     def _count_digit_occurrences(self, digit: int) -> int:
         """Counts the total occurrences of a digit across all player hands."""
         count = 0
@@ -576,10 +588,11 @@ def get_player_configurations() -> List[Dict[str, str]]:
     common_configs = {
         "1": ("openai", "gpt-4o-mini"),
         "2": ("anthropic", "claude-3-haiku-20240307"),
-        "3": ("openrouter", "meta-llama/llama-3-8b-instruct"),
-        "4": ("openrouter", "google/gemini-flash-1.5"),
+        "3": ("openrouter", "google/gemini-2.5-pro-exp-03-25:free"),
+        "4": ("openrouter", "deepseek/deepseek-chat-v3-0324:free"),
         "5": ("openai", "gpt-4o"),
         "6": ("anthropic", "claude-3-sonnet-20240229"),
+        "7": ("openrouter", "meta-llama/llama-4-maverick:free"),
     }
 
     for i in range(num_players):
