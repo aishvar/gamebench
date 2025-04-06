@@ -358,7 +358,11 @@ class LiarsPokerGame:
             )
             # Assuming log_llm_call is defined elsewhere and handles the payload
             try:
-                 log_llm_call(response_payload, {"developer": developer_msg, "user": user_msg, "system": system_msg}, start_time)
+                 log_llm_call(
+                     response_json=response_payload,
+                     prompt_messages={"developer": developer_msg, "user": user_msg, "system": system_msg},
+                     start_time=start_time
+                 )
             except NameError:
                  logger.warning("log_llm_call function not found, skipping LLM call logging.")
             except Exception as log_err:
