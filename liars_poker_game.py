@@ -243,6 +243,7 @@ class LiarsPokerGame:
             "Your goal is to either make a valid higher bid or challenge the last bid if you think it's unlikely. "
             "Provide your response as a JSON object containing two keys: 'reasoning' (explaining your thought process) "
             "and 'action' (containing *only* your chosen action string: 'BID: [quantity] [digit]s' or 'CHALLENGE')."
+            " Do not include any explanation or formatting outside the JSON object. Only return the JSON."
         )
 
         developer_message = (
@@ -268,6 +269,7 @@ class LiarsPokerGame:
             f'  "action": "CHALLENGE"\n'
             f"}}\n"
             f"Ensure the 'action' value is *exactly* 'BID: [quantity] [digit]s' or 'CHALLENGE'."
+            " IMPORTANT: Do not include any text or Markdown formatting outside the JSON. Only return the JSON object."
         )
 
         # Construct user message with current game state
@@ -557,16 +559,17 @@ class LiarsPokerGame:
         # --- Round End ---
         self._log_round_event("--- Round Ended ---")
 
-        winner_original_order = None
+        winner_model: Optional[str] = None
         if winner_id is not None:
-            # Map winner ID to original_order
-            winner_original_order = next((p.original_order for p in self.players if p.player_id == winner_id), None)
+            winner_model = next((p.model_config["model"] for p in self.players
+                                 if p.player_id == winner_id), None)
 
-        loser_original_orders = [
-            next((p.original_order for p in self.players if p.player_id == loser_id), None)
-            for loser_id in loser_ids
-        ]
-        loser_original_orders = [order for order in loser_original_orders if order is not None]
+        loser_models: List[str] = []
+        for loser_id in loser_ids:
+            loser_model = next((p.model_config["model"] for p in self.players
+                                if p.player_id == loser_id), None)
+            if loser_model is not None:
+                loser_models.append(loser_model)
 
         # Save the round log
         timestamp = time.strftime("%Y%m%d-%H%M%S")
@@ -582,8 +585,8 @@ class LiarsPokerGame:
         hands_log_path = os.path.join(LOGS_DIR, "hands_log.json")
         hand_entry = {
             "timestamp": timestamp,
-            "winner": winner_original_order,
-            "losers": loser_original_orders,
+            "winner": winner_model,
+            "losers": loser_models,
             "round_log_file": os.path.basename(log_filename)
         }
 
@@ -615,7 +618,7 @@ class LiarsPokerGame:
         except Exception as e:
             logger.error(f"Failed to update hands log: {e}")
 
-        return winner_original_order, loser_original_orders, self.round_log
+        return winner_id, loser_ids, self.round_log
 
 
 # --- Main Execution ---
@@ -655,6 +658,8 @@ def get_player_configurations() -> List[Dict[str, str]]:
         "5": ("openai", "gpt-4o"),
         "6": ("anthropic", "claude-3-sonnet-20240229"),
         "7": ("openrouter", "meta-llama/llama-4-maverick:free"),
+        "8": ("openrouter", "meta-llama/llama-4-scout:free"),
+        "9": ("openrouter", "google/gemma-3-27b-it:free"),
     }
 
     for i in range(num_players):
