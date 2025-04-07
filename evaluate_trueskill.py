@@ -8,6 +8,9 @@ LOG_PATH = os.path.join("data", "hands_log.json")
 RATINGS_PATH = "model_ratings.json"
 
 def canonical_name(model_name):
+    # Handle cases where model_name might be None
+    if model_name is None:
+        return None
     return model_name.split(":", 1)[0]
 
 def main():
@@ -17,12 +20,10 @@ def main():
             stored = json.load(f)
         processed_timestamps = set(stored.get("processed_timestamps", []))
         model_ratings_data = stored.get("model_ratings", {})
-        # Convert stored ratings into Rating objects, ensuring canonical naming
         model_ratings = {}
+        # Convert stored ratings into Rating objects, ensuring canonical naming
         for m, vals in model_ratings_data.items():
             c = canonical_name(m)
-            # If collisions happen, you might merge or skip. 
-            # For simplicity, we overwrite; adjust logic as needed.
             model_ratings[c] = Rating(mu=vals["mu"], sigma=vals["sigma"])
     except FileNotFoundError:
         model_ratings = {}
@@ -39,23 +40,29 @@ def main():
         if ts in processed_timestamps:
             continue
 
-        winner_model = canonical_name(entry["winner"])
+        winner = entry["winner"]
+        # If there's no winner, skip rating logic but mark as processed
+        if winner is None:
+            new_timestamps.append(ts)
+            continue
+
+        winner_model = canonical_name(winner)
         loser_models = [canonical_name(l) for l in entry["losers"]]
 
-        # Make sure all involved models have a rating object
+        # Ensure rating objects exist for the involved models
         if winner_model not in model_ratings:
             model_ratings[winner_model] = Rating()
         for lm in loser_models:
             if lm not in model_ratings:
                 model_ratings[lm] = Rating()
 
-        # Build input to `rate`.
+        # Build input to `rate`
         all_models = [winner_model] + loser_models
         current_ratings = [model_ratings[m] for m in all_models]
         ranks = [1] + [0]*len(loser_models)
 
         updated = rate(current_ratings, ranks=ranks)
-        
+
         # Store updated ratings back
         for m, new_r in zip(all_models, updated):
             model_ratings[m] = new_r
