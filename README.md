@@ -11,3 +11,7 @@
 * **High Extensibility and Customizability:** Compared to more traditional benchmarks, game benchmarks can easily be made harder (or easier) by simple extensions. For example, one could test adaptability by having two model's repeatedly play other and carry over context to understand if models are capable of adapting and exploiting weaknesses in the other's gameplay. Or one could easily take a game that can support multiple players and modify the benchmark by increasing (or decreasing) the # of players—thereby requiring models to deal with a more (or less) complex game state.
 
 * **Economical Benchmark Development:** As frontier models becoming increasingly capable, new challenging knowledge based benchmarks are only capable of being created by the world's most leading experts meaning that any new questions or benchmarks are extremely resource-intensive to produce. 
+
+# First Game: Liar's Poker
+
+**Liar's Poker** is the first game of choice. Adapted from [the famous game](https://en.wikipedia.org/wiki/Liar%27s_poker) described by Michael Lewis, it is a simple game of statistical reasoning with bluffing.
