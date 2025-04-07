@@ -103,8 +103,8 @@ for model in df['model']:
         colors.append('#7AB3EF')  # Default blue
 df['color'] = colors
 
-# Get number of tournaments from the timestamps
-num_tournaments = len(data.get('processed_timestamps', []))
+# Get number of rounds from the timestamps
+num_rounds = len(data.get('processed_timestamps', []))
 
 # Create the plot
 fig, ax = plt.subplots(figsize=(12, 8))
@@ -152,7 +152,7 @@ plt.figtext(0.1, 0.02,
             fontsize=8)
 
 # Add totals and attribution
-plt.figtext(0.9, 0.02, f"Total Tournaments: {num_tournaments}\nBy Aishvar Radhakrishnan", fontsize=8, ha='right')
+plt.figtext(0.9, 0.02, f"Total Rounds: {num_rounds}\nBy Aishvar Radhakrishnan", fontsize=8, ha='right')
 
 plt.tight_layout(rect=[0, 0.08, 1, 0.95])
 plt.savefig('model_rankings.png', dpi=300, bbox_inches='tight')

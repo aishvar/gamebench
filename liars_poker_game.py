@@ -132,7 +132,7 @@ class Player:
                 self.client = LLMClient(
                     provider=self.model_config["provider"],
                     model=self.model_config["model"],
-                    max_tokens=8192, # Increased slightly for JSON + reasoning
+                    max_tokens=32000, # Increased slightly for JSON + reasoning
                     temperature=0.5, # Encourage more deterministic actions
                     max_retries=2,
                     timeout=60 # Increased slightly for potentially longer reasoning
