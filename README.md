@@ -22,8 +22,8 @@ Models are evaluated using the **Microsoft TrueSkill** algorithm.
 
 The TrueSkill Leaderboard represents models with 2 metrics:
 
-*μ: Skill Rating quantifying how well the model performs.
-*σ: Uncertainty Rating quantifying how uncertain we are about overall model performance.
+* μ: Skill Rating quantifying how well the model performs.
+* σ: Uncertainty Rating quantifying how uncertain we are about overall model performance.
 
 ![Scores](model_rankings.png)
 
