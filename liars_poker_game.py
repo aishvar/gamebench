@@ -165,16 +165,23 @@ class Player:
             if self.effective_strategy == 'llm' and self.effective_model_config:
                 provider = self.effective_model_config.get('provider', 'unknown')
                 model = self.effective_model_config.get('model', 'unknown')
-                return f"Random({provider}/{model})"
+                if 'quasar-alpha' in model:
+                    return 'openrouter/quasar-alpha'  
+                if provider == "openrouter" :
+                    model = model.replace("openrouter/", "", 1)
+                return model
             elif self.effective_strategy == 'naive_5050':
-                return "Random(Naive 50/50)"
+                return "Naive 50/50"
             else:
                 return "Random(Undecided)"
         elif self.strategy_type == 'llm' and self.model_config:
             provider = self.model_config.get('provider', 'unknown')
             model = self.model_config.get('model', 'unknown')
+            if 'quasar-alpha' in model:
+                return 'openrouter/quasar-alpha'  
             if provider == "openrouter":
-                return model
+                # Strip the "openrouter/" prefix if present
+                return model.replace("openrouter/", "", 1)                
             if model.startswith(provider + "/"):
                 return model
             else:
@@ -183,7 +190,6 @@ class Player:
             return "Naive 50/50"
         else:
             return f"Unknown Strategy ({self.strategy_type})"
-
 
 # --- Game Logic ---
 
@@ -201,8 +207,8 @@ class LiarsPokerGame:
         "3": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
         "4": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
         "5": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
-        "6": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1:floor"},
-        "7": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-exp-03-25:free"},
+        "6": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:floor"},
+        "7": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
         "8": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
         "9": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
         "10": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
@@ -212,8 +218,8 @@ class LiarsPokerGame:
         "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
         "15": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
         "16": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
-        "17": {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
-        "18": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"}
+        "17": {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"}#,
+        #"18": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"}
     }
 
     def __init__(self, player_configs: List[Dict[str, Any]]):
