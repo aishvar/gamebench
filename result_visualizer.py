@@ -49,6 +49,8 @@ for model_full, ratings in data['model_ratings'].items():
             model_name = 'Qwen QwQ-32B'
         elif 'quasar-alpha' in model_part:
             model_name = 'Quasar Alpha'
+        elif 'command-a' in model_part:
+            model_name = 'Cohere Command A'
         else:
             model_name = model_part
     else:
