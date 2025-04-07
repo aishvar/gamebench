@@ -152,7 +152,9 @@ plt.figtext(0.1, 0.02,
             fontsize=8)
 
 # Add totals and attribution
-plt.figtext(0.9, 0.02, f"Total Rounds: {num_rounds}\nBy Aishvar Radhakrishnan", fontsize=8, ha='right')
+plt.figtext(0.9, 0.02, 
+            f"Total Rounds: {num_rounds}\nBy Aishvar Radhakrishnan\ngamebench.ai", 
+            fontsize=8, ha='right')
 
 plt.tight_layout(rect=[0, 0.08, 1, 0.95])
 plt.savefig('model_rankings.png', dpi=300, bbox_inches='tight')
