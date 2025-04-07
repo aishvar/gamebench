@@ -27,3 +27,4 @@ The TrueSkill Leaderboard represents models with 2 metrics:
 
 ![Scores](model_rankings.png)
 
+Inspiration for using TrueSkill and Scoreboard design is from  [lechmazur](https://github.com/lechmazur) who has also tested LLMs on many games such as NYT Connections & The Elimination Game.
