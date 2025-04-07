@@ -14,4 +14,16 @@
 
 # First Game: Liar's Poker
 
-**Liar's Poker** is the first game of choice. Adapted from [the famous game](https://en.wikipedia.org/wiki/Liar%27s_poker) described by Michael Lewis, it is a simple game of statistical reasoning with bluffing.
+**Liar's Poker** is the first game of choice. Adapted from [the famous game](https://en.wikipedia.org/wiki/Liar%27s_poker) described by Michael Lewis, it is a simple game of statistical reasoning with bluffing. Each player is dealt a hidden 8-digit “hand” (random digits 0–9). Players take turns bidding on how many total instances of a specific digit (e.g., “five 7s”) they believe exist across all hands. Bids must increase in quantity and/or digit. On their turn, a player may raise the bid or issue a challenge—disputing the previous bid. If challenged, all hands are revealed: if the bid is valid, the bidder wins; if not, the challenger wins. The game tests bluffing, inference, and probabilistic reasoning. 
+
+# Evaluations and Scores
+
+Models are evaluated using the **Microsoft TrueSkill** algorithm.
+
+The TrueSkill Leaderboard represents models with 2 metrics:
+
+*μ: Skill Rating quantifying how well the model performs.
+*σ: Uncertainty Rating quantifying how uncertain we are about overall model performance.
+
+![Scores](model_rankings.png)
+
