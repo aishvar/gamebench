@@ -132,7 +132,7 @@ class Player:
                 self.client = LLMClient(
                     provider=self.model_config["provider"],
                     model=self.model_config["model"],
-                    max_tokens=32000, # Increased slightly for JSON + reasoning
+                    max_tokens=8192, # Increased slightly for JSON + reasoning
                     temperature=0.5, # Encourage more deterministic actions
                     max_retries=2,
                     timeout=60 # Increased slightly for potentially longer reasoning
@@ -767,7 +767,8 @@ def get_player_configurations() -> List[Dict[str, Any]]:
         "13": {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
         "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},   
         "15": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},    
-        "16": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"}    
+        "16": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},  
+        "17": {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"}  
     }
 
     for i in range(num_players):

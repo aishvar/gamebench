@@ -23,7 +23,7 @@ for model_full, ratings in data['model_ratings'].items():
         # For models with provider/model format
         provider, model_part = model_full.split('/', 1)
         
-        if 'deepseek-chat-v3' in model_part:
+        if 'deepseek-chat-v3-0324' in model_part:
             model_name = 'DeepSeek-V3 2025-03-24'
         elif 'deepseek-r1-distill-llama-70b' in model_part:
             model_name = 'DeepSeek R1 Llama 70B'
