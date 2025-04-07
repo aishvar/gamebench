@@ -766,7 +766,8 @@ def get_player_configurations() -> List[Dict[str, Any]]:
         "12": {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
         "13": {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
         "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},   
-        "15": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"}       
+        "15": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},    
+        "16": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"}    
     }
 
     for i in range(num_players):

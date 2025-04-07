@@ -17,12 +17,18 @@ sigma_values = []
 
 for model_full, ratings in data['model_ratings'].items():
     # Extract and format model name for cleaner display
-    if '/' in model_full:
+    if 'Naive' in model_full:
+        model_name='Naive 50/50'
+    elif '/' in model_full:
         # For models with provider/model format
         provider, model_part = model_full.split('/', 1)
         
         if 'deepseek-chat-v3' in model_part:
             model_name = 'DeepSeek-V3'
+        elif 'deepseek-r1-distill-llama-70b' in model_part:
+            model_name = 'DeepSeek R1 Llama 70B'
+        elif 'deepseek-r1-distill-qwen-32b' in model_part:
+            model_name = 'DeepSeek R1 Qwen 32B'
         elif 'deepseek-r1' in model_part:
             model_name = 'DeepSeek R1'
         elif 'gemini-2.5-pro-preview' in model_part:
@@ -35,6 +41,8 @@ for model_full, ratings in data['model_ratings'].items():
             model_name = 'Llama 4 Scout'
         elif 'llama-3.1-8b' in model_part:
             model_name = 'Llama 3.1 8B'
+        elif 'llama-3.3-70b' in model_part:
+            model_name = 'Llama 3.3 70B'
         elif 'mistral-small' in model_part:
             model_name = 'Mistral Small 3.1'
         elif 'qwq-32b' in model_part:
@@ -49,8 +57,8 @@ for model_full, ratings in data['model_ratings'].items():
             model_name = 'Claude 3.7 Sonnet'
         elif 'claude-3-5-sonnet' in model_full:
             model_name = 'Claude 3.5 Sonnet'
-        elif 'gpt-4o' in model_full:
-            model_name = 'GPT-4o'
+        elif 'gpt-4o-2024-11-20' in model_full:
+            model_name = 'GPT-4o 2024-11-20'
         elif 'gemini-2.0-flash' in model_full:
             model_name = 'Gemini 2.0 Flash'
         else:
