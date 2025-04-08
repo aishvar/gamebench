@@ -4,9 +4,9 @@
 
 COUNT=${1:-2}  # Default to 2 if not provided
 
-#CONFIG_INPUT=$'2\nR\nC\nopenai\ngpt-4o-2024-11-20\n1'
+CONFIG_INPUT=$'2\nR\nC\nopenai\no3-mini-2025-01-31\n1'
 
-CONFIG_INPUT=$'2\nN\n12\n1'
+#CONFIG_INPUT=$'2\nN\n12\n1'
 
 TEMP_DIR="./.tmp_game_status"
 
