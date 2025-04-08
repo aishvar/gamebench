@@ -401,18 +401,35 @@ class LiarsPokerGame:
             "You are a strategic player in a game of Liar's Poker. "
             "Analyze the situation, your hand, and the bidding history to make the best move. "
             "Your goal is to either make a valid higher bid or challenge the last bid if you think it's unlikely. "
-            "Provide your response as a JSON object containing two keys: 'reasoning' and 'action'. "
-            "Your 'action' must be exactly 'BID: Q D' or 'CHALLENGE'."
+            "Provide your response as a JSON object containing two keys: 'reasoning' (explaining your thought process) "
+            "and 'action' (containing *only* your chosen action string: 'BID: [quantity] [digit]s' or 'CHALLENGE')."
+            " Do not include any explanation or formatting outside the JSON object. Only return the JSON."
         )
 
         developer_message = (
             f"Liar's Poker Rules:\n"
             f"- Each of the {len(self.players)} players has {self.MAX_DIGITS_PER_HAND} secret digits.\n"
             f"- Players take turns bidding on the total count of a specific digit (0-9) across ALL players' hands.\n"
-            f"- A bid must exceed the current bid ('{self.current_bid or 'None'}') by quantity or digit.\n"
-            f"- You can challenge the current bid if you believe it's too high.\n"
-            f"- The maximum possible quantity is {self.total_digits_in_play}.\n"
-            f"Output only valid JSON with 'reasoning' and 'action' keys.\n"
+            f"- A bid consists of a quantity and a digit (e.g., '3 5s' means at least three 5s exist in total).\n"
+            f"- Your bid must be strictly higher than the current bid '{self.current_bid or 'None'}'.\n"
+            f"  - 'Higher' means: higher quantity (e.g., 3 9s -> 4 0s) OR same quantity but higher digit (e.g., 3 5s -> 3 6s).\n"
+            f"- Instead of bidding, you can challenge the current bid by saying 'CHALLENGE'. You can only challenge the immediately preceding bid.\n"
+            f"- If a bid is challenged, the actual count of the digit is revealed. If count >= bid quantity, the bidder wins. If count < bid quantity, the challenger wins.\n"
+            f"- The maximum possible quantity for any digit is {self.total_digits_in_play}.\n"
+            f"Output Format:\n"
+            f"Respond with a valid JSON object containing 'reasoning' and 'action' keys.\n"
+            f"Example 1 (Making a bid):\n"
+            f"{{\n"
+            f'  "reasoning": "I have two 6s in my hand. The current bid is only 3 5s. Bidding 4 6s seems reasonable, increasing both quantity and digit based on my hand.",\n'
+            f'  "action": "BID: 4 6s"\n'
+            f"}}\n"
+            f"Example 2 (Challenging):\n"
+            f"{{\n"
+            f'  "reasoning": "The current bid is 11 8s. With only {self.total_digits_in_play} total digits in play, this seems extremely unlikely, even if I have one 8. I should challenge.",\n'
+            f'  "action": "CHALLENGE"\n'
+            f"}}\n"
+            f"Ensure the 'action' value is *exactly* 'BID: [quantity] [digit]s' or 'CHALLENGE'."
+            " IMPORTANT: Do not include any text or Markdown formatting outside the JSON. Only return the JSON object."
         )
 
         hand_str = "".join(map(str, player.hand))
