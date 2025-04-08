@@ -84,6 +84,11 @@ class LLMClient:
     Client for interfacing with various LLM providers.
     Handles API calls, retries, and error handling.
     """
+
+    REASONING_MODELS={
+        "o3-mini-2025-01-31"
+        ,"o1-2024-12-17"
+    }
     
     def __init__(
         self, 
@@ -202,6 +207,10 @@ class LLMClient:
         
         # This should not be reached due to the return in the exception handler
         return None
+    
+    def _supports_reasoning(self) -> bool:
+        """Return True if the current model is an OpenAI reasoning-capable model."""
+        return self.provider == "openai" and self.model in self.REASONING_MODELS
 
     def _call_openai(
         self, 
@@ -209,29 +218,21 @@ class LLMClient:
         user_message: str, 
         system_message: Optional[str]
     ) -> Dict[str, Any]:
-        """
-        Call the OpenAI API.
-        
-        Args:
-            developer_message: Context for the model
-            user_message: User's message
-            system_message: Optional system message
-            
-        Returns:
-            OpenAI API response
-            
-        Raises:
-            Exception: On API error
-        """
+        if self._supports_reasoning():
+            return self._call_openai_reasoning(developer_message, user_message)
+        else:
+            return self._call_openai_chat(developer_message, user_message, system_message)
+
+    def _call_openai_chat(
+        self,
+        developer_message: str,
+        user_message: str,
+        system_message: Optional[str]
+    ) -> Dict[str, Any]:
         messages = []
-        
-        # Add system message if provided
         if system_message:
             messages.append({"role": "system", "content": system_message})
-        
-        # Add developer context and user message
         messages.append({"role": "user", "content": f"Developer Context: {developer_message}\n\nUser Message: {user_message}"})
-        
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -240,12 +241,27 @@ class LLMClient:
                 temperature=self.temperature,
                 timeout=self.timeout
             )
-            
-            # Convert to dictionary for consistent handling
             return response.model_dump()
-            
         except Exception as e:
-            logger.error(f"Error calling OpenAI API: {str(e)}")
+            logger.error(f"Error calling OpenAI Chat API: {str(e)}")
+            raise
+
+    def _call_openai_reasoning(
+        self,
+        developer_message: str,
+        user_message: str
+    ) -> Dict[str, Any]:
+        full_prompt = f"Developer Context: {developer_message}\n\nUser Message: {user_message}"
+        try:
+            response = self.client.responses.create(
+                model=self.model,
+                input=full_prompt,
+                reasoning={"effort": "high"},
+                max_output_tokens=None
+            )
+            return response.model_dump()
+        except Exception as e:
+            logger.error(f"Error calling OpenAI Reasoning API: {str(e)}")
             raise
 
     def _call_anthropic(
@@ -386,6 +402,16 @@ def parse_response_text(response_json: Dict[str, Any]) -> Optional[str]:
 
     # Track parsing attempts for debugging
     parsing_attempts = []
+
+    # 🆕 Reasoning API format: OpenAI /v1/responses output block
+    if "output" in response_json and isinstance(response_json["output"], list):
+        for block in response_json["output"]:
+            if block.get("type") == "message":
+                contents = block.get("content", [])
+                for item in contents:
+                    if isinstance(item, dict) and item.get("type") == "output_text":
+                        parsing_attempts.append({"method": "reasoning_output_text", "success": True})
+                        return item.get("text")
 
     # Check for OpenAI style: "choices" key with "message"
     if "choices" in response_json:
