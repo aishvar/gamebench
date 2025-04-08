@@ -10,6 +10,7 @@ import re
 from typing import List, Tuple, Dict, Optional, NamedTuple, Union, Any
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+import fcntl  # Added for file locking on POSIX systems
 
 # Assuming llm_client.py is in the same parent directory or accessible via PYTHONPATH
 # Ensure llm_client.py exists and is correctly implemented
@@ -761,7 +762,7 @@ class LiarsPokerGame:
         except Exception as e:
             logger.error(f"Failed to save round log: {e}")
 
-        # Save short results in hands_log.json
+        # Save short results in hands_log.json using exclusive file lock
         hands_log_path = os.path.join(LOGS_DIR, "hands_log.json")
         hand_entry = {
             "timestamp": timestamp,
@@ -775,32 +776,34 @@ class LiarsPokerGame:
                 hand_entry["losers"].append(loser_p.get_display_name())
 
         try:
-            if os.path.exists(hands_log_path):
-                try:
-                    with open(hands_log_path, "r", encoding='utf-8') as f:
-                        existing_content = f.read().strip()
-                        if existing_content:
-                            hands_log = json.loads(existing_content)
-                            if not isinstance(hands_log, list):
-                                logger.warning(f"hands_log.json wasn't a list. Overwriting.")
-                                hands_log = []
-                        else:
+            with open(hands_log_path, "a+", encoding="utf-8") as f:
+                # Acquire an exclusive lock
+                fcntl.flock(f, fcntl.LOCK_EX)
+                f.seek(0)
+                content = f.read().strip()
+                if content:
+                    try:
+                        hands_log = json.loads(content)
+                        if not isinstance(hands_log, list):
+                            logger.warning(f"hands_log.json wasn't a list. Overwriting.")
                             hands_log = []
-                except Exception:
-                    logger.warning(f"hands_log.json invalid. Overwriting.")
+                    except Exception:
+                        logger.warning(f"hands_log.json invalid. Overwriting.")
+                        hands_log = []
+                else:
                     hands_log = []
-            else:
-                hands_log = []
-
-            hands_log.append(hand_entry)
-            with open(hands_log_path, "w", encoding='utf-8') as f:
+                hands_log.append(hand_entry)
+                # Rewind and truncate before writing new content
+                f.seek(0)
+                f.truncate(0)
                 json.dump(hands_log, f, indent=2)
+                # Release the lock
+                fcntl.flock(f, fcntl.LOCK_UN)
             logger.info(f"Hand log updated in {hands_log_path}")
         except Exception as e:
             logger.error(f"Failed to update hands log: {e}")
 
         return winner_original_order, loser_original_orders, self.round_log
-
 
 # --- Main Execution ---
 
@@ -913,7 +916,6 @@ if __name__ == "__main__":
                 print(f" - Player {lo} ({l_name})")
 
         print(f"\nAll {num_rounds} rounds finished. Logs in {GAME_LOGS_DIR}, summary in {os.path.join(LOGS_DIR, 'hands_log.json')}")
-
     except (ValueError, RuntimeError, KeyError) as e:
         logger.error(f"Game setup or execution failed: {e}", exc_info=True)
         print(f"\nError: {e}")
