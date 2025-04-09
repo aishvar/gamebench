@@ -200,28 +200,27 @@ class LiarsPokerGame:
     MAX_DIGITS_PER_HAND = 8
     MAX_ACTION_PARSE_ATTEMPTS = 2
 
-    COMMON_CONFIGS = {
-        "N": {"strategy_type": "naive_5050"},
-        "R": {"strategy_type": "random"},
-        "1": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
-        "2": {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
-        "3": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
-        "4": {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
-        "5": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
-        "6": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:floor"},
-        "7": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
-        "8": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
-        "9": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
-        "10": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
-        "11": {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
-        "12": {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
-        "13": {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
-        "14": {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
-        "15": {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
-        "16": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
-        "17": {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"}#,
-        #"18": {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"}
-    }
+    # === IMPROVEMENT: COMMON_CONFIGS changed to a list of dicts for auto-numbering ===
+    COMMON_CONFIGS = [
+        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
+        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
+        {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
+        {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"},
+    ]
 
     def __init__(self, player_configs: List[Dict[str, Any]]):
         """
@@ -318,28 +317,18 @@ class LiarsPokerGame:
                 # --- MODIFIED LOGIC FOR RANDOM PLAYERS ---
                 # We'll pick a sub-strategy that doesn't conflict with used_strategies
                 possible_choices = []
-                for key, cfg in self.COMMON_CONFIGS.items():
-                    if key == 'R':
-                        continue  # skip the literal 'random' definition
-                    if cfg['strategy_type'] == 'naive_5050':
-                        # only pick naive if not used yet
-                        if ('naive_5050', None) not in used_strategies:
-                            possible_choices.append(cfg)
-                    elif cfg['strategy_type'] == 'llm':
+                for cfg in self.COMMON_CONFIGS:
+                    if cfg['strategy_type'] == 'llm':
                         model_key = (cfg['provider'], cfg['model'])
                         if ('llm', model_key) not in used_strategies:
                             possible_choices.append(cfg)
 
                 if not possible_choices:
-                    # fallback to everything except literal 'R'
-                    possible_choices = [
-                        cfg
-                        for key, cfg in self.COMMON_CONFIGS.items()
-                        if key != 'R'
-                    ]
+                    # fallback to everything in COMMON_CONFIGS
+                    possible_choices = self.COMMON_CONFIGS.copy()
 
                 selected_cfg = random.choice(possible_choices)
-                # If the random pick is naive_5050
+                # If the random pick is naive_5050 (won't happen as our list contains only LLMs), but kept for structure
                 if selected_cfg['strategy_type'] == 'naive_5050':
                     new_player.effective_strategy = 'naive_5050'
                     new_player.effective_model_config = None
@@ -827,24 +816,36 @@ def get_player_configurations() -> List[Dict[str, Any]]:
     print("\nEnter configurations for each player.")
     print("Supported LLM providers: openai, anthropic, openrouter, etc.")
     print("Internal Strategies: Naive 50/50 (N), Random (R)")
-    llm_keys = sorted([k for k in LiarsPokerGame.COMMON_CONFIGS if k not in ('N', 'R')], key=int)
+    # === IMPROVEMENT: Use auto-numbering for common LLM models ===
+    print("Common Choices:")
+    print("  N: Naive 50/50")
+    print("  R: Random")
+    for i, cfg in enumerate(LiarsPokerGame.COMMON_CONFIGS, 1):
+        print(f"  {i}: {cfg['provider']}/{cfg['model']}")
+    # === End of improvement ===
 
     for i in range(num_players):
         while True:
-            print(f"\n--- Player {i+1} ---")
-            print("Common Choices:")
-            print(f"  N: Naive 50/50")
-            print(f"  R: Random (picks a new model or naive each round)")
-            for key in llm_keys:
-                cfg = LiarsPokerGame.COMMON_CONFIGS[key]
-                print(f"  {key}: {cfg['provider']}/{cfg['model']}")
-            print("  C: Custom LLM input")
-
-            choice = input(f"Select config for Player {i+1} (N, R, {', '.join(llm_keys)}) or C: ").strip().upper()
+            choice = input(f"\nSelect config for Player {i+1} (N, R, or a number from 1 to {len(LiarsPokerGame.COMMON_CONFIGS)}) or C: ").strip().upper()
 
             selected_config = None
-            if choice in LiarsPokerGame.COMMON_CONFIGS:
-                selected_config = LiarsPokerGame.COMMON_CONFIGS[choice]
+            # === IMPROVEMENT: Parse digit choice using auto-numbering ===
+            if choice == 'N':
+                selected_config = {"strategy_type": "naive_5050"}
+            elif choice == 'R':
+                selected_config = {"strategy_type": "random"}
+            elif choice.isdigit():
+                idx = int(choice) - 1
+                if 0 <= idx < len(LiarsPokerGame.COMMON_CONFIGS):
+                    llm_cfg = LiarsPokerGame.COMMON_CONFIGS[idx]
+                    selected_config = {
+                        "strategy_type": "llm",
+                        "provider": llm_cfg["provider"],
+                        "model": llm_cfg["model"]
+                    }
+                else:
+                    print("Invalid number.")
+                    continue
             elif choice == 'C':
                 provider = input("Enter provider: ").strip()
                 model = input("Enter model name: ").strip()
@@ -859,6 +860,7 @@ def get_player_configurations() -> List[Dict[str, Any]]:
             else:
                 print("Invalid choice.")
                 continue
+            # === End of improvement ===
 
             if selected_config:
                 configs.append(selected_config)
