@@ -202,26 +202,38 @@ class LiarsPokerGame:
 
     # === IMPROVEMENT: COMMON_CONFIGS changed to a list of dicts for auto-numbering ===
     COMMON_CONFIGS = [
+        # === OpenAI ===
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
         {"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
+
+        # === Anthropic ===
         {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
         {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
+
+        # === DeepSeek ===
         {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"},
+
+        # === LLaMA ===
+        {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
+
+        # === Google ===
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
+
+        # === Miscellaneous ===
+        {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"},
-    ]
+    ]   
 
     def __init__(self, player_configs: List[Dict[str, Any]]):
         """
