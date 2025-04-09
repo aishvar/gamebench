@@ -13,11 +13,9 @@ import anthropic
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Base logs directory
-LOGS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "logs")
-
-# Subdirectory for raw LLM logs
-RAW_LOGS_DIR = os.path.join(LOGS_DIR, "raw_llm_logs")
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__)) 
+LOGS_DIR = os.path.join(PROJECT_ROOT, "data", "logs")
+RAW_LOGS_DIR = os.path.join(PROJECT_ROOT, "data", "raw_llm_logs")
 
 os.makedirs(RAW_LOGS_DIR, exist_ok=True)  # Ensure subdirectory exists
 

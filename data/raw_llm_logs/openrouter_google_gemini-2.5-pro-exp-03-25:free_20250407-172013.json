@@ -1,0 +1,23 @@
+{
+    "timestamp": "20250407-172013",
+    "provider": "openrouter",
+    "model": "google/gemini-2.5-pro-exp-03-25:free",
+    "request": {
+        "developer_message": "Liar's Poker Rules:\n- Each of the 2 players has 8 secret digits.\n- Players take turns bidding on the total count of a specific digit (0-9) across ALL players' hands.\n- A bid must exceed the current bid ('3 3s') by quantity or digit.\n- You can challenge the current bid if you believe it's too high.\n- The maximum possible quantity is 16.\nOutput only valid JSON with 'reasoning' and 'action' keys.\n",
+        "user_message": "Game State:\n- Your Hand: 90554877\n- Players: Player 0 (google/gemini-2.5-pro-exp-03-25:free), Player 1 (meta-llama/llama-4-maverick:floor)\n- Your Turn: Player 0 (google/gemini-2.5-pro-exp-03-25:free)\n- Current Bid: 3 3s (made by Player 1 - meta-llama/llama-4-maverick:floor)\n- Bid History:\n  - Player 0 bid: 2 5s\n  - Player 1 bid: 3 3s\n\nWhat is your action? Provide your reasoning and action in the specified JSON format.",
+        "system_message": "You are a strategic player in a game of Liar's Poker. Analyze the situation, your hand, and the bidding history to make the best move. Your goal is to either make a valid higher bid or challenge the last bid if you think it's unlikely. Provide your response as a JSON object containing two keys: 'reasoning' and 'action'. Your 'action' must be exactly 'BID: Q D' or 'CHALLENGE'.",
+        "max_tokens": 8192,
+        "temperature": 0.5
+    },
+    "response": {
+        "error": {
+            "message": "Provider returned error",
+            "code": 429,
+            "metadata": {
+                "raw": "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.QuotaFailure\",\n        \"violations\": [\n          {\n            \"quotaMetric\": \"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\n            \"quotaId\": \"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\n            \"quotaDimensions\": {\n              \"location\": \"global\",\n              \"model\": \"gemini-2.0-pro-exp\"\n            },\n            \"quotaValue\": \"25\"\n          }\n        ]\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Learn more about Gemini API quotas\",\n            \"url\": \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n          }\n        ]\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.RetryInfo\",\n        \"retryDelay\": \"46s\"\n      }\n    ]\n  }\n}\n",
+                "provider_name": "Google AI Studio"
+            }
+        },
+        "user_id": "user_2mtCbKSWjBmfiDa0d9Q1zNPx7X2"
+    }
+}
