@@ -204,6 +204,7 @@ class LiarsPokerGame:
     COMMON_CONFIGS = [
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
+        {"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
         {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
         {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
