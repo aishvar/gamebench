@@ -1,0 +1,58 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-4-maverick:free', 'deepseek/deepseek-chat-v3-0324:free', 'google/gemma-3-27b-it:free']
+Generated 3 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (google/gemma-3-27b-it:free) ---
+Requesting action from Player 0 (google/gemma-3-27b-it:free), Attempt 1/3
+Player 0 Reasoning: The current bid is 'None', so I need to make the first bid. I have two 0s, one 4, one 5, one 6, one 7, and one 8 in my hand. A conservative bid would be 1 of any digit. I will bid 1 0s, as I have two of them.
+Attempting to parse extracted action string: 'BID: 1 0S'
+Player 0 (google/gemma-3-27b-it:free) bids: 1 0s
+
+--- Turn: Player 1 (deepseek/deepseek-chat-v3-0324:free) ---
+Requesting action from Player 1 (deepseek/deepseek-chat-v3-0324:free), Attempt 1/3
+Player 1 Reasoning: I have one 0 in my hand (from digit 0). The current bid is 1 0s, which is very low. Since I have one 0, it's likely there are at least one or two more 0s among the other players' hands. Bidding 2 0s is a safe increase that is likely to be true.
+Attempting to parse extracted action string: 'BID: 2 0S'
+Player 1 (deepseek/deepseek-chat-v3-0324:free) bids: 2 0s
+
+--- Turn: Player 2 (meta-llama/llama-4-maverick:free) ---
+Requesting action from Player 2 (meta-llama/llama-4-maverick:free), Attempt 1/3
+Player 2 Reasoning: The current bid is 2 0s. My hand is 88911436, which contains no 0s. Given that there are 3 players and each has 8 digits, the total number of digits is 24. A bid of 2 0s implies that there are at least 2 zeros across all hands. Since I have no 0s, the 2 0s must be distributed among the other two players. This seems plausible but not certain. I can bid higher by either increasing the quantity or the digit. I will increase the digit to make a higher bid. Bidding 2 1s is a valid higher bid because it keeps the quantity the same but increases the digit. Upon examining my hand, I see I have one 1, so it's reasonable to think there could be at least 2 ones in total among all players.
+Attempting to parse extracted action string: 'BID: 2 1S'
+Player 2 (meta-llama/llama-4-maverick:free) bids: 2 1s
+
+--- Turn: Player 0 (google/gemma-3-27b-it:free) ---
+Requesting action from Player 0 (google/gemma-3-27b-it:free), Attempt 1/3
+Player 0 Reasoning: The current bid is 2 1s. I have no 1s in my hand, making it plausible that the bid is an overestimation. However, other players could have 1s. I have two 0s, and the previous bids were focused on 0s, so it's possible there are more 0s. I will bid 3 0s, which is higher than the previous bid of 2 0s and the current bid of 2 1s. It's a relatively safe bid given my hand and the recent bidding history.
+Attempting to parse extracted action string: 'BID: 3 0S'
+Player 0 (google/gemma-3-27b-it:free) bids: 3 0s
+
+--- Turn: Player 1 (deepseek/deepseek-chat-v3-0324:free) ---
+Requesting action from Player 1 (deepseek/deepseek-chat-v3-0324:free), Attempt 1/3
+Player 1 Reasoning: I have no 0s in my hand. The current bid is 3 0s, which seems high given that I have none. However, since there are two other players, it's possible they have multiple 0s. To be safe, I will increase the bid slightly by bidding on a digit I have in my hand, which is 4. Bidding 3 4s increases the digit while keeping the quantity the same.
+Attempting to parse extracted action string: 'BID: 3 4S'
+Player 1 (deepseek/deepseek-chat-v3-0324:free) bids: 3 4s
+
+--- Turn: Player 2 (meta-llama/llama-4-maverick:free) ---
+Requesting action from Player 2 (meta-llama/llama-4-maverick:free), Attempt 1/3
+Player 2 Reasoning: The current bid is 3 4s. I have one 4 in my hand (88911436). To make a higher bid, I can either increase the quantity or keep the quantity the same and increase the digit. Since I see one 4 in my hand, it's possible others have 4s as well, but I don't have information about their hands. I can bid 3 5s, increasing the digit, or bid 4 0s, 4 1s, 4 2s, 4 3s, or 4 4s, increasing the quantity. Given my hand has two 8s, I can confidently bid on 8s. Bidding 4 8s seems reasonable as it increases the quantity and is based on my hand having two 8s, making it plausible that the total count could be at least 4.
+Attempting to parse extracted action string: 'BID: 4 8S'
+Player 2 (meta-llama/llama-4-maverick:free) bids: 4 8s
+
+--- Turn: Player 0 (google/gemma-3-27b-it:free) ---
+Requesting action from Player 0 (google/gemma-3-27b-it:free), Attempt 1/3
+Player 0 Reasoning: The current bid is 4 8s. I have one 8 in my hand. It's unlikely there are three more 8s among the other two players' hands, but not impossible. However, bidding higher on 8s is risky. I have two 6s, and the previous bids focused on 0s, 1s and 4s. Bidding 5 6s is a reasonable increase in quantity and is not a digit that has been bid on heavily yet. It's a safer bid than increasing the 8s.
+Attempting to parse extracted action string: 'BID: 5 6S'
+Player 0 (google/gemma-3-27b-it:free) bids: 5 6s
+
+--- Turn: Player 1 (deepseek/deepseek-chat-v3-0324:free) ---
+Requesting action from Player 1 (deepseek/deepseek-chat-v3-0324:free), Attempt 1/3
+Player 1 Reasoning: I have no 6s in my hand ('41234921'). The current bid is 5 6s, which seems high given that I have none and the previous bids suggest moderate digit counts. Challenging is a reasonable move as it's unlikely there are five 6s across all hands.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-chat-v3-0324:free) challenges Player 0's (google/gemma-3-27b-it:free) bid of 5 6s.
+Revealed Hands: P0(google/gemma-3-27b-it:free):05784606 | P1(deepseek/deepseek-chat-v3-0324:free):41234921 | P2(meta-llama/llama-4-maverick:free):88911436
+Actual count of 6s across all hands: 3
+Challenge Successful! Actual count (3) < Bid quantity (5).
+Winner: Player 1 (deepseek/deepseek-chat-v3-0324:free)
+Losers: Players 0 (google/gemma-3-27b-it:free), 2 (meta-llama/llama-4-maverick:free)
+--- Round Ended ---

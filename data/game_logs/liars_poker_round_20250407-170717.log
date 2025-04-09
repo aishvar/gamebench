@@ -1,0 +1,30 @@
+Player order: ['Naive 50/50', 'Random(meta-llama/llama-3.1-8b-instruct:floor)']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 making initial bid: 1 0s
+Player 0 bids: 1 0s
+
+--- Turn: Player 1 (Random(meta-llama/llama-3.1-8b-instruct:floor)) ---
+Requesting LLM action from Player 1 (Random(meta-llama/llama-3.1-8b-instruct:floor)), Attempt 1/3
+Player 1 Reasoning: The current bid is 1 0, which is a low bid. Given the Naive 50/50 player's tendency to be conservative, it's likely they've made a low bid. Since my hand contains a 0, I have a good chance of making a higher bid. I'll choose a high digit (Q) and a moderate quantity (4) to challenge the current bid and potentially take the lead.
+Attempting to parse extracted action string: 'BID: Q 4'
+Parse Error: Action string did not match 'CHALLENGE' or 'BID: Q D'.
+Player 1 provided invalid action or malformed JSON. Re-prompting...
+Requesting LLM action from Player 1 (Random(meta-llama/llama-3.1-8b-instruct:floor)), Attempt 2/3
+Player 1 Reasoning: The current bid is 1 0, which is a low bid. Given the bid history and the players' strategies, I should make a higher bid to increase the stakes. My hand has 3 zeros, which is a decent amount. I'll bid 5 0s to make a more substantial claim.
+Attempting to parse extracted action string: 'BID: 5 0S'
+Player 1 bids: 5 0s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 chose to CHALLENGE.
+Player 0 (Naive 50/50) challenges Player 1 (Random(meta-llama/llama-3.1-8b-instruct:floor))'s bid of 5 0s.
+Revealed Hands: P0(Naive 50/50):39286164 | P1(Random(meta-llama/llama-3.1-8b-instruct:floor)):97485836
+Actual count of 0s: 0
+Challenge successful: count(0) < 5. Challenger wins.
+Losers: 1 (Random(meta-llama/llama-3.1-8b-instruct:floor))
+--- Round Ended ---

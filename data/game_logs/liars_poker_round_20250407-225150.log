@@ -1,0 +1,39 @@
+Player order: ['deepseek/deepseek-r1:free', 'meta-llama/llama-3.1-8b-instruct:floor']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (deepseek/deepseek-r1:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1:free), Attempt 1/3
+Player 0 Reasoning: I have two 2s in my hand. Since the current bid is None, starting with 2 2s is a safe opening because the total count must be at least 2 (my two 2s). This bid cannot be successfully challenged, forcing the opponent to make a higher bid.
+Attempting to parse extracted action string: 'BID: 2 2S'
+Player 0 bids: 2 2s
+
+--- Turn: Player 1 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting LLM action from Player 1 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 2s. I have a 2 in my hand. I can confidently bid on the digit 2, increasing the quantity from 2 to 3.
+Attempting to parse extracted action string: 'BID: 3 2S'
+Player 1 bids: 3 2s
+
+--- Turn: Player 0 (deepseek/deepseek-r1:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1:free), Attempt 1/3
+Player 0 Reasoning: I have two 2s in my hand. The opponent increased the bid from 2 2s to 3 2s, suggesting they might have at least one 2, making the total three. Challenging risks losing if they have one. Bidding 3 8s (a higher digit than 2) keeps the game active, leveraging my single 8 and hoping the opponent lacks sufficient 8s to challenge effectively.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 0 bids: 3 8s
+
+--- Turn: Player 1 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting LLM action from Player 1 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 8s. I have one 8 in my hand. Bidding 4 8s seems reasonable, increasing the quantity based on my hand.
+Attempting to parse extracted action string: 'BID: 4 8S'
+Player 1 bids: 4 8s
+
+--- Turn: Player 0 (deepseek/deepseek-r1:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1:free), Attempt 1/3
+Player 0 Reasoning: I have one 8 in my hand. The opponent's bid of 4 8s implies they need at least 3 additional 8s. Given the low probability of having 3+ 8s in their 8-digit hand (estimated ~3.8% assuming uniform distribution), challenging is statistically favorable. Previous bidding patterns suggest possible bluffing after my 3 8s bid. Challenging now has a high chance of success.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (deepseek/deepseek-r1:free) challenges Player 1 (meta-llama/llama-3.1-8b-instruct:floor)'s bid of 4 8s.
+Revealed Hands: P0(deepseek/deepseek-r1:free):54622781 | P1(meta-llama/llama-3.1-8b-instruct:floor):93459879
+Actual count of 8s: 2
+Challenge successful: count(2) < 4. Challenger wins.
+Losers: 1 (meta-llama/llama-3.1-8b-instruct:floor)
+--- Round Ended ---

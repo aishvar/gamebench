@@ -1,0 +1,27 @@
+Player order: ['deepseek/deepseek-r1-distill-llama-70b:free', 'meta-llama/llama-4-maverick:floor']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (deepseek/deepseek-r1-distill-llama-70b:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1-distill-llama-70b:free), Attempt 1/3
+Player 0 Reasoning: I have two 6s in my hand. Since the current bid is None, I can start by bidding a quantity and digit I have. Bidding 2 6s is a safe and reasonable starting point based on my hand, and it's a higher digit which could be advantageous.
+Attempting to parse extracted action string: 'BID: 2 6S'
+Player 0 bids: 2 6s
+
+--- Turn: Player 1 (meta-llama/llama-4-maverick:floor) ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 6s. I have one 6 in my hand (61945278), so the total count of 6s so far is at least 2 (one from my hand and at least one from the opponent's hand). I can either challenge or make a higher bid. A higher bid can be made by either increasing the quantity or keeping the quantity the same and increasing the digit. Since I see one 6 in my hand, bidding 3 6s seems reasonable as it increases the quantity.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 1 bids: 3 6s
+
+--- Turn: Player 0 (deepseek/deepseek-r1-distill-llama-70b:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1-distill-llama-70b:free), Attempt 1/3
+Player 0 Reasoning: I have two 6s in my hand, and the current bid is 3 6s. Since I have two, the total could be 3 if Player 1 has one or 2 if they have none. Challenging is a good move because it's uncertain whether Player 1 is bluffing or not, and the potential reward outweighs the risk.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (deepseek/deepseek-r1-distill-llama-70b:free) challenges Player 1 (meta-llama/llama-4-maverick:floor)'s bid of 3 6s.
+Revealed Hands: P0(deepseek/deepseek-r1-distill-llama-70b:free):45613306 | P1(meta-llama/llama-4-maverick:floor):61945278
+Actual count of 6s: 3
+Challenge failed: count(3) >= 3. Bidder wins.
+Losers: 0 (deepseek/deepseek-r1-distill-llama-70b:free)
+--- Round Ended ---

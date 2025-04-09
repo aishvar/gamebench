@@ -1,0 +1,27 @@
+Player order: ['deepseek/deepseek-r1-distill-llama-70b:free', 'google/gemma-3-27b-it:floor']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (deepseek/deepseek-r1-distill-llama-70b:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1-distill-llama-70b:free), Attempt 1/3
+Player 0 Reasoning: I have two 2s in my hand, which gives me a solid foundation to bid on this digit. Starting with a bid of 3 2s is reasonable, as it's higher than the current bid of None and leverages my hand's strength without being overly risky.
+Attempting to parse extracted action string: 'BID: 3 2S'
+Player 0 bids: 3 2s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting LLM action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 2s. I have no 2s in my hand. I have two 6s, one 7, one 8, one 9, one 0, and one 5. Bidding 4 2s would be a reasonable increase in quantity, but I have no 2s, making it a bluff. Bidding 3 3s is also possible, but I don't have any 3s. Bidding 4 5s is possible, as I have one 5. However, increasing the digit to 6 seems more strategic, as I have two 6s. Therefore, bidding 4 6s is a good option, increasing both quantity and digit.
+Attempting to parse extracted action string: 'BID: 4 6S'
+Player 1 bids: 4 6s
+
+--- Turn: Player 0 (deepseek/deepseek-r1-distill-llama-70b:free) ---
+Requesting LLM action from Player 0 (deepseek/deepseek-r1-distill-llama-70b:free), Attempt 1/3
+Player 0 Reasoning: I have no 6s in my hand, so all 6s must be in Player 1's hand. The bid is 4 6s, which would require Player 1 to have at least four 6s. Given the uncertainty and the risk of bluffing, challenging is a reasonable move to test the validity of the bid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (deepseek/deepseek-r1-distill-llama-70b:free) challenges Player 1 (google/gemma-3-27b-it:floor)'s bid of 4 6s.
+Revealed Hands: P0(deepseek/deepseek-r1-distill-llama-70b:free):20429351 | P1(google/gemma-3-27b-it:floor):97750866
+Actual count of 6s: 2
+Challenge successful: count(2) < 4. Challenger wins.
+Losers: 1 (google/gemma-3-27b-it:floor)
+--- Round Ended ---

@@ -1,0 +1,59 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-3.1-8b-instruct:floor', 'Naive 50/50']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: Given the current bid is 'None', I should make an initial bid based on my hand. I have 4 digits in my hand that are greater than or equal to 5, and 3 digits that are greater than or equal to 6. Since 6 is the highest digit in my hand, I should bid on it. With 4 digits in my hand that are 6 or higher, I can reasonably bid 4 6s.
+Attempting to parse extracted action string: 'BID: 4 6S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 4 6s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to BID: 4 7s
+Player 1 (Naive 50/50) bids: 4 7s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 4 7s. I have two 7s in my hand. Bidding 5 7s seems reasonable, as it increases both quantity and digit based on my hand.
+Attempting to parse extracted action string: 'BID: 5 7S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 5 7s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to BID: 5 8s
+Player 1 (Naive 50/50) bids: 5 8s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 5 8s. I have no 8s in my hand. Bidding 3 9s is a reasonable increase in digit, as I have one 9 in my hand, and the quantity is lower than the current bid, making it a valid higher bid.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Parse Error: Bid 3 9s is not higher than current bid 5 8s.
+Player 0 provided invalid action or malformed/unparsable JSON. Re-prompting...
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 2/3
+Player 0 Reasoning: The current bid is 5 8s. I have a 5 in my hand. I can bid higher quantity or same quantity with a higher digit. Bidding 6 8s seems reasonable, increasing the digit based on my hand.
+Attempting to parse extracted action string: 'BID: 6 8S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 6 8s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to BID: 6 9s
+Player 1 (Naive 50/50) bids: 6 9s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid of 6 9s is relatively low, and I have one 9 in my hand. I can make a higher bid by increasing the quantity and digit based on my hand. Bidding 7 9s seems like a reasonable move.
+Attempting to parse extracted action string: 'BID: 7 9S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 7 9s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to CHALLENGE.
+Player 1 (Naive 50/50) challenges Player 0's (meta-llama/llama-3.1-8b-instruct:floor) bid of 7 9s.
+Revealed Hands: P0(meta-llama/llama-3.1-8b-instruct:floor):90046351 | P1(Naive 50/50):58672031
+Actual count of 9s across all hands: 1
+Challenge Successful! Actual count (1) < Bid quantity (7).
+Winner: Player 1 (Naive 50/50)
+Losers: Players 0 (meta-llama/llama-3.1-8b-instruct:floor)
+--- Round Ended ---

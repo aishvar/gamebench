@@ -1,0 +1,21 @@
+Player order: ['google/gemini-2.5-pro-preview-03-25:floor', 'deepseek/deepseek-r1-distill-llama-70b:free']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (google/gemini-2.5-pro-preview-03-25:floor) ---
+Requesting LLM action from Player 0 (google/gemini-2.5-pro-preview-03-25:floor), Attempt 1/3
+Player 0 Reasoning: I am Player 0 and need to make the first bid. My hand is 55629139. I have two 5s and two 9s, which are my most frequent digits. The expected count for any digit across all 16 cards is 1.6. Having two 9s is above average. Bidding '3 9s' requires the opponent to have at least one 9, which is statistically likely (approx. 57% chance they have at least one 9). Starting with '3 9s' uses my strongest digit and sets a reasonably challenging opening bid.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 0 bids: 3 9s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-llama-70b:free) ---
+Requesting LLM action from Player 1 (deepseek/deepseek-r1-distill-llama-70b:free), Attempt 1/3
+Player 1 Reasoning: I have no 9s in my hand, so all 9s must be in Player 0's hand. The bid is 3 9s, which requires Player 0 to have at least three 9s. Since I don't have any, challenging is a reasonable move to test if the bid is valid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1-distill-llama-70b:free) challenges Player 0 (google/gemini-2.5-pro-preview-03-25:floor)'s bid of 3 9s.
+Revealed Hands: P0(google/gemini-2.5-pro-preview-03-25:floor):55629139 | P1(deepseek/deepseek-r1-distill-llama-70b:free):83201447
+Actual count of 9s: 2
+Challenge successful: count(2) < 3. Challenger wins.
+Losers: 0 (google/gemini-2.5-pro-preview-03-25:floor)
+--- Round Ended ---

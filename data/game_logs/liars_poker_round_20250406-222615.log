@@ -1,0 +1,28 @@
+--- Starting New Round ---
+Player order: ['deepseek/deepseek-chat-v3-0324:floor', 'deepseek/deepseek-r1-distill-llama-70b:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (deepseek/deepseek-chat-v3-0324:floor) ---
+Requesting action from Player 0 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 0 Reasoning: Since there are no bids yet, I can start with a conservative bid based on my hand. I have two 1s, one 0, one 2, one 4, one 6, and two 7s. Bidding on the digit with the highest count in my hand (1s or 7s) seems reasonable. I'll start with 2 1s, as it's a safe initial bid.
+Attempting to parse extracted action string: 'BID: 2 1S'
+Player 0 (deepseek/deepseek-chat-v3-0324:floor) bids: 2 1s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-llama-70b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-llama-70b:floor), Attempt 1/3
+Player 1 Reasoning: I have two 8s in my hand, and the current bid is 2 1s. Since I don't have any 1s, the total number of 1s depends on Player 0's hand. Bidding 2 8s is a safer move because I know I have two, and if Player 0 has any, the bid could hold. Challenging the 2 1s is risky because Player 0 might have the necessary 1s.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 1 (deepseek/deepseek-r1-distill-llama-70b:floor) bids: 2 8s
+
+--- Turn: Player 0 (deepseek/deepseek-chat-v3-0324:floor) ---
+Requesting action from Player 0 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 0 Reasoning: I have no 8s in my hand, and the current bid is 2 8s. Since the bid is relatively low and I don't have any 8s, it's possible that the opponent has at least two 8s. However, given that 8s are less common, I can safely challenge this bid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (deepseek/deepseek-chat-v3-0324:floor) challenges Player 1's (deepseek/deepseek-r1-distill-llama-70b:floor) bid of 2 8s.
+Revealed Hands: P0(deepseek/deepseek-chat-v3-0324:floor):06124771 | P1(deepseek/deepseek-r1-distill-llama-70b:floor):80835926
+Actual count of 8s across all hands: 2
+Challenge Failed! Actual count (2) >= Bid quantity (2).
+Winner: Player 1 (deepseek/deepseek-r1-distill-llama-70b:floor)
+Losers: Players 0 (deepseek/deepseek-chat-v3-0324:floor)
+--- Round Ended ---

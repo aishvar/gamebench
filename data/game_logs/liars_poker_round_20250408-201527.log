@@ -1,0 +1,26 @@
+Player order: ['openrouter/quasar-alpha', 'Naive 50/50']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (openrouter/quasar-alpha) ---
+Requesting LLM action from Player 0 (openrouter/quasar-alpha), Attempt 1/3
+Player 0 Reasoning: It's the first bid of the game, so I should make a safe and reasonable opening bid. Looking at my hand, I have two 5s, two 3s, and one each of 1, 2, 7, and 8. Since I have two 5s, a bid of 3 5s is conservative and likely to be valid, considering the opponent probably has at least one 5 as well. This sets a solid starting point without overcommitting.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 0 bids: 3 5s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Naive chooses BID: 3 6s
+Player 1 bids: 3 6s
+
+--- Turn: Player 0 (openrouter/quasar-alpha) ---
+Requesting LLM action from Player 0 (openrouter/quasar-alpha), Attempt 1/3
+Player 0 Reasoning: In my hand 38155273, I have no 6s. The current bid is 3 6s, which requires at least three 6s across both hands. Since I have zero, all three would need to be in Player 1's hand, which is unlikely. The naive player might overbid, so challenging now is statistically favorable.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (openrouter/quasar-alpha) challenges Player 1 (Naive 50/50)'s bid of 3 6s.
+Revealed Hands: P0(openrouter/quasar-alpha):38155273 | P1(Naive 50/50):87784619
+Actual count of 6s: 1
+Challenge successful: count(1) < 3. Challenger wins.
+Losers: 1 (Naive 50/50)
+--- Round Ended ---

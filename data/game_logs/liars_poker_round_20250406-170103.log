@@ -1,0 +1,34 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-3.1-8b-instruct:floor', 'google/gemma-3-27b-it:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: With no current bid, I should start by bidding a digit that I'm confident I have. In my hand, I have two 8s. Bidding 2 8s seems reasonable.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 2 8s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 8s. I have one 8 in my hand. Bidding 3 8s is a reasonable increase, and I have a chance of it being true. Alternatively, I could bid on a different digit, but I don't have many of any other digit. Since I have one 8, I'll increase the bid on 8s. I could also challenge, but 2 8s isn't outrageously high.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 1 (google/gemma-3-27b-it:floor) bids: 3 8s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: I have one 8 in my hand. The current bid is 3 8s. I should bid 4 8s, increasing the quantity based on my hand.
+Attempting to parse extracted action string: 'BID: 4 8S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 4 8s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 4 8s. I have no 8s in my hand. Given the bid history shows an increasing trend, and I have no information about the other player's hand, it is likely they have at least one 8. However, 4 is a significant number considering there are only 16 total digits. I will challenge the bid, as it seems improbable that there are four 8s given my hand and the previous bids.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (google/gemma-3-27b-it:floor) challenges Player 0's (meta-llama/llama-3.1-8b-instruct:floor) bid of 4 8s.
+Revealed Hands: P0(meta-llama/llama-3.1-8b-instruct:floor):85671447 | P1(google/gemma-3-27b-it:floor):92903921
+Actual count of 8s across all hands: 1
+Challenge Successful! Actual count (1) < Bid quantity (4).
+Winner: Player 1 (google/gemma-3-27b-it:floor)
+Losers: Players 0 (meta-llama/llama-3.1-8b-instruct:floor)
+--- Round Ended ---

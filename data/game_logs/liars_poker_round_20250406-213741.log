@@ -1,0 +1,34 @@
+--- Starting New Round ---
+Player order: ['deepseek/deepseek-r1-distill-qwen-32b:floor', 'google/gemini-2.0-flash-001:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (google/gemini-2.0-flash-001:floor) ---
+Requesting action from Player 0 (google/gemini-2.0-flash-001:floor), Attempt 1/3
+Player 0 Reasoning: Since there is no current bid, I can make an opening bid. I have four 2s in my hand. Bidding a small amount of 2s seems like a reasonable starting point. I will bid 3 2s.
+Attempting to parse extracted action string: 'BID: 3 2S'
+Player 0 (google/gemini-2.0-flash-001:floor) bids: 3 2s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: I have two 8s in my hand. The current bid is 3 2s. Bidding 3 8s is a valid higher bid, increasing the digit while keeping the quantity the same. This move is strategic as it leverages my hand's strength in 8s.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) bids: 3 8s
+
+--- Turn: Player 0 (google/gemini-2.0-flash-001:floor) ---
+Requesting action from Player 0 (google/gemini-2.0-flash-001:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 3 8s. I have no 8s in my hand. Bidding 4 0s is a safe increase in quantity, and I have two 0s in my hand, making it slightly more plausible.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 0 (google/gemini-2.0-flash-001:floor) bids: 4 0s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 4 0s, and I have no 0s in my hand. Given that the maximum possible 0s is 8 (from Player 0's hand), 4 0s seems plausible but risky. However, considering the bid history and the likelihood, challenging might be the better option to test the validity of the bid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) challenges Player 0's (google/gemini-2.0-flash-001:floor) bid of 4 0s.
+Revealed Hands: P0(google/gemini-2.0-flash-001:floor):07202602 | P1(deepseek/deepseek-r1-distill-qwen-32b:floor):56788479
+Actual count of 0s across all hands: 3
+Challenge Successful! Actual count (3) < Bid quantity (4).
+Winner: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor)
+Losers: Players 0 (google/gemini-2.0-flash-001:floor)
+--- Round Ended ---

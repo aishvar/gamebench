@@ -1,0 +1,43 @@
+--- Starting New Round ---
+Player order: ['Naive 50/50', 'openrouter/quasar-alpha']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 (Naive) making initial bid: 1 0s
+Player 0 (Naive 50/50) bids: 1 0s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: In my hand, I have one 0. The current bid is 1 0s, which is quite conservative given there are 16 digits total, and I already see one 0 myself. It is very likely there is at least one more 0 in Player 0's hand, so challenging now would be unwise. A natural and safe progression is to raise the bid slightly. Since I have one 0, bidding 2 0s is very reasonable and keeps the pressure on Player 0.
+Attempting to parse extracted action string: 'BID: 2 0S'
+Player 1 (openrouter/quasar-alpha) bids: 2 0s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 (Naive) chose to BID: 2 1s
+Player 0 (Naive 50/50) bids: 2 1s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: In my hand (20488751), I have one '1'. The current bid is 2 1s, so for that to be valid, opponent must have at least one '1'. That's plausible given 8 digits. Instead of challenging a likely valid bid, I should increase it. I also have two '8's, making a bid of 2 8s at the same quantity no improvement, but I can raise to 3 8s, leveraging my strong count. This is a safe, incremental, and stronger bid.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 1 (openrouter/quasar-alpha) bids: 3 8s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 (Naive) chose to BID: 3 9s
+Player 0 (Naive 50/50) bids: 3 9s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: In my hand, I have two 8s and one 9. The current bid is 3 9s, which requires at least two more 9s in Player 0's hand. Given the naive nature of Player 0, they might be bluffing or overestimating. The probability of Player 0 holding two or more 9s is relatively low, especially since I hold only one 9. Therefore, challenging this bid is the best strategic move.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (openrouter/quasar-alpha) challenges Player 0's (Naive 50/50) bid of 3 9s.
+Revealed Hands: P0(Naive 50/50):13793475 | P1(openrouter/quasar-alpha):20488751
+Actual count of 9s across all hands: 1
+Challenge Successful! Actual count (1) < Bid quantity (3).
+Winner: Player 1 (openrouter/quasar-alpha)
+Losers: Players 0 (Naive 50/50)
+--- Round Ended ---

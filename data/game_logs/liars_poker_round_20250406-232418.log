@@ -1,0 +1,34 @@
+--- Starting New Round ---
+Player order: ['google/gemini-2.0-flash-001:floor', 'deepseek/deepseek-r1:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (google/gemini-2.0-flash-001:floor) ---
+Requesting action from Player 0 (google/gemini-2.0-flash-001:floor), Attempt 1/3
+Player 0 Reasoning: Since there are no bids yet, I can start with a low bid based on a digit I have in my hand. I have two 1s, so I will bid 2 1s.
+Attempting to parse extracted action string: 'BID: 2 1S'
+Player 0 (google/gemini-2.0-flash-001:floor) bids: 2 1s
+
+--- Turn: Player 1 (deepseek/deepseek-r1:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1:floor), Attempt 1/3
+Player 1 Reasoning: My hand has two 8s and no 1s. The current bid is 2 1s. Bidding 2 8s is valid as it maintains the quantity but increases the digit. Since I have two 8s, the total count must be at least 2 regardless of the opponent's hand, making this a safe bid that forces the opponent to respond.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 1 (deepseek/deepseek-r1:floor) bids: 2 8s
+
+--- Turn: Player 0 (google/gemini-2.0-flash-001:floor) ---
+Requesting action from Player 0 (google/gemini-2.0-flash-001:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 2 8s. I don't have any 8s. I could bid 3 of any digit. I have two 1s and two 4s. I will bid 3 1s, which is a safe increase.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 0 (google/gemini-2.0-flash-001:floor) bids: 3 1s
+
+--- Turn: Player 1 (deepseek/deepseek-r1:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1:floor), Attempt 1/3
+Player 1 Reasoning: I have 0 1s in my hand. The opponent bid 3 1s, meaning they must have all three in their 8-card hand. The probability of holding exactly three 1s in 8 random digits is low (~3%). Given the bid history started with 2 1s and they raised again, this could be a bluff. Challenging seems favorable as their required 1s concentration is unlikely.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1:floor) challenges Player 0's (google/gemini-2.0-flash-001:floor) bid of 3 1s.
+Revealed Hands: P0(google/gemini-2.0-flash-001:floor):41143625 | P1(deepseek/deepseek-r1:floor):25380897
+Actual count of 1s across all hands: 2
+Challenge Successful! Actual count (2) < Bid quantity (3).
+Winner: Player 1 (deepseek/deepseek-r1:floor)
+Losers: Players 0 (google/gemini-2.0-flash-001:floor)
+--- Round Ended ---

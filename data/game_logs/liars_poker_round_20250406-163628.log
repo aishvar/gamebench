@@ -1,0 +1,34 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-4-scout:floor', 'qwen/qwq-32b:nitro']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-4-scout:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 0 Reasoning: Since there are no bids yet, I can make any valid bid I want. My hand contains two 6s and two 1s. I can start with a conservative bid to test the waters. Bidding 2 1s seems like a reasonable starting point as it reflects a digit I have in my hand and a quantity that seems achievable.
+Attempting to parse extracted action string: 'BID: 2 1S'
+Player 0 (meta-llama/llama-4-scout:floor) bids: 2 1s
+
+--- Turn: Player 1 (qwen/qwq-32b:nitro) ---
+Requesting action from Player 1 (qwen/qwq-32b:nitro), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 1s. Bidding 2 8s increases the digit (8 > 1) at the same quantity, which is a valid higher bid. My hand has two 8s, ensuring the total count of 8s is at least 2, making this bid safe.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 1 (qwen/qwq-32b:nitro) bids: 2 8s
+
+--- Turn: Player 0 (meta-llama/llama-4-scout:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 2 8s. Given my hand (65112366), I have a total of 3 sixes and 2 ones, along with other digits. Since the bid is only 2 8s, I can increase the quantity or the digit to make a valid higher bid. I have two 6s and could potentially make a bid that is higher than 2 8s. The bid '3 6s' seems reasonable as it increases both the quantity and the digit compared to the current bid.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 0 (meta-llama/llama-4-scout:floor) bids: 3 6s
+
+--- Turn: Player 1 (qwen/qwq-32b:nitro) ---
+Requesting action from Player 1 (qwen/qwq-32b:nitro), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 6s. My hand has no 6s, so the opponent must have at least 3 6s. The probability of them having 3 or more 6s in their 8-digit hand is low. Challenging offers a high chance of winning since their bid is risky.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (qwen/qwq-32b:nitro) challenges Player 0's (meta-llama/llama-4-scout:floor) bid of 3 6s.
+Revealed Hands: P0(meta-llama/llama-4-scout:floor):65112366 | P1(qwen/qwq-32b:nitro):15839078
+Actual count of 6s across all hands: 3
+Challenge Failed! Actual count (3) >= Bid quantity (3).
+Winner: Player 0 (meta-llama/llama-4-scout:floor)
+Losers: Players 1 (qwen/qwq-32b:nitro)
+--- Round Ended ---

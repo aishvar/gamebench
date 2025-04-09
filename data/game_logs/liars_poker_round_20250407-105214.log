@@ -1,0 +1,43 @@
+--- Starting New Round ---
+Player order: ['Naive 50/50', 'openrouter/quasar-alpha']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 (Naive) making initial bid: 1 0s
+Player 0 (Naive 50/50) bids: 1 0s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: In my hand, I have no 0s, but several high-frequency digits: two 9s, two 4s, two 3s, and two 8s. Since the current bid is very low (only 1 0s), it's trivial to raise. The most strategic move is to increase the quantity to 2 and choose a digit I have multiple of, maximizing the likelihood the bid is valid. I will bid 2 9s, since I hold two 9s myself, making it very likely true.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Player 1 (openrouter/quasar-alpha) bids: 2 9s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 (Naive) chose to BID: 3 0s
+Player 0 (Naive 50/50) bids: 3 0s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: My hand contains three 9s and no 0s. The current bid is 3 0s, which I know is unlikely because I have zero 0s, so Player 0 must have at least three 0s for their bid to be valid. This is improbable given they only have eight digits. Instead of challenging now, I can confidently increase the bid to 4 9s, leveraging my strong count of 9s and putting pressure back on Player 0.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 1 (openrouter/quasar-alpha) bids: 4 9s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 (Naive) chose to BID: 5 0s
+Player 0 (Naive 50/50) bids: 5 0s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: In my hand '98993442', I have zero 0s. The current bid is 5 0s, which requires there to be five zeroes across both hands. Since I have none, all five would need to be in Player 0's hand of eight digits. The probability of five or more zeroes in eight digits is very low (~2.8%). Given this unlikely scenario, challenging is the best strategic move.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (openrouter/quasar-alpha) challenges Player 0's (Naive 50/50) bid of 5 0s.
+Revealed Hands: P0(Naive 50/50):75100764 | P1(openrouter/quasar-alpha):98993442
+Actual count of 0s across all hands: 2
+Challenge Successful! Actual count (2) < Bid quantity (5).
+Winner: Player 1 (openrouter/quasar-alpha)
+Losers: Players 0 (Naive 50/50)
+--- Round Ended ---

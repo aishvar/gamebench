@@ -1,0 +1,43 @@
+--- Starting New Round ---
+Player order: ['Naive 50/50', 'meta-llama/llama-4-maverick:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-4-maverick:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 0 Reasoning: The game has just started with no bids. I need to make the first bid. My hand is 90256209. I can see I have one 0, one 2, one 5, one 6, and two 9s. A reasonable starting bid should be based on my hand and a conservative assumption about the opponent's hand. I have two 9s, so bidding on 9s seems like a good start. I'll bid 3 9s, assuming there's at least one more 9 in the opponent's hand.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 0 (meta-llama/llama-4-maverick:floor) bids: 3 9s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to BID: 4 0s
+Player 1 (Naive 50/50) bids: 4 0s
+
+--- Turn: Player 0 (meta-llama/llama-4-maverick:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 4 0s. I have one 0 in my hand, so the total count of 0s is at least 1. I need to make a higher bid than 4 0s. The next possible bid can be either 5 0s or 4 1s. Since I don't have information about the count of 1s, I'll increase the quantity. Bidding 5 0s seems reasonable as it directly increases the quantity.
+Attempting to parse extracted action string: 'BID: 5 0S'
+Player 0 (meta-llama/llama-4-maverick:floor) bids: 5 0s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to BID: 5 1s
+Player 1 (Naive 50/50) bids: 5 1s
+
+--- Turn: Player 0 (meta-llama/llama-4-maverick:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 5 1s. I have the digits 90256209, and I can count that I have one 1. The total count of 1s across both hands must be at least 1 (mine) and at most 9 (if the other player has 8 ones, which is highly unlikely). The current bid of 5 1s is possible but seems a bit high given that I only have one 1. However, it's not impossible since my opponent could have up to 4 more 1s. I can bid higher by either increasing the quantity or the digit. Since I don't have information about the other digits in my opponent's hand, I'll consider a conservative increase. Bidding 5 2s is a reasonable next step as it increases the digit while keeping the quantity the same, which is a valid and higher bid according to the rules.
+Attempting to parse extracted action string: 'BID: 5 2S'
+Player 0 (meta-llama/llama-4-maverick:floor) bids: 5 2s
+
+--- Turn: Player 1 (Naive 50/50) ---
+Calculating action for Player 1 (Naive 50/50)
+Player 1 (Naive) chose to CHALLENGE.
+Player 1 (Naive 50/50) challenges Player 0's (meta-llama/llama-4-maverick:floor) bid of 5 2s.
+Revealed Hands: P0(meta-llama/llama-4-maverick:floor):90256209 | P1(Naive 50/50):77846902
+Actual count of 2s across all hands: 3
+Challenge Successful! Actual count (3) < Bid quantity (5).
+Winner: Player 1 (Naive 50/50)
+Losers: Players 0 (meta-llama/llama-4-maverick:floor)
+--- Round Ended ---

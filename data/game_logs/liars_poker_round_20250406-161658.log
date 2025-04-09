@@ -1,0 +1,40 @@
+--- Starting New Round ---
+Player order: ['deepseek/deepseek-chat-v3-0324:floor', 'openrouter/quasar-alpha']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (openrouter/quasar-alpha) ---
+Requesting action from Player 0 (openrouter/quasar-alpha), Attempt 1/3
+Player 0 Reasoning: Since there is no current bid, I need to start the bidding. Looking at my hand, I have two 7s, two 4s, one 0, one 5, one 9, and one 2. Starting with a conservative but reasonable opening bid, I'll choose a digit I have multiple of—7—and bid 2 7s, reflecting my own hand and leaving room to escalate.
+Attempting to parse extracted action string: 'BID: 2 7S'
+Player 0 (openrouter/quasar-alpha) bids: 2 7s
+
+--- Turn: Player 1 (deepseek/deepseek-chat-v3-0324:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 1 Reasoning: I have two 8s in my hand. The current bid is 2 7s. Since I have a strong hand with multiple 8s, I can confidently bid higher by increasing the digit to 8, which is higher than 7, while keeping the quantity the same. This puts pressure on the opponent without overcommitting.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 1 (deepseek/deepseek-chat-v3-0324:floor) bids: 2 8s
+
+--- Turn: Player 0 (openrouter/quasar-alpha) ---
+Requesting action from Player 0 (openrouter/quasar-alpha), Attempt 1/3
+Player 0 Reasoning: Looking at my hand '75092474', I have zero 8s. Since the current bid is 2 8s, and I have none, it's less likely my opponent has both 8s, though not impossible. A bid of 3 8s would be risky without any in my hand. However, I do have two 7s, so I can safely increase the quantity on 7s to 3, which is a stronger, safer bid given my hand.
+Attempting to parse extracted action string: 'BID: 3 7S'
+Player 0 (openrouter/quasar-alpha) bids: 3 7s
+
+--- Turn: Player 1 (deepseek/deepseek-chat-v3-0324:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 1 Reasoning: I have two 8s in my hand. The current bid is 3 7s. Since I have a strong hand with 8s, I can increase the bid to 3 8s, which is a higher digit than 7s at the same quantity. This seems reasonable given my hand and the current bid.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 1 (deepseek/deepseek-chat-v3-0324:floor) bids: 3 8s
+
+--- Turn: Player 0 (openrouter/quasar-alpha) ---
+Requesting action from Player 0 (openrouter/quasar-alpha), Attempt 1/3
+Player 0 Reasoning: In my hand, the digits are 7, 5, 0, 9, 2, 4, 7, 4. I have no 8s at all. The current bid is 3 8s, which means my opponent is claiming there are at least three 8s across both hands. Since I have zero 8s, that would require my opponent to have all three 8s themselves, which is unlikely given only 8 digits per player and the distribution of digits. Statistically, three 8s in one hand is a rare occurrence. Therefore, it's probable that the bid is an overstatement, and challenging is the best move.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (openrouter/quasar-alpha) challenges Player 1's (deepseek/deepseek-chat-v3-0324:floor) bid of 3 8s.
+Revealed Hands: P0(openrouter/quasar-alpha):75092474 | P1(deepseek/deepseek-chat-v3-0324:floor):30828821
+Actual count of 8s across all hands: 3
+Challenge Failed! Actual count (3) >= Bid quantity (3).
+Winner: Player 1 (deepseek/deepseek-chat-v3-0324:floor)
+Losers: Players 0 (openrouter/quasar-alpha)
+--- Round Ended ---

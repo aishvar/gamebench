@@ -1,0 +1,34 @@
+--- Starting New Round ---
+Player order: ['deepseek/deepseek-r1-distill-qwen-32b:floor', 'mistralai/mistral-small-3.1-24b-instruct:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (mistralai/mistral-small-3.1-24b-instruct:floor) ---
+Requesting action from Player 0 (mistralai/mistral-small-3.1-24b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: Since there are no bids yet, I can start with a reasonable bid. I have one 3 in my hand. Bidding 2 3s is a safe start, as it's likely that the other player has at least one 3.
+Attempting to parse extracted action string: 'BID: 2 3S'
+Player 0 (mistralai/mistral-small-3.1-24b-instruct:floor) bids: 2 3s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: I have two 2s in my hand. The current bid is 2 3s. Bidding 3 2s is a valid higher bid, increasing the quantity while using a digit I hold.
+Attempting to parse extracted action string: 'BID: 3 2S'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) bids: 3 2s
+
+--- Turn: Player 0 (mistralai/mistral-small-3.1-24b-instruct:floor) ---
+Requesting action from Player 0 (mistralai/mistral-small-3.1-24b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 3 2s. I have two 2s in my hand, which makes it likely that there are at least 4 2s in total. Bidding 4 2s is a reasonable move to increase the quantity while keeping the same digit.
+Attempting to parse extracted action string: 'BID: 4 2S'
+Player 0 (mistralai/mistral-small-3.1-24b-instruct:floor) bids: 4 2s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 4 2s. I have two 2s in my hand. Considering the bid history, Player 0 might be trying to bluff. Challenging seems reasonable given the potential total count of 2s.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) challenges Player 0's (mistralai/mistral-small-3.1-24b-instruct:floor) bid of 4 2s.
+Revealed Hands: P0(mistralai/mistral-small-3.1-24b-instruct:floor):53713020 | P1(deepseek/deepseek-r1-distill-qwen-32b:floor):57422081
+Actual count of 2s across all hands: 3
+Challenge Successful! Actual count (3) < Bid quantity (4).
+Winner: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor)
+Losers: Players 0 (mistralai/mistral-small-3.1-24b-instruct:floor)
+--- Round Ended ---

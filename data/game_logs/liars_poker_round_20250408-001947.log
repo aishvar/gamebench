@@ -1,0 +1,21 @@
+Player order: ['meta-llama/llama-4-scout:floor', 'deepseek/deepseek-r1-distill-llama-70b:free']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-4-scout:floor) ---
+Requesting LLM action from Player 0 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 0 Reasoning: Since there are no bids yet, I can make a conservative bid based on my hand. I have multiple 8s, which is a good starting point. With 3 eights in my hand, bidding 3 8s seems reasonable and not too high to be suspicious.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 0 bids: 3 8s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-llama-70b:free) ---
+Requesting LLM action from Player 1 (deepseek/deepseek-r1-distill-llama-70b:free), Attempt 1/3
+Player 1 Reasoning: I have no 8s in my hand, making the total number of 8s dependent on Player 0's hand. The bid is 3 8s, which requires at least three 8s in total. Given the average probability, it's more likely that Player 0 has fewer than three 8s. Challenging is a strategic move as it's probable the bid is false.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1-distill-llama-70b:free) challenges Player 0 (meta-llama/llama-4-scout:floor)'s bid of 3 8s.
+Revealed Hands: P0(meta-llama/llama-4-scout:floor):95088834 | P1(deepseek/deepseek-r1-distill-llama-70b:free):76190765
+Actual count of 8s: 3
+Challenge failed: count(3) >= 3. Bidder wins.
+Losers: 1 (deepseek/deepseek-r1-distill-llama-70b:free)
+--- Round Ended ---

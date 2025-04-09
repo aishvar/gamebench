@@ -1,0 +1,28 @@
+--- Starting New Round ---
+Player order: ['qwen/qwq-32b:nitro', 'openrouter/quasar-alpha']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (qwen/qwq-32b:nitro) ---
+Requesting action from Player 0 (qwen/qwq-32b:nitro), Attempt 1/3
+Player 0 Reasoning: I have two 6s in my hand. Starting the bidding with 3 6s is reasonable since the opponent might have at least one, making the total plausible. Bidding a higher digit (6) gives flexibility for future bids.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 0 (qwen/qwq-32b:nitro) bids: 3 6s
+
+--- Turn: Player 1 (openrouter/quasar-alpha) ---
+Requesting action from Player 1 (openrouter/quasar-alpha), Attempt 1/3
+Player 1 Reasoning: In my hand, I have two 6s. Since the current bid is 3 6s, there need to be at least one more 6 in the opponent's hand for the bid to be valid. This is plausible but not guaranteed. Instead of challenging now, a safer strategic move is to increase the bid slightly to maintain pressure and gather more information. The minimal valid higher bid would be 3 7s, which is safe because it only increases the digit and not the quantity, keeping the bid conservative.
+Attempting to parse extracted action string: 'BID: 3 7S'
+Player 1 (openrouter/quasar-alpha) bids: 3 7s
+
+--- Turn: Player 0 (qwen/qwq-32b:nitro) ---
+Requesting action from Player 0 (qwen/qwq-32b:nitro), Attempt 1/3
+Player 0 Reasoning: The current bid is 3 7s. I have one 7. The opponent has 8 digits, so the chance they have at least two 7s (to reach the bid's total of 3) is low (~19%). Challenging has an 81% probability of success based on random distribution, making it a favorable risk.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (qwen/qwq-32b:nitro) challenges Player 1's (openrouter/quasar-alpha) bid of 3 7s.
+Revealed Hands: P0(qwen/qwq-32b:nitro):38505766 | P1(openrouter/quasar-alpha):99158416
+Actual count of 7s across all hands: 1
+Challenge Successful! Actual count (1) < Bid quantity (3).
+Winner: Player 0 (qwen/qwq-32b:nitro)
+Losers: Players 1 (openrouter/quasar-alpha)
+--- Round Ended ---

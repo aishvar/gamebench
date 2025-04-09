@@ -1,0 +1,22 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-3.3-70b-instruct:floor', 'deepseek/deepseek-r1:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-3.3-70b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.3-70b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: Given that this is the start of the game and there are no previous bids, I need to make an initial bid. Looking at my hand, 44309410, I notice that I have multiple occurrences of the digit '4'. Since I have two '4's, a safe initial bid could be to bid on the total count of '4's, considering it's likely the other player might also have some '4's. Thus, bidding on '4 4s' seems like a reasonable starting point, as it's a digit I have knowledge of and it gives a moderate starting bid that doesn't overestimate the total count across both hands.
+Attempting to parse extracted action string: 'BID: 4 4S'
+Player 0 (meta-llama/llama-3.3-70b-instruct:floor) bids: 4 4s
+
+--- Turn: Player 1 (deepseek/deepseek-r1:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1:floor), Attempt 1/3
+Player 1 Reasoning: My hand contains 0 fours. The opponent bid 4 fours, meaning they must have all 4 in their hand. The probability of having 4 of the same digit in an 8-card hand is low (approximately 0.46% chance for exactly 4). Given the low likelihood and my zero fours, challenging is statistically favorable.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1:floor) challenges Player 0's (meta-llama/llama-3.3-70b-instruct:floor) bid of 4 4s.
+Revealed Hands: P0(meta-llama/llama-3.3-70b-instruct:floor):44309410 | P1(deepseek/deepseek-r1:floor):16576708
+Actual count of 4s across all hands: 3
+Challenge Successful! Actual count (3) < Bid quantity (4).
+Winner: Player 1 (deepseek/deepseek-r1:floor)
+Losers: Players 0 (meta-llama/llama-3.3-70b-instruct:floor)
+--- Round Ended ---

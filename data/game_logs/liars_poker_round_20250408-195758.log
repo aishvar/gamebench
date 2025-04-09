@@ -1,0 +1,31 @@
+Player order: ['Naive 50/50', 'o3-mini-2025-01-31']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 making initial bid: 1 0s
+Player 0 bids: 1 0s
+
+--- Turn: Player 1 (o3-mini-2025-01-31) ---
+Requesting LLM action from Player 1 (o3-mini-2025-01-31), Attempt 1/3
+Player 1 Reasoning: My hand is 59098047, which gives me two 0s. Knowing that there are at least two 0s in total because of my hand, I can safely raise the bid from 1 0s to 2 0s. This bid is strictly higher than 1 0s and leverages the certainty provided by my own cards.
+Attempting to parse extracted action string: 'BID: 2 0S'
+Player 1 bids: 2 0s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Naive chooses BID: 2 1s
+Player 0 bids: 2 1s
+
+--- Turn: Player 1 (o3-mini-2025-01-31) ---
+Requesting LLM action from Player 1 (o3-mini-2025-01-31), Attempt 1/3
+Player 1 Reasoning: My hand (59098047) contains no 1s, so I have no support for the current bid of 2 1s. With only 8 unknown digits in Player 0's hand, the chance that there are at least 2 ones overall is very low (roughly an 18-19% chance). Given these odds, challenging the bid is the most sensible move.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (o3-mini-2025-01-31) challenges Player 0 (Naive 50/50)'s bid of 2 1s.
+Revealed Hands: P0(Naive 50/50):18384166 | P1(o3-mini-2025-01-31):59098047
+Actual count of 1s: 2
+Challenge failed: count(2) >= 2. Bidder wins.
+Losers: 1 (o3-mini-2025-01-31)
+--- Round Ended ---

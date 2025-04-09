@@ -1,0 +1,46 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-4-maverick:floor', 'deepseek/deepseek-r1-distill-qwen-32b:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-4-maverick:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 0 Reasoning: The game has just started with no bids yet, so I can make the first bid. Looking at my hand (72790294), I see that I have two 7s, two 2s, one 9, one 0, and one 4. The most frequent digit in my hand is 2 and 7, both appearing twice. A reasonable starting bid could be on the digit '2' or '7'. I'll choose '2' because it's lower than '7', giving me more flexibility to increase the digit later if needed. I'll bid 2 2s as it's a conservative start.
+Attempting to parse extracted action string: 'BID: 2 2S'
+Player 0 (meta-llama/llama-4-maverick:floor) bids: 2 2s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 2s. I have two 3s in my hand. Bidding 2 3s is a valid higher bid since it increases the digit while keeping the quantity the same. This seems reasonable given my hand.
+Attempting to parse extracted action string: 'BID: 2 3S'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) bids: 2 3s
+
+--- Turn: Player 0 (meta-llama/llama-4-maverick:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 2 3s. I have one 2 and no 3s in my hand (72790294). The count of 3s is likely to be 2 or less since I have no 3s and my opponent bid 2 3s. I can bid higher by either increasing the quantity or the digit. Bidding 2 4s seems reasonable as it increases the digit and is based on my hand knowledge.
+Attempting to parse extracted action string: 'BID: 2 4S'
+Player 0 (meta-llama/llama-4-maverick:floor) bids: 2 4s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 4s. I have two 4s in my hand, and the total across both players could be up to four. Bidding 3 4s is a reasonable increase in quantity, assuming Player 0 has at least one more 4.
+Attempting to parse extracted action string: 'BID: 3 4S'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) bids: 3 4s
+
+--- Turn: Player 0 (meta-llama/llama-4-maverick:floor) ---
+Requesting action from Player 0 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 3 4s. I have one 4 in my hand (72790294), so it's possible that there are at least three 4s in total. However, I also have two 7s and two other relatively high digits (9 and 2). I can increase the quantity or the digit. Bidding 3 7s seems reasonable as I have two 7s and it's a higher digit, making it a valid and potentially strong bid.
+Attempting to parse extracted action string: 'BID: 3 7S'
+Player 0 (meta-llama/llama-4-maverick:floor) bids: 3 7s
+
+--- Turn: Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) ---
+Requesting action from Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 7s. I have one 7 in my hand, so the total could be 3 if Player 0 has two 7s. However, considering the bidding history and the risk involved, challenging seems prudent to test the validity of the bid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (deepseek/deepseek-r1-distill-qwen-32b:floor) challenges Player 0's (meta-llama/llama-4-maverick:floor) bid of 3 7s.
+Revealed Hands: P0(meta-llama/llama-4-maverick:floor):72790294 | P1(deepseek/deepseek-r1-distill-qwen-32b:floor):30171431
+Actual count of 7s across all hands: 3
+Challenge Failed! Actual count (3) >= Bid quantity (3).
+Winner: Player 0 (meta-llama/llama-4-maverick:floor)
+Losers: Players 1 (deepseek/deepseek-r1-distill-qwen-32b:floor)
+--- Round Ended ---

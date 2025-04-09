@@ -1,0 +1,42 @@
+Player order: ['Naive 50/50', 'google/gemma-3-27b-it:floor']
+Generated 2 hands.
+Hands dealt to 2 players.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 making initial bid: 1 0s
+Player 0 bids: 1 0s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting LLM action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 1 zero. I have zero zeros in my hand. The opponent is a naive player, meaning they are likely to bid randomly. It's plausible they have at least one zero. Bidding '2 0s' is a reasonable increase, as it's not excessively high and attempts to exploit the opponent's naivety. A challenge is too risky at this stage, as the opponent could easily have one zero.
+Attempting to parse extracted action string: 'BID: 2 0S'
+Player 1 bids: 2 0s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Naive chooses BID: 2 1s
+Player 0 bids: 2 1s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting LLM action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 2 1s. I have one 1 in my hand. The opponent is a naive player, so they are likely to bid randomly. It's reasonable to assume they don't have many 1s. Bidding 3 1s seems plausible and avoids a challenge at this stage, as it's not an extremely aggressive bid. Increasing the quantity is safer than increasing the digit, as it's less likely to be a bluff. Since the maximum possible quantity is 16, and the current bid is low, a quantity increase is a good strategy.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 1 bids: 3 1s
+
+--- Turn: Player 0 (Naive 50/50) ---
+Calculating action for Player 0 (Naive 50/50)
+Naive chooses BID: 3 2s
+Player 0 bids: 3 2s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting LLM action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 2s. I have zero 2s in my hand. Player 0 has been making relatively conservative bids, and their last bid of 3 2s feels potentially high. The bid history shows a pattern of escalating bids, but it's unlikely Player 0 has three 2s given their 'Naive 50/50' strategy. While I could bid higher, I think challenging is the optimal play here. A bid of 4 2s is very unlikely to be true. If I bid, I risk being forced to call a bluff with a hand that has no 2s. Challenging maximizes my chances of winning without revealing information about my hand.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (google/gemma-3-27b-it:floor) challenges Player 0 (Naive 50/50)'s bid of 3 2s.
+Revealed Hands: P0(Naive 50/50):33431684 | P1(google/gemma-3-27b-it:floor):00967841
+Actual count of 2s: 0
+Challenge successful: count(0) < 3. Challenger wins.
+Losers: 0 (Naive 50/50)
+--- Round Ended ---

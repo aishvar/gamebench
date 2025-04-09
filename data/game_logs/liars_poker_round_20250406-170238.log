@@ -1,0 +1,87 @@
+--- Starting New Round ---
+Player order: ['meta-llama/llama-3.1-8b-instruct:floor', 'google/gemma-3-27b-it:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: I have a 5 in my hand. With no previous bids to compare, I'll start by bidding on a low digit to gauge the opponent's hand. I'll choose a quantity of 1 and a digit of 5.
+Attempting to parse extracted action string: 'BID: 1 5S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 1 5s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 1 5s. I have no 5s in my hand. Bidding 2 5s is a reasonable increase in quantity, and I'm willing to take the risk since I don't have any 5s to contribute. This seems like a plausible bid for my opponent to potentially have to challenge.
+Attempting to parse extracted action string: 'BID: 2 5S'
+Player 1 (google/gemma-3-27b-it:floor) bids: 2 5s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 2 5s. I have a 5 in my hand, but I also have a 2, which could potentially be a 5. Given the low quantity, I should bid a higher quantity or a higher digit. I'll bid 3 5s, as it's a reasonable increase.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 3 5s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 5s. I have no 5s in my hand. Bidding higher than 3 5s is necessary. I have two 6s, so bidding 4 6s is a reasonable option, increasing both the quantity and the digit. Alternatively, I could challenge, but given the history of increasing bids, it's likely the opponent has at least some 5s. A small increase in the bid seems safer than a challenge at this stage.
+Attempting to parse extracted action string: 'BID: 4 6S'
+Player 1 (google/gemma-3-27b-it:floor) bids: 4 6s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: I have a 6 in my hand. The current bid is 4 6s. I should increase the quantity to 5, as it's a higher quantity and I have a 6 in my hand.
+Attempting to parse extracted action string: 'BID: 5 6S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 5 6s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 5 6s. I have two 6s in my hand. Bidding 6 6s is a reasonable increase in quantity, and still plausible given my hand. It's a relatively safe bid, increasing the pressure on the opponent without being overly aggressive.
+Attempting to parse extracted action string: 'BID: 6 6S'
+Player 1 (google/gemma-3-27b-it:floor) bids: 6 6s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 6 6s. I have two 6s in my hand. I can increase both quantity and digit based on my hand, making a bid of 7 6s.
+Attempting to parse extracted action string: 'BID: 7 6S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 7 6s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 7 6s. I have two 6s in my hand. It's unlikely there are 7 6s total, but the opponent has been consistently bidding up 6s. Bidding 8 6s is possible, but risky. Instead, I will bid on a different digit. I have three 4s in my hand. Bidding 4 4s is a reasonable increase in digit and quantity from the previous bid of 7 6s. It's a safer bid than pushing the 6s further.
+Attempting to parse extracted action string: 'BID: 4 4S'
+Parse Error: Bid 4 4s is not higher than current bid 7 6s.
+Player 1 provided invalid action or malformed/unparsable JSON. Re-prompting...
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 2/3
+Player 1 Reasoning: The current bid is 7 6s. I have two 6s in my hand. Given the history of escalating bids on 6s, and the fact that the opponent has already bid up to 7, it's likely they also have a few 6s. Bidding 8 6s is a reasonable increase, and I have the cards to potentially support it. Bidding higher on a different digit is risky as the opponent seems focused on 6s. Challenging seems premature as the opponent has consistently increased their bid, suggesting they have information.
+Attempting to parse extracted action string: 'BID: 8 6S'
+Player 1 (google/gemma-3-27b-it:floor) bids: 8 6s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 8 6s. I have two 6s in my hand. Bidding 9 6s seems reasonable, increasing quantity based on my hand.
+Attempting to parse extracted action string: 'BID: 9 6S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 9 6s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 9 6s. I have two 6s in my hand. While I could bid higher on 6s, it's risky. Bidding on a different digit seems more strategic. I have three 4s. Bidding 10 4s is a reasonable increase in quantity and would be difficult to challenge. Alternatively, challenging the 9 6s is an option, but given the recent history of escalating 6s bids, it's likely the other player has a few. I'll go with the safer bid of 10 4s.
+Attempting to parse extracted action string: 'BID: 10 4S'
+Player 1 (google/gemma-3-27b-it:floor) bids: 10 4s
+
+--- Turn: Player 0 (meta-llama/llama-3.1-8b-instruct:floor) ---
+Requesting action from Player 0 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 10 4s, but since I have a 4 in my hand, I can make a bid with a higher quantity. I also have a 5 in my hand, which is higher than the current digit. Considering the bid history, it's likely that Player 1 is trying to keep the digit count low. Bidding 11 5s seems reasonable.
+Attempting to parse extracted action string: 'BID: 11 5S'
+Player 0 (meta-llama/llama-3.1-8b-instruct:floor) bids: 11 5s
+
+--- Turn: Player 1 (google/gemma-3-27b-it:floor) ---
+Requesting action from Player 1 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 11 5s. I have no 5s in my hand. Given there are only 16 total digits, 11 5s is highly improbable. It's a strong candidate for a challenge. While I have two 6s, and four 4s, bidding higher would likely be a bluff that could easily be called. Challenging seems like the most rational play.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1 (google/gemma-3-27b-it:floor) challenges Player 0's (meta-llama/llama-3.1-8b-instruct:floor) bid of 11 5s.
+Revealed Hands: P0(meta-llama/llama-3.1-8b-instruct:floor):52171512 | P1(google/gemma-3-27b-it:floor):62064943
+Actual count of 5s across all hands: 2
+Challenge Successful! Actual count (2) < Bid quantity (11).
+Winner: Player 1 (google/gemma-3-27b-it:floor)
+Losers: Players 0 (meta-llama/llama-3.1-8b-instruct:floor)
+--- Round Ended ---

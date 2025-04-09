@@ -1,0 +1,28 @@
+--- Starting New Round ---
+Player order: ['google/gemini-2.0-flash-001:floor', 'deepseek/deepseek-r1:floor']
+Generated 2 hands.
+Round setup complete. Starting bids.
+
+--- Turn: Player 0 (deepseek/deepseek-r1:floor) ---
+Requesting action from Player 0 (deepseek/deepseek-r1:floor), Attempt 1/3
+Player 0 Reasoning: I have three 9s in my hand. Since the current bid is None, starting with 3 9s is safe and credible. Even if the opponent has no 9s, the total count would match my bid, making it unchallengeable. This establishes a strong opening position while leveraging my highest-frequency digit.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 0 (deepseek/deepseek-r1:floor) bids: 3 9s
+
+--- Turn: Player 1 (google/gemini-2.0-flash-001:floor) ---
+Requesting action from Player 1 (google/gemini-2.0-flash-001:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 9s. I have no 9s in my hand. I could bid 4 0s, increasing the quantity and changing the digit. Or I could bid 3 of a digit higher than 9, which doesn't exist, or increase the quantity. Since I have a 5, 6, 7, 8, 2, 1, 0, I can bid 4 0s or 4 of any of those digits. I will bid 4 0s.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 1 (google/gemini-2.0-flash-001:floor) bids: 4 0s
+
+--- Turn: Player 0 (deepseek/deepseek-r1:floor) ---
+Requesting action from Player 0 (deepseek/deepseek-r1:floor), Attempt 1/3
+Player 0 Reasoning: I have zero 0s in my hand. The opponent needs exactly 4 zeros in their 8-digit hand for the current bid to be valid. Given the low probability of having four 0s (approximately 7.3% chance) and the high risk of continuing the bidding with uncertain information, challenging offers a high likelihood of success.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0 (deepseek/deepseek-r1:floor) challenges Player 1's (google/gemini-2.0-flash-001:floor) bid of 4 0s.
+Revealed Hands: P0(deepseek/deepseek-r1:floor):13294992 | P1(google/gemini-2.0-flash-001:floor):67582150
+Actual count of 0s across all hands: 1
+Challenge Successful! Actual count (1) < Bid quantity (4).
+Winner: Player 0 (deepseek/deepseek-r1:floor)
+Losers: Players 1 (google/gemini-2.0-flash-001:floor)
+--- Round Ended ---
