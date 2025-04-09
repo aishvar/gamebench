@@ -61,6 +61,10 @@ for model_full, ratings in data['model_ratings'].items():
             model_name = 'Claude 3.5 Sonnet 2024-10-22'
         elif 'gpt-4o-2024-11-20' in model_full:
             model_name = 'GPT-4o 2024-11-20'
+        elif 'o3-mini' in model_full:
+            model_name = 'o3-mini (high)'
+        elif 'o1-2024' in model_full:
+            model_name = 'o1 (high)'
         elif 'gemini-2.0-flash' in model_full:
             model_name = 'Gemini 2.0 Flash'
         else:
