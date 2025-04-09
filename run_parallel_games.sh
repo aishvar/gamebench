@@ -4,7 +4,7 @@
 
 COUNT=${1:-2}  # Default to 2 if not provided
 
-CONFIG_INPUT=$'2\nR\nC\nopenai\ngpt-4.5-preview\n1'
+CONFIG_INPUT=$'2\nR\nC\nopenai\no1-2024-12-17\n1'
 
 #CONFIG_INPUT=$'2\nR\n19\n1'
 
