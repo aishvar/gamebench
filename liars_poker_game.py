@@ -10,75 +10,7 @@ import re
 from typing import List, Tuple, Dict, Optional, NamedTuple, Union, Any
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
-import fcntl  # Added for file locking on POSIX systems
-
-# Assuming llm_client.py is in the same parent directory or accessible via PYTHONPATH
-# Ensure llm_client.py exists and is correctly implemented
-try:
-    from llm_client import LLMClient, parse_response_text, log_llm_call, LOGS_DIR
-except ImportError:
-    # Provide a dummy implementation if llm_client is missing, for basic structure testing
-    print("Warning: llm_client.py not found. Using dummy implementation.")
-    LOGS_DIR = "logs"
-    os.makedirs(LOGS_DIR, exist_ok=True)
-
-    class LLMClient:
-        def __init__(self, provider: str, model: str, max_tokens: int, temperature: float, max_retries: int, timeout: int):
-            self.provider = provider
-            self.model = model
-            self.max_tokens = max_tokens
-            self.temperature = temperature
-            self.max_retries = max_retries
-            self.timeout = timeout
-            print(f"Dummy LLMClient initialized for {provider}/{model}")
-
-        def call_llm(self, developer_message: str, user_message: str, system_message: str) -> Optional[Dict[str, Any]]:
-            # Dummy response for testing purposes
-            print(f"--- Dummy LLM Call ({self.model}) ---")
-            print(f"System: {system_message}")
-            print(f"Developer: {developer_message}")
-            print(f"User: {user_message}")
-            # Simulate a valid response structure
-            dummy_reasoning = "This is a dummy reasoning based on the prompt."
-            # Simulate either a bid or challenge based on simple logic for testing
-            if "Current Bid: None" in user_message:
-                dummy_action = "BID: 2 5s"
-            else:
-                # Try to make a slightly higher bid or challenge randomly
-                bid_match = re.search(r"Current Bid: Bid\(quantity=(\d+), digit=(\d+)\)", user_message)
-                if bid_match and random.random() > 0.3:
-                    qty = int(bid_match.group(1))
-                    digit = int(bid_match.group(2))
-                    if digit < 9:
-                        dummy_action = f"BID: {qty} {digit+1}s"
-                    else:
-                        dummy_action = f"BID: {qty+1} 0s"
-                else:
-                    dummy_action = "CHALLENGE"
-
-            response_content = json.dumps({
-                "reasoning": dummy_reasoning,
-                "action": dummy_action
-            })
-            # Simulate the structure returned by the actual client
-            return {
-                "model": self.model,
-                "usage": {"prompt_tokens": 100, "completion_tokens": 50},
-                "choices": [{"message": {"content": response_content}}]
-            }
-
-    def parse_response_text(response_json: Optional[Dict[str, Any]]) -> Optional[str]:
-        if response_json and "choices" in response_json and response_json["choices"]:
-            message = response_json["choices"][0].get("message", {})
-            content = message.get("content")
-            if content:
-                return str(content).strip()
-        return None
-
-    def log_llm_call(provider: str, model: str, request_data: Dict[str, Any], response_data: Dict[str, Any]) -> str:
-        # Dummy logging function
-        print(f"Dummy LLM Call Logged for provider={provider}, model={model}")
-        return "dummy_log_file.json"
+import fcntl  # Added for file locking on logging
 
 # Override LOGS_DIR to save logs in the 'data' directory within the current folder
 LOGS_DIR = os.path.join(os.path.dirname(__file__), "data")
