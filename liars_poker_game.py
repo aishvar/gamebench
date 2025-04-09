@@ -315,8 +315,12 @@ class LiarsPokerGame:
 
             else:
                 # --- MODIFIED LOGIC FOR RANDOM PLAYERS ---
-                # We'll pick a sub-strategy that doesn't conflict with used_strategies
+                # We'll pick a sub-strategy that doesn't conflict with used_strategies,
+                # and allow Naive 50/50 ("N") as one of the random options.
                 possible_choices = []
+                if ('naive_5050', None) not in used_strategies:
+                    possible_choices.append({"strategy_type": "naive_5050"})
+
                 for cfg in self.COMMON_CONFIGS:
                     if cfg['strategy_type'] == 'llm':
                         model_key = (cfg['provider'], cfg['model'])
