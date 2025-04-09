@@ -6,7 +6,7 @@
 
 * **Resistance to Direct Optimization:** Ironically, Game Benchmarks are the _least gameable_. Unlike knowledge-based tests, which models can easily be fine-tuned on, improving scores in game benchmarks requires the sophisticated development of reinforcement learning environments encompassing multiple varied games.
 
-* **Robust Against Data Contamination::** Similar to the above, Game Benchmarks are more or less contamination proof. Typically, the strategic knowledge required to play these games is already available to LLMs through their training data, making direct memorization ineffective.
+* **Robust Against Data Contamination:** Similar to the above, Game Benchmarks are more or less contamination proof. Typically, the strategic knowledge required to play these games is already available to LLMs through their training data, making direct memorization ineffective.
 
 * **High Extensibility and Customizability:** Compared to more traditional benchmarks, game benchmarks can easily be made harder (or easier) by simple extensions. For example, one could test adaptability by having two model's repeatedly play other and carry over context to understand if models are capable of adapting and exploiting weaknesses in the other's gameplay. Or one could easily take a game that can support multiple players and modify the benchmark by increasing (or decreasing) the # of players—thereby requiring models to deal with a more (or less) complex game state.
 
