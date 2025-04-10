@@ -6,7 +6,7 @@ COUNT=${1:-2}  # Default to 2 if not provided
 
 #CONFIG_INPUT=$'2\nR\nC\nopenrouter\nopenrouter/optimus-alpha\n1'
 
-#CONFIG_INPUT=$'2\nR\n19\n1'
+CONFIG_INPUT=$'2\nR\n20\n1'
 
 TEMP_DIR="./.tmp_game_status"
 
