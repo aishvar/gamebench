@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#use this for 2-player games
+# use this for 2-player games
 
 import os
 import json
@@ -14,15 +14,9 @@ def canonical_name(model_name):
     return model_name.split(":", 1)[0]
 
 def elo_expected(ratingA, ratingB):
-    """Returns expected score for A vs. B using standard 400-point spacing."""
     return 1.0 / (1.0 + 10.0 ** ((ratingB - ratingA) / 400.0))
 
 def elo_update(ratingA, ratingB, scoreA, k=20):
-    """
-    ratingA, ratingB: current Elo ratings for A and B.
-    scoreA: actual score for A (1 if A wins, 0 if A loses).
-    Returns the updated (ratingA, ratingB).
-    """
     expectedA = elo_expected(ratingA, ratingB)
     expectedB = 1.0 - expectedA
     newA = ratingA + k * (scoreA - expectedA)
@@ -55,8 +49,8 @@ def main():
         winner = canonical_name(entry["winner"])
         losers = [canonical_name(l) for l in entry["losers"]]
 
-        # If there's no winner, skip rating updates
-        if winner is None:
+        # Skip Elo update if it's a self-match (winner appears in losers)
+        if winner is None or winner in losers:
             new_timestamps.append(ts)
             continue
 
@@ -71,7 +65,6 @@ def main():
         for lm in losers:
             w_rating = model_ratings[winner]
             l_rating = model_ratings[lm]
-            # Winner gets 1.0, loser gets 0.0
             new_w, new_l = elo_update(w_rating, l_rating, 1.0, k=20)
             model_ratings[winner] = new_w
             model_ratings[lm] = new_l
