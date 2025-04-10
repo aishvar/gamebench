@@ -4,8 +4,10 @@ import os
 import json
 from trueskill_minimal import Rating, rate
 
-LOG_PATH = os.path.join("data", "hands_log.json")
-RATINGS_PATH = "model_ratings.json"
+#use this for multiple players
+
+#LOG_PATH = os.path.join("data", "hands_log.json") #change 
+#RATINGS_PATH = "model_ratings.json" #change
 
 def canonical_name(model_name):
     # Handle cases where model_name might be None
