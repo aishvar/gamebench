@@ -487,9 +487,9 @@ class TruncateFactor(Factor):
 ###############################################################################
 
 MU               = 25.0
-SIGMA            = MU/3.0
-BETA             = SIGMA/2.0
-TAU              = 0#SIGMA/100.0
+SIGMA            = MU/3.0 #default
+BETA             = SIGMA/2.0 #default   
+TAU              = 0 #SIGMA/100.0 #default
 DRAW_PROBABILITY = 0.0 # No Draws in Liars Poker, but could change for other games.
 DELTA            = 0.0001
 
