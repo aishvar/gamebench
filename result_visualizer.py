@@ -19,6 +19,8 @@ for model_full, ratings in data['model_ratings'].items():
     # Extract and format model name for cleaner display
     if 'Naive' in model_full:
         model_name='Naive 50/50'
+    elif 'optimus-alpha' in model_full:
+        model_name='Optimus Alpha'
     elif '/' in model_full:
         # For models with provider/model format
         provider, model_part = model_full.split('/', 1)
