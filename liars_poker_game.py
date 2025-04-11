@@ -198,7 +198,7 @@ class LiarsPokerGame:
         {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/optimus-alpha"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
+        #gonefornow but swap in to real{"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
     ]
 
