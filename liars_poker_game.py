@@ -170,6 +170,9 @@ class LiarsPokerGame:
         # === OpenAI ===
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
+        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-2025-04-14"},
+        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-mini-2025-04-14"},
+        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-nano-2025-04-14"},
         {"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
 
         # === Anthropic ===
@@ -197,8 +200,6 @@ class LiarsPokerGame:
         {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/optimus-alpha"},
-        #gonefornow but swap in to real{"strategy_type": "llm", "provider": "openrouter", "model": "openrouter/quasar-alpha"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
     ]
 
