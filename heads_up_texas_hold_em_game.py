@@ -332,113 +332,133 @@ class HeadsUpTexasHoldEmGame:
     def _betting_round(self, street_name: str) -> bool:
         """
         Force both players to act in the betting round.
-        The round ends when each player has taken an action and no new bet is introduced.
+
+        ‑ On any street *except* Pre‑flop, a voluntary BET / RAISE followed by a
+          CALL ends the round immediately.
+        ‑ On Pre‑flop we still need the big blind’s option, so the “bet‑was‑called
+          → end round” rule triggers only after a voluntary raise.
         """
         self._log(f"--- {street_name} betting round ---")
-        if street_name == "Preflop":
-            next_to_act = self.button_index
-        else:
-            next_to_act = self._opponent_idx(self.button_index)
+        next_to_act = self.button_index if street_name == "Preflop" else self._opponent_idx(self.button_index)
 
-        last_raiser: Optional[int] = None
-        # Count actions that do not introduce a new bet.
-        consecutive_calls = 0
+        consecutive_checks = 0          # for check‑check detection
+        round_has_voluntary_bet = False # becomes True after first BET / RAISE
 
         while True:
-            if self.stacks[next_to_act] == 0:
-                # If player is all-in, simply pass
-                if self.bets[0] == self.bets[1] or self.stacks[self._opponent_idx(next_to_act)] == 0:
+            if self.stacks[next_to_act] == 0:                       # player already all‑in
+                if self.bets[0] == self.bets[1]:
                     return True
                 next_to_act = self._opponent_idx(next_to_act)
                 continue
 
             to_call = self.current_bet - self.bets[next_to_act]
             action = self._get_player_action(next_to_act, to_call, street_name)
-            if not action:
+            if not action or not isinstance(action, str):
                 self._log(f"Player {next_to_act} => parse fail => fold.")
                 return False
 
-            # Ensure action is a string.
-            if not isinstance(action, str):
-                action = str(action)
+            action = action.strip().upper()
+            self._log(f"Player {next_to_act} => {action}")
 
-            self._log(f"Player {next_to_act} => {action.upper()}")
-
-            if action.upper() == "FOLD":
+            # -------------------------- FOLD --------------------------
+            if action == "FOLD":
                 return False
-            elif action.upper() == "CHECK":
-                if to_call > 0:
-                    self._log("(CHECK when call is required; treating as CALL)")
+
+            # -------------------------- CHECK -------------------------
+            if action == "CHECK":
+                if to_call:              # check when a call is required → treat as CALL
                     action = "CALL"
                 else:
-                    # No chips moved, but counts as an action.
-                    consecutive_calls += 1
-                    if consecutive_calls >= 2 and self.bets[0] == self.bets[1]:
+                    consecutive_checks += 1
+                    if consecutive_checks >= 2 and self.bets[0] == self.bets[1]:
                         return True
                     next_to_act = self._opponent_idx(next_to_act)
                     continue
 
-            if action.upper() == "CALL":
+            # -------------------------- CALL --------------------------
+            if action == "CALL":
                 call_amt = min(to_call, self.stacks[next_to_act])
                 self.stacks[next_to_act] -= call_amt
                 self.pot += call_amt
                 self.bets[next_to_act] += call_amt
-                consecutive_calls += 1
-                if consecutive_calls >= 2 and self.bets[0] == self.bets[1]:
+
+                # if this call closed a voluntary bet/raise, end the street immediately
+                if to_call and round_has_voluntary_bet:
                     return True
+
+                consecutive_checks = 1   # one “check” equivalent (the call of zero next)
                 next_to_act = self._opponent_idx(next_to_act)
-            elif action.upper().startswith("BET") or action.upper().startswith("RAISE"):
-                m = re.match(r"(BET|RAISE)\s*:\s*(\d+)", action.upper())
-                if not m:
-                    self._log("Raise parse failure => fold.")
-                    return False
-                try:
-                    raise_amt = int(m.group(2))
-                except:
-                    self._log("Bad raise amount => fold.")
-                    return False
-                old_bet = self.current_bet
-                already_in = self.bets[next_to_act]
-                if old_bet == 0 and action.upper().startswith("BET"):
-                    new_bet = raise_amt
-                else:
-                    new_bet = old_bet + raise_amt
-                if (new_bet - old_bet) < self.last_raise_size:
-                    new_bet = old_bet + self.last_raise_size
-                if new_bet <= already_in:
-                    self._log("Invalid raise (new bet not higher) => fold.")
-                    return False
-                cost = new_bet - already_in
-                if cost > self.stacks[next_to_act]:
-                    cost = self.stacks[next_to_act]
-                    new_bet = already_in + cost
-                self.stacks[next_to_act] -= cost
-                self.pot += cost
-                self.bets[next_to_act] = new_bet
-                self.current_bet = new_bet
-                actual_raise = new_bet - old_bet
-                self.last_raise_size = actual_raise
-                last_raiser = next_to_act
-                consecutive_calls = 0  # reset on new bet
-                next_to_act = self._opponent_idx(next_to_act)
-            else:
+                continue
+
+            # ------------------- BET / RAISE --------------------------
+            m = re.match(r"(BET|RAISE)\s*:\s*(\d+)", action)
+            if not m:
                 self._log("Unrecognized action => fold.")
                 return False
+
+            raise_amt = int(m.group(2))
+            old_bet    = self.current_bet
+            already_in = self.bets[next_to_act]
+
+            new_bet = raise_amt if (old_bet == 0 and m.group(1) == "BET") else old_bet + raise_amt
+            if (new_bet - old_bet) < self.last_raise_size:
+                new_bet = old_bet + self.last_raise_size
+            if new_bet <= already_in:
+                self._log("Invalid raise (new bet not higher) => fold.")
+                return False
+
+            cost = min(new_bet - already_in, self.stacks[next_to_act])
+            new_bet = already_in + cost
+
+            # commit chips
+            self.stacks[next_to_act] -= cost
+            self.pot                 += cost
+            self.bets[next_to_act]    = new_bet
+            self.current_bet          = new_bet
+            self.last_raise_size      = new_bet - old_bet
+            round_has_voluntary_bet   = True
+            consecutive_checks        = 0
+            next_to_act               = self._opponent_idx(next_to_act)
+
+    # ----------------------- NEW JSON PARSING HELPERS ------------------------
+
+    @staticmethod
+    def _extract_action_from_text(txt: str) -> Optional[str]:
+        """
+        Extract the 'action' value from a variety of possible LLM formats.
+        """
+        # Fast path – clean fences and try direct load
+        cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", txt.strip(), flags=re.I)
+        try:
+            return str(json.loads(cleaned).get("action"))
+        except Exception:
+            pass
+
+        # Fallback – grab the first well‑formed JSON object
+        m = re.search(r"\{.*?\}", txt, re.S)
+        if m:
+            try:
+                return str(json.loads(m.group(0)).get("action"))
+            except Exception:
+                pass
+        return None
+
+    # --------------------------- PLAYER ACTION ------------------------------
 
     def _get_player_action(self, pidx: int, to_call: int, street: str) -> Optional[str]:
         pl = self.players[pidx]
         if pl.strategy_type == "llm":
-            return self._get_llm_action(pl, to_call, street)
+            return self._get_llm_action(pl, pidx, to_call, street)
         elif pl.strategy_type == "naive":
             return self._get_naive_action(pidx, to_call)
         elif pl.strategy_type == "random":
             if not pl.effective_strategy:
-                picks = [("naive", None)]
-                for cc in COMMON_CONFIGS:
-                    picks.append(("llm", {"provider": cc["provider"], "model": cc["model"]}))
+                picks = [("naive", None)] + [
+                    ("llm", {"provider": cc["provider"], "model": cc["model"]})
+                    for cc in COMMON_CONFIGS
+                ]
                 pick = random.choice(picks)
-                pl.effective_strategy = pick[0]
-                pl.effective_model_config = pick[1]
+                pl.effective_strategy, pl.effective_model_config = pick
                 if pl.effective_strategy == "llm":
                     try:
                         pl.client = LLMClient(
@@ -454,10 +474,8 @@ class HeadsUpTexasHoldEmGame:
                         pl.effective_strategy = "naive"
             if pl.effective_strategy == "naive":
                 return self._get_naive_action(pidx, to_call)
-            else:
-                return self._get_llm_action(pl, to_call, street)
-        else:
-            return None
+            return self._get_llm_action(pl, pidx, to_call, street)
+        return None
 
     def _get_naive_action(self, pidx: int, to_call: int) -> str:
         stack = self.stacks[pidx]
@@ -465,19 +483,19 @@ class HeadsUpTexasHoldEmGame:
             return "CALL"
         if to_call == 0:
             return f"BET: {stack}"
-        else:
-            needed = stack - to_call
-            return f"RAISE: {needed}"
+        needed = stack - to_call
+        return f"RAISE: {needed}"
 
-    def _get_llm_action(self, pl: Player, to_call: int, street: str) -> Optional[str]:
+    def _get_llm_action(self, pl: Player, pidx: int, to_call: int, street: str) -> Optional[str]:
         if not pl.client:
             self._log("LLM strategy with no client; folding.")
             return None
+
         user_msg = (
             f"Street: {street}\n"
             f"Pot: {self.pot}\n"
-            f"Your stack: {self.stacks[pl.player_id]}\n"
-            f"Opponent stack: {self.stacks[self._opponent_idx(pl.player_id)]}\n"
+            f"Your stack: {self.stacks[pidx]}\n"
+            f"Opponent stack: {self.stacks[self._opponent_idx(pidx)]}\n"
             f"Amount to call: {to_call}\n"
             "Valid actions:\n"
             "  - FOLD\n"
@@ -488,23 +506,17 @@ class HeadsUpTexasHoldEmGame:
         )
         sys_msg = "You are playing simplified heads-up Texas Hold'em. Return valid JSON."
         dev_msg = "Heads-up Hold'em: return an action in JSON (FOLD/CALL/CHECK/BET: X/RAISE: X)."
+
         resp = pl.client.call_llm(
-            developer_message=dev_msg, user_message=user_msg, system_message=sys_msg
+            developer_message=dev_msg,
+            user_message=user_msg,
+            system_message=sys_msg
         )
         if not resp:
             return None
-        txt = parse_response_text(resp)
-        if not txt:
-            return None
-        cleaned = txt.strip().strip("```")
-        try:
-            j = json.loads(cleaned)
-            result = j["action"]
-            if not isinstance(result, str):
-                result = str(result)
-            return result
-        except Exception:
-            return None
+
+        txt = parse_response_text(resp) or ""
+        return self._extract_action_from_text(txt)
 
     # --- Round Resolution and Logging ---
 
@@ -522,48 +534,26 @@ class HeadsUpTexasHoldEmGame:
         self._log(f"P0 hole: {self._describe_cards(c0)} / stack={self.stacks[0]}")
         self._log(f"P1 hole: {self._describe_cards(c1)} / stack={self.stacks[1]}")
 
-        survived = self._betting_round("Preflop")
-        if not survived:
-            return self._fold_result()
-        self._settle_bets()
-
-        self._log(f"FLOP: {self._describe_cards(flop)}")
-        survived = self._betting_round("Flop")
-        if not survived:
-            return self._fold_result()
-        self._settle_bets()
-
-        self._log(f"TURN: {self._describe_cards(turn)}")
-        survived = self._betting_round("Turn")
-        if not survived:
-            return self._fold_result()
-        self._settle_bets()
-
-        self._log(f"RIVER: {self._describe_cards(river)}")
-        survived = self._betting_round("River")
-        if not survived:
-            return self._fold_result()
+        for street, cards in [("Preflop", None), ("Flop", flop), ("Turn", turn), ("River", river)]:
+            if street != "Preflop":
+                self._log(f"{street.upper()}: {self._describe_cards(cards)}")
+            if not self._betting_round(street):
+                return self._fold_result()
+            self._settle_bets()
 
         board = flop + turn + river
         cmp_val = self.compare_final_hands(c0, c1, board)
         if cmp_val > 0:
             return self._end_hand_with_winner(0)
-        elif cmp_val < 0:
+        if cmp_val < 0:
             return self._end_hand_with_winner(1)
-        else:
-            self._log("Tie at showdown => no single winner.")
-            self._save_log()
-            return (None, [0, 1], self.round_log)
+        self._log("Tie at showdown => no single winner.")
+        self._save_log()
+        return (None, [0, 1], self.round_log)
 
     def _fold_result(self) -> Tuple[Optional[int], List[int], List[str]]:
-        if self.bets[0] < self.bets[1]:
-            folder = 0
-        elif self.bets[1] < self.bets[0]:
-            folder = 1
-        else:
-            folder = 0
-        winner = self._opponent_idx(folder)
-        return self._end_hand_with_winner(winner)
+        folder = 0 if self.bets[0] < self.bets[1] else 1
+        return self._end_hand_with_winner(self._opponent_idx(folder))
 
     def _end_hand_with_winner(self, widx: int) -> Tuple[Optional[int], List[int], List[str]]:
         self._log(f"Player {widx} ({self.players[widx].get_display_name()}) WINS the pot of {self.pot} chips!")
@@ -583,16 +573,9 @@ class HeadsUpTexasHoldEmGame:
                 fcntl.flock(f, fcntl.LOCK_EX)
                 f.seek(0)
                 cont = f.read().strip()
-                if cont:
-                    try:
-                        hist = json.loads(cont)
-                        if not isinstance(hist, list):
-                            logger.warning("Corrupt hand history; overwriting.")
-                            hist = []
-                    except:
-                        logger.warning("Invalid hand history; overwriting.")
-                        hist = []
-                else:
+                hist = json.loads(cont) if cont else []
+                if not isinstance(hist, list):
+                    logger.warning("Corrupt hand history; overwriting.")
                     hist = []
                 hist.append(hand_entry)
                 f.seek(0)
@@ -601,7 +584,11 @@ class HeadsUpTexasHoldEmGame:
                 fcntl.flock(f, fcntl.LOCK_UN)
         except Exception as e:
             self._log(f"Error updating hand history: {e}")
-        return (self.players[widx].original_order, [self.players[self._opponent_idx(widx)].original_order], self.round_log)
+        return (
+            self.players[widx].original_order,
+            [self.players[self._opponent_idx(widx)].original_order],
+            self.round_log
+        )
 
     def _save_log(self):
         ts = time.strftime("%Y%m%d-%H%M%S")
@@ -632,18 +619,13 @@ def get_player_configurations() -> List[Dict[str, Any]]:
             configs.append({"strategy_type": "naive"})
         elif choice == "R":
             configs.append({"strategy_type": "random"})
-        elif choice.isdigit():
-            idx = int(choice)
-            if 1 <= idx <= len(COMMON_CONFIGS):
-                c = COMMON_CONFIGS[idx - 1]
-                configs.append({
-                    "strategy_type": "llm",
-                    "provider": c["provider"],
-                    "model": c["model"]
-                })
-            else:
-                print("Invalid index. Defaulting to naive.")
-                configs.append({"strategy_type": "naive"})
+        elif choice.isdigit() and 1 <= int(choice) <= len(COMMON_CONFIGS):
+            c = COMMON_CONFIGS[int(choice) - 1]
+            configs.append({
+                "strategy_type": "llm",
+                "provider": c["provider"],
+                "model": c["model"]
+            })
         else:
             print("Invalid input. Defaulting to naive.")
             configs.append({"strategy_type": "naive"})
@@ -662,14 +644,10 @@ if __name__ == "__main__":
         game = HeadsUpTexasHoldEmGame(pconfs)
         for i in range(rounds_num):
             print(f"\n--- Hand {i+1}/{rounds_num} ---")
-            winner, losers, logs = game.play_round()
-            if winner is None:
-                print("Hand ended in a tie.")
-            else:
-                print(f"Winner: Player {winner}")
+            winner, losers, _ = game.play_round()
+            print("Hand ended in a tie." if winner is None else f"Winner: Player {winner}")
             print("Losers:", losers)
-            # Rotate button
-            game.button_index = game._opponent_idx(game.button_index)
+            game.button_index = game._opponent_idx(game.button_index)  # rotate button
         print(f"\nAll done. Logs are in {LOGS_DIR}")
         print(f"Results appended to {HAND_HISTORY_JSON}")
     except Exception as e:
