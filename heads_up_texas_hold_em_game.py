@@ -65,6 +65,8 @@ COMMON_CONFIGS = [
     {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-mini-2025-04-14"},
     {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-nano-2025-04-14"},
     {"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
+    {"strategy_type": "llm", "provider": "openai", "model": "o4-mini-2025-04-16"},
+    {"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
 
     # === Anthropic ===
     {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
@@ -72,6 +74,7 @@ COMMON_CONFIGS = [
 
     # === DeepSeek ===
     {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
+    {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1:floor"},
     {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
     {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"},
 
@@ -90,7 +93,7 @@ COMMON_CONFIGS = [
     {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
     {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
     {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
+    #{"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"}, #too many tokens
 ]
 
 # ----------------------------------------------------------------------------
@@ -151,7 +154,7 @@ class Player:
 # ----------------------------------------------------------------------------
 
 class HeadsUpTexasHoldEmGame:
-    STARTING_STACK = 100
+    STARTING_STACK = 200
     SMALL_BLIND = 1
     BIG_BLIND = 2
 
@@ -176,6 +179,7 @@ class HeadsUpTexasHoldEmGame:
                 raise ValueError(f"Bad strategy {st} for player {i}")
             self.players.append(pl)
         random.shuffle(self.players)
+        self._assign_random_strategies()
         self.button_index = 0
         self.round_log: List[str] = []
         self.game_active = False
@@ -188,6 +192,56 @@ class HeadsUpTexasHoldEmGame:
 
     def _opponent_idx(self, idx: int) -> int:
         return 1 - idx
+
+    # --- Random-strategy assignment (performed once at game start) ---
+
+    def _assign_random_strategies(self):
+        """
+        Immediately turn every 'Random' player into either Naive or a concrete LLM
+        strategy before the first hand starts. Ensures no duplicates when more
+        than one player chooses Random.
+        """
+        # Exclude any models already selected manually (so random vs. a specific model can't pick that model)
+        reserved_models = {
+            (pl.model_config["provider"], pl.model_config["model"])
+            for pl in self.players
+            if pl.strategy_type == "llm"
+        }
+
+        # Build a pool of unique strategy picks
+        available_picks = [("naive", None)] + [
+            ("llm", {"provider": cc["provider"], "model": cc["model"]})
+            for cc in COMMON_CONFIGS
+            if (cc["provider"], cc["model"]) not in reserved_models
+        ]
+        random.shuffle(available_picks)
+
+        for pl in self.players:
+            if pl.strategy_type != "random":
+                continue
+            if not available_picks:
+                logger.warning("Out of unique strategies; defaulting to naive.")
+                pl.effective_strategy = "naive"
+                pl.effective_model_config = None
+                continue
+
+            pick = available_picks.pop()
+            pl.effective_strategy, pl.effective_model_config = pick
+
+            if pl.effective_strategy == "llm":
+                try:
+                    pl.client = LLMClient(
+                        provider=pl.effective_model_config["provider"],
+                        model=pl.effective_model_config["model"],
+                        max_tokens=8192,
+                        temperature=0.5,
+                        max_retries=2,
+                        timeout=60
+                    )
+                except Exception as e:
+                    logger.warning(f"LLM init error; falling back to naive. {e}")
+                    pl.effective_strategy = "naive"
+                    pl.effective_model_config = None
 
     # --- Card Dealing ---
 
@@ -499,8 +553,6 @@ class HeadsUpTexasHoldEmGame:
             self._log("LLM strategy with no client; folding.")
             return None
 
-        dev_msg = "You are an AI agent playing heads‑up Texas Hold'em."
-
         sys_msg = (
             "You are playing a simplified heads‑up Texas Hold'em cash game against one opponent.\n"
             "\n"
@@ -523,6 +575,8 @@ class HeadsUpTexasHoldEmGame:
             "call with suitable odds; bet strong hands for value; raise with premiums or strong draws."
         )
 
+        dev_msg = sys_msg
+
         community = self._describe_cards(self.board_so_far) if self.board_so_far else "(none)"
 
         user_msg = (
@@ -537,7 +591,7 @@ class HeadsUpTexasHoldEmGame:
         )
 
         resp = pl.client.call_llm(
-            developer_message=dev_msg,
+            developer_message=dev_msg, 
             user_message=user_msg,
             system_message=sys_msg
         )
@@ -553,6 +607,7 @@ class HeadsUpTexasHoldEmGame:
         """Plays a single heads‑up hand and returns (winner, losers, log)."""
         self.game_active = True
         self.round_log  = []
+        self._assign_random_strategies()
 
         deck                  = shuffle_deck()
         c0, c1                = self._deal_hole_cards(deck)
