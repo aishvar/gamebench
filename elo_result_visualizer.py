@@ -16,9 +16,10 @@ rating_values = []
 
 # Loop through the ratings, mapping raw model names to nicer display names
 for model_full, rating in rating_data.items():
-    if 'Naive' in model_full:
+    # Map bot names
+    if 'Naive' in model_full or model_full.strip() in ('50', '50/50'):
         model_name = 'Naive 50/50 (Bot)'
-    if 'Intelligent' in model_full:
+    elif 'Intelligent' in model_full:
         model_name = 'Intelligent (Bot)'
     elif 'optimus-alpha' in model_full:
         model_name = 'Optimus Alpha'
