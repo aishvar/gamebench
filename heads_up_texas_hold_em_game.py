@@ -40,7 +40,7 @@ logger = logging.getLogger("HeadsUpTexasHoldEm")
 # CARD FUNCTIONS
 # ----------------------------------------------------------------------------
 
-RANK_NAMES = ["2", "3", "4", "5", "6", "7", "8", "10", "T", "J", "Q", "K", "A"]
+RANK_NAMES = ["2", "3", "4", "5", "6", "7", "8","9", "10", "J", "Q", "K", "A"]
 SUIT_NAMES = ["♣", "♦", "♥", "♠"]
 
 def card_str(card: int) -> str:
@@ -222,6 +222,7 @@ class HeadsUpTexasHoldEmGame:
         unique_r = sorted(set(ranks))
         if 12 in unique_r:
             unique_r.append(-1)
+            unique_r.sort()            #for ace low
         longest = 1
         best_high = unique_r[0]
         cur_len = 1
@@ -556,7 +557,10 @@ class HeadsUpTexasHoldEmGame:
         self._log("--- New Heads-Up Hand ---")
         self._init_chips()
         self._post_blinds()
-        self._log(f"Button => Player {self.button_index} ({self.players[self.button_index].get_display_name()})")
+        btn = self.button_index
+        opp = self._opponent_idx(btn)
+        self._log(f"Button   => Player {btn} ({self.players[btn].get_display_name()})")
+        self._log(f"Opponent => Player {opp} ({self.players[opp].get_display_name()})")
         self._log(f"P0 hole: {self._describe_cards(c0)} / stack={self.stacks[0]}")
         self._log(f"P1 hole: {self._describe_cards(c1)} / stack={self.stacks[1]}")
 
