@@ -197,18 +197,33 @@ class HeadsUpTexasHoldEmGame:
     # --- Random-strategy assignment (performed once at game start) ---
 
     def _assign_random_strategies(self):
+        # ------------------------------------------------------------------
+        # Build the pool of strategies that a "Random" player may draw from
+        # while ensuring we never duplicate a strategy already chosen by a
+        # non‑random participant in this hand.
+        # ------------------------------------------------------------------
+        naive_already_taken = any(
+            pl.strategy_type == "naive"
+            for pl in self.players
+            if pl.strategy_type != "random"
+        )
+ 
         reserved_models = {
             (pl.model_config["provider"], pl.model_config["model"])
             for pl in self.players
             if pl.strategy_type == "llm"
         }
-
-        available_picks = [("naive", None)] + [
-            ("llm", {"provider": cc["provider"], "model": cc["model"]})
-            for cc in COMMON_CONFIGS
-            if (cc["provider"], cc["model"]) not in reserved_models
-        ]
-        random.shuffle(available_picks)
+ 
+        available_picks: List[Tuple[str, Optional[Dict[str, str]]]] = []
+        if not naive_already_taken:
+            available_picks.append(("naive", None))
+ 
+        for cc in COMMON_CONFIGS:
+            mdl_sig = (cc["provider"], cc["model"])
+            if mdl_sig not in reserved_models:
+                available_picks.append(
+                    ("llm", {"provider": cc["provider"], "model": cc["model"]})
+                )
 
         for pl in self.players:
             if pl.strategy_type != "random":
@@ -219,7 +234,9 @@ class HeadsUpTexasHoldEmGame:
                 pl.effective_model_config = None
                 continue
 
-            pick = available_picks.pop()
+            idx  = random.randrange(len(available_picks))
+            pick = available_picks.pop(idx)
+            
             pl.effective_strategy, pl.effective_model_config = pick
 
             if pl.effective_strategy == "llm":
@@ -679,7 +696,6 @@ class HeadsUpTexasHoldEmGame:
         self.game_active = True
         self.round_log = []
         self.public_action_history = []
-        self._assign_random_strategies()
 
         self.hole_cards = [c0, c1]
         self.board_so_far: List[int] = []
@@ -725,6 +741,7 @@ class HeadsUpTexasHoldEmGame:
         self,
     ) -> Tuple[List[Optional[int]], List[List[int]], List[str]]:
         deck = shuffle_deck()
+        self._assign_random_strategies()
         c0, c1 = self._deal_hole_cards(deck)
         flop, turn, river = self._get_community_cards(deck)
 
