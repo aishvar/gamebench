@@ -91,7 +91,6 @@ COMMON_CONFIGS = [
     {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
     {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
     {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
-    # {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"}, # too many tokens
 ]
 
 # ----------------------------------------------------------------------------
@@ -137,14 +136,14 @@ class Player:
 
         if self.strategy_type == "random":
             if not self.effective_strategy:
-                return "Random(undecided)"  # only possible before a pick
+                return "Random(undecided)"
             if self.effective_strategy == "naive":
                 return "Naive All‑In"
             if self.effective_strategy == "llm":
                 p = self.effective_model_config.get("provider", "?")
                 m = self.effective_model_config.get("model", "?")
                 return f"{p}/{m}"
-            return self.effective_strategy  # future‑proof fallback
+            return self.effective_strategy
 
         return "Unknown"
 
@@ -198,11 +197,6 @@ class HeadsUpTexasHoldEmGame:
     # --- Random-strategy assignment (performed once at game start) ---
 
     def _assign_random_strategies(self):
-        """
-        Immediately turn every 'Random' player into either Naive or a concrete LLM
-        strategy before the first hand starts. Ensures no duplicates when more
-        than one player chooses Random.
-        """
         reserved_models = {
             (pl.model_config["provider"], pl.model_config["model"])
             for pl in self.players
@@ -280,7 +274,7 @@ class HeadsUpTexasHoldEmGame:
         unique_r = sorted(set(ranks))
         if 12 in unique_r:
             unique_r.append(-1)
-            unique_r.sort()  # for ace low
+            unique_r.sort()
         longest = 1
         best_high = unique_r[0]
         cur_len = 1
@@ -588,6 +582,7 @@ class HeadsUpTexasHoldEmGame:
         )
 
         user_msg = (
+            f"You are Player {pidx}\n"
             f"Street: {street}\n"
             f"Pot: {self.pot}\n"
             f"Current bet: {self.current_bet}\n"
@@ -655,8 +650,8 @@ class HeadsUpTexasHoldEmGame:
             self._log(f"Error updating hand history: {e}")
 
         return (
-            self.players[widx].original_order,
-            [self.players[self._opponent_idx(widx)].original_order],
+            widx,
+            [self._opponent_idx(widx)],
             self.round_log,
         )
 
@@ -733,16 +728,26 @@ class HeadsUpTexasHoldEmGame:
         c0, c1 = self._deal_hole_cards(deck)
         flop, turn, river = self._get_community_cards(deck)
 
+        # First sub-hand with initial player ordering
         res1 = self._play_single_hand(c0, c1, flop, turn, river)
-        res2 = self._play_single_hand(c1, c0, flop, turn, river)
+
+        # Swap player models/strategies while keeping card positions the same
+        self.players[0], self.players[1] = self.players[1], self.players[0]
+
+        # Second sub-hand with models swapped, cards in original positions
+        res2 = self._play_single_hand(c0, c1, flop, turn, river)
 
         combined_log = (
             res1[2]
-            + ["--- Paired hand restart (hole cards swapped) ---"]
+            + ["--- Paired hand restart (models swapped) ---"]
             + res2[2]
         )
         winners = [res1[0], res2[0]]
         losers_lists = [res1[1], res2[1]]
+
+        # Restore original player order for future rounds
+        self.players[0], self.players[1] = self.players[1], self.players[0]
+
         return winners, losers_lists, combined_log
 
 
