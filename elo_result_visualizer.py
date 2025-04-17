@@ -73,6 +73,9 @@ for model_full, rating in rating_data.items():
         else:
             model_name = model_full
     
+    # Exclude specific models from the leaderboard
+    if model_name in ('Optimus Alpha', 'Quasar Alpha'):
+        continue
     models.append(model_name)
     rating_values.append(rating)
 

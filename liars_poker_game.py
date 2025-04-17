@@ -92,6 +92,8 @@ class Player:
                 model = self.effective_model_config.get('model', 'unknown')
                 if 'quasar-alpha' in model:
                     return 'openrouter/quasar-alpha'
+                if 'gemini-2.5-flash-preview:thinking' in model:
+                    return 'openrouter/gemini-2.5-flash-preview-thinking'
                 if provider == "openrouter":
                     model = model.replace("openrouter/", "", 1)
                 return model
@@ -106,6 +108,8 @@ class Player:
             model = self.model_config.get('model', 'unknown')
             if 'quasar-alpha' in model:
                 return 'openrouter/quasar-alpha'
+            if 'gemini-2.5-flash-preview:thinking' in model:
+                    return 'openrouter/gemini-2.5-flash-preview-thinking'
             if provider == "openrouter":
                 return model.replace("openrouter/", "", 1)
             if model.startswith(provider + "/"):
@@ -154,6 +158,8 @@ class LiarsPokerGame:
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-flash-preview:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-flash-preview:thinking"},
 
         # === Miscellaneous ===
         {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},

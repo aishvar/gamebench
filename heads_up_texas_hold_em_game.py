@@ -71,26 +71,26 @@ COMMON_CONFIGS = [
     {"strategy_type": "llm", "provider": "openai", "model": "o4-mini-2025-04-16"},
     {"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
     # === Anthropic ===
-    {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
-    {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
-    # === DeepSeek ===
-    {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"},
-    # === LLaMA ===
-    {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
-    # === Google ===
-    {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
-    # === Miscellaneous ===
-    {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
-    {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
+    # {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
+    # {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
+    # # === DeepSeek ===
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-chat-v3-0324:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-qwen-32b:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "deepseek/deepseek-r1-distill-llama-70b:floor"},
+    # # === LLaMA ===
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.1-8b-instruct:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-maverick:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
+    # # === Google ===
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
+    # # === Miscellaneous ===
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
+    # {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
 ]
 
 # ----------------------------------------------------------------------------
