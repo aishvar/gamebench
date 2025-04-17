@@ -40,7 +40,7 @@ logger = logging.getLogger("HeadsUpTexasHoldEm")
 # CARD FUNCTIONS
 # ----------------------------------------------------------------------------
 
-RANK_NAMES = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
+RANK_NAMES = ["2", "3", "4", "5", "6", "7", "8", "10", "T", "J", "Q", "K", "A"]
 SUIT_NAMES = ["♣", "♦", "♥", "♠"]
 
 def card_str(card: int) -> str:
@@ -114,7 +114,7 @@ class Player:
             self.client = LLMClient(
                 provider=self.model_config["provider"],
                 model=self.model_config["model"],
-                max_tokens=1024,
+                max_tokens=8192,
                 temperature=0.5,
                 max_retries=2,
                 timeout=60
@@ -464,7 +464,7 @@ class HeadsUpTexasHoldEmGame:
                         pl.client = LLMClient(
                             provider=pick[1]["provider"],
                             model=pick[1]["model"],
-                            max_tokens=1024,
+                            max_tokens=8192,
                             temperature=0.5,
                             max_retries=2,
                             timeout=60
@@ -491,21 +491,42 @@ class HeadsUpTexasHoldEmGame:
             self._log("LLM strategy with no client; folding.")
             return None
 
+        dev_msg = "You are an AI agent playing heads‑up Texas Hold'em."
+
+        sys_msg = (
+            "You are playing a simplified heads‑up Texas Hold'em cash game against one opponent.\n"
+            "\n"
+            "Valid actions (case‑insensitive):\n"
+            "  • FOLD\n"
+            "  • CHECK          – only when Amount to call is 0\n"
+            "  • CALL           – match the current bet when Amount to call > 0\n"
+            "  • BET: X         – when no current bet (X = chips you wager)\n"
+            "  • RAISE: X       – X is the **additional** chips above the current bet and "
+            "must be at least the table's minimum‑raise size\n"
+            "\n"
+            "Respond with **JSON only**, exactly two keys:\n"
+            '  { "reasoning": "<detailed thoughts>", "action": "<one of the actions above>" }\n'
+            "\n"
+            "Examples:\n"
+            '  { "reasoning": "No equity, fold to pressure", "action": "FOLD" }\n'
+            '  { "reasoning": "Top pair, value bet",          "action": "BET: 6" }\n'
+            "\n"
+            "General tips: fold very weak holdings facing large bets; check marginal hands when free; "
+            "call with suitable odds; bet strong hands for value; raise with premiums or strong draws."
+        )
+
+        community = self._describe_cards(self.board_so_far) if self.board_so_far else "(none)"
+
         user_msg = (
             f"Street: {street}\n"
             f"Pot: {self.pot}\n"
+            f"Current bet: {self.current_bet}\n"  
             f"Your stack: {self.stacks[pidx]}\n"
             f"Opponent stack: {self.stacks[self._opponent_idx(pidx)]}\n"
             f"Amount to call: {to_call}\n"
-            "Valid actions:\n"
-            "  - FOLD\n"
-            "  - CHECK (if nothing to call)\n"
-            "  - CALL (if required)\n"
-            "  - BET: X (if no current bet) or RAISE: X (if there is a bet; X must be at least the min raise)\n"
-            "Return your action as JSON with keys 'reasoning' and 'action'."
+            f"Hole cards: {self._describe_cards(self.hole_cards[pidx])}\n"
+            f"Community cards: {community}"
         )
-        sys_msg = "You are playing simplified heads-up Texas Hold'em. Return valid JSON."
-        dev_msg = "Heads-up Hold'em: return an action in JSON (FOLD/CALL/CHECK/BET: X/RAISE: X)."
 
         resp = pl.client.call_llm(
             developer_message=dev_msg,
@@ -521,12 +542,17 @@ class HeadsUpTexasHoldEmGame:
     # --- Round Resolution and Logging ---
 
     def play_round(self) -> Tuple[Optional[int], List[int], List[str]]:
+        """Plays a single heads‑up hand and returns (winner, losers, log)."""
         self.game_active = True
-        self.round_log = []
-        deck = shuffle_deck()
-        c0, c1 = self._deal_hole_cards(deck)
-        flop, turn, river = self._get_community_cards(deck)
+        self.round_log  = []
 
+        deck                  = shuffle_deck()
+        c0, c1                = self._deal_hole_cards(deck)
+        self.hole_cards       = [c0, c1]           # used by _get_llm_action
+        flop, turn, river     = self._get_community_cards(deck)
+        self.board_so_far: List[int] = []          # ← NEW
+
+        # --- initial logging / blinds -------------------------------------------------
         self._log("--- New Heads-Up Hand ---")
         self._init_chips()
         self._post_blinds()
@@ -534,40 +560,61 @@ class HeadsUpTexasHoldEmGame:
         self._log(f"P0 hole: {self._describe_cards(c0)} / stack={self.stacks[0]}")
         self._log(f"P1 hole: {self._describe_cards(c1)} / stack={self.stacks[1]}")
 
-        for street, cards in [("Preflop", None), ("Flop", flop), ("Turn", turn), ("River", river)]:
+        # --- play four streets --------------------------------------------------------
+        for street, cards in [
+            ("Preflop", None),
+            ("Flop",   flop),
+            ("Turn",   turn),
+            ("River",  river),
+        ]:
             if street != "Preflop":
                 self._log(f"{street.upper()}: {self._describe_cards(cards)}")
-            if not self._betting_round(street):
-                return self._fold_result()
-            self._settle_bets()
+                self.board_so_far.extend(cards)     # ← NEW
 
-        board = flop + turn + river
-        cmp_val = self.compare_final_hands(c0, c1, board)
-        if cmp_val > 0:
+            if not self._betting_round(street):     # someone folded
+                return self._fold_result()
+            self._settle_bets()                     # reset street bets
+
+        # --- showdown ----------------------------------------------------------------
+        board   = flop + turn + river
+        outcome = self.compare_final_hands(c0, c1, board)
+        if outcome > 0:
             return self._end_hand_with_winner(0)
-        if cmp_val < 0:
+        if outcome < 0:
             return self._end_hand_with_winner(1)
+
         self._log("Tie at showdown => no single winner.")
         self._save_log()
         return (None, [0, 1], self.round_log)
-
+    
     def _fold_result(self) -> Tuple[Optional[int], List[int], List[str]]:
         folder = 0 if self.bets[0] < self.bets[1] else 1
         return self._end_hand_with_winner(self._opponent_idx(folder))
 
-    def _end_hand_with_winner(self, widx: int) -> Tuple[Optional[int], List[int], List[str]]:
-        self._log(f"Player {widx} ({self.players[widx].get_display_name()}) WINS the pot of {self.pot} chips!")
+    def _end_hand_with_winner(
+        self, widx: int
+    ) -> Tuple[Optional[int], List[int], List[str]]:
+        # --- credit the pot and compute net gain -------------------------
+        self.stacks[widx] += self.pot                       # give winner the pot
+        net_chips_won = self.stacks[widx] - self.STARTING_STACK
+
+        self._log(
+            f"Player {widx} ({self.players[widx].get_display_name()}) "
+            f"WINS the pot of {self.pot} chips! (Net +{net_chips_won})"
+        )
         self.game_active = False
         self._save_log()
-        ts = time.strftime("%Y%m%d-%H%M%S")
-        loser = self._opponent_idx(widx)
+
+        ts     = time.strftime("%Y%m%d-%H%M%S")
+        loser  = self._opponent_idx(widx)
         hand_entry = {
-            "timestamp": ts,
-            "winner": self.players[widx].get_display_name(),
-            "losers": [self.players[loser].get_display_name()],
-            "round_log_file": self.log_filename,
-            "chips_won": self.pot,
+            "timestamp":       ts,
+            "winner":          self.players[widx].get_display_name(),
+            "losers":          [self.players[loser].get_display_name()],
+            "round_log_file":  self.log_filename,
+            "chips_won":       net_chips_won,               # <-- now NET, not pot
         }
+
         try:
             with open(HAND_HISTORY_JSON, "a+", encoding="utf-8") as f:
                 fcntl.flock(f, fcntl.LOCK_EX)
@@ -584,12 +631,13 @@ class HeadsUpTexasHoldEmGame:
                 fcntl.flock(f, fcntl.LOCK_UN)
         except Exception as e:
             self._log(f"Error updating hand history: {e}")
+
         return (
             self.players[widx].original_order,
             [self.players[self._opponent_idx(widx)].original_order],
-            self.round_log
+            self.round_log,
         )
-
+    
     def _save_log(self):
         ts = time.strftime("%Y%m%d-%H%M%S")
         self.log_filename = f"heads_up_holdem_{ts}.log"
