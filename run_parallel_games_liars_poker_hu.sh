@@ -1,6 +1,6 @@
 #!/bin/bash
-# Usage: ./run_parallel_games.sh [count]
-# Example: ./run_parallel_games.sh 10
+# Usage: ./run_parallel_games_liars_poker_hu.sh [count]
+# Example: ./run_parallel_games_liars_poker_hu.sh 10
 
 COUNT=${1:-2}  # Default to 2 if not provided
 
