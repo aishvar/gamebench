@@ -126,26 +126,26 @@ class Player:
 
     def get_display_name(self) -> str:
         if self.strategy_type == "naive":
-            return "Naive All-In"
-        elif self.strategy_type == "llm":
+            return "Naive All‑In"
+
+        if self.strategy_type == "llm":
             p = self.model_config.get("provider", "?")
             m = self.model_config.get("model", "?")
             return f"{p}/{m}"
-        elif self.strategy_type == "random":
-            if not self.effective_strategy:
-                return "Random(undecided)"
-            if self.effective_strategy == "naive":
-                return "Random(Naive All-In)"
-            if self.effective_strategy == "llm":
-                if self.effective_model_config:
-                    p = self.effective_model_config.get("provider", "?")
-                    m = self.effective_model_config.get("model", "?")
-                    return f"Random({p}/{m})"
-                return "Random(LLM??)"
-            return f"Random({self.effective_strategy})"
-        else:
-            return "Unknown"
 
+        if self.strategy_type == "random":
+            if not self.effective_strategy:
+                return "Random(undecided)"          # only possible before a pick
+            if self.effective_strategy == "naive":
+                return "Naive All‑In"
+            if self.effective_strategy == "llm":
+                p = self.effective_model_config.get("provider", "?")
+                m = self.effective_model_config.get("model", "?")
+                return f"{p}/{m}"
+            return self.effective_strategy          # future‑proof fallback
+
+        return "Unknown"
+    
 # ----------------------------------------------------------------------------
 # HEADS-UP TEXAS HOLD'EM GAME CLASS
 # ----------------------------------------------------------------------------
@@ -378,6 +378,13 @@ class HeadsUpTexasHoldEmGame:
 
             # -------------------------- CALL --------------------------
             if action == "CALL":
+                if to_call == 0:               # ← NEW: it's really a check
+                    consecutive_checks += 1
+                    if consecutive_checks >= 2 and self.bets[0] == self.bets[1]:
+                        return True            # both players checked/limped ⇒ round ends
+                    next_to_act = self._opponent_idx(next_to_act)
+                    continue
+
                 call_amt = min(to_call, self.stacks[next_to_act])
                 self.stacks[next_to_act] -= call_amt
                 self.pot += call_amt
@@ -387,7 +394,7 @@ class HeadsUpTexasHoldEmGame:
                 if to_call and round_has_voluntary_bet:
                     return True
 
-                consecutive_checks = 1   # one “check” equivalent (the call of zero next)
+                consecutive_checks = 1         # one “check” equivalent
                 next_to_act = self._opponent_idx(next_to_act)
                 continue
 
