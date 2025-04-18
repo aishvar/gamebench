@@ -7,6 +7,7 @@ import time
 import os
 import json
 import re
+import itertools
 from typing import List, Tuple, Dict, Optional, Union, Any
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -69,7 +70,7 @@ COMMON_CONFIGS = [
     {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-nano-2025-04-14"},
     {"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
     {"strategy_type": "llm", "provider": "openai", "model": "o4-mini-2025-04-16"},
-    {"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
+    #{"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
     # === Anthropic ===
     # {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
     # {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-7-sonnet-20250219"},
@@ -91,6 +92,7 @@ COMMON_CONFIGS = [
     # {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
     # {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
     # {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
+
 ]
 
 # ----------------------------------------------------------------------------
@@ -197,27 +199,22 @@ class HeadsUpTexasHoldEmGame:
     # --- Random-strategy assignment (performed once at game start) ---
 
     def _assign_random_strategies(self):
-        # ------------------------------------------------------------------
-        # Build the pool of strategies that a "Random" player may draw from
-        # while ensuring we never duplicate a strategy already chosen by a
-        # non‑random participant in this hand.
-        # ------------------------------------------------------------------
         naive_already_taken = any(
             pl.strategy_type == "naive"
             for pl in self.players
             if pl.strategy_type != "random"
         )
- 
+
         reserved_models = {
             (pl.model_config["provider"], pl.model_config["model"])
             for pl in self.players
             if pl.strategy_type == "llm"
         }
- 
+
         available_picks: List[Tuple[str, Optional[Dict[str, str]]]] = []
         if not naive_already_taken:
             available_picks.append(("naive", None))
- 
+
         for cc in COMMON_CONFIGS:
             mdl_sig = (cc["provider"], cc["model"])
             if mdl_sig not in reserved_models:
@@ -234,9 +231,9 @@ class HeadsUpTexasHoldEmGame:
                 pl.effective_model_config = None
                 continue
 
-            idx  = random.randrange(len(available_picks))
+            idx = random.randrange(len(available_picks))
             pick = available_picks.pop(idx)
-            
+
             pl.effective_strategy, pl.effective_model_config = pick
 
             if pl.effective_strategy == "llm":
@@ -373,6 +370,92 @@ class HeadsUpTexasHoldEmGame:
                 elif a < b:
                     return -1
             return 0
+
+    # ----------------------- NEW: ALL-IN EV SPLIT ---------------------------
+
+    def _ev_split_allin(self) -> Tuple[Optional[int], List[int], List[str]]:
+        needed = 5 - len(self.board_so_far)
+        seen = set(self.hole_cards[0] + self.hole_cards[1] + self.board_so_far)
+        remaining_cards = [c for c in range(52) if c not in seen]
+
+        wins0 = wins1 = ties = 0
+        for extra in itertools.combinations(remaining_cards, needed):
+            board = self.board_so_far + list(extra)
+            res = self.compare_final_hands(
+                self.hole_cards[0], self.hole_cards[1], board
+            )
+            if res > 0:
+                wins0 += 1
+            elif res < 0:
+                wins1 += 1
+            else:
+                ties += 1
+
+        total = wins0 + wins1 + ties
+        equity0 = (wins0 + ties * 0.5) / total
+        equity1 = 1.0 - equity0
+
+        chips0 = int(round(equity0 * self.pot))
+        chips1 = self.pot - chips0
+
+        self.stacks[0] += chips0
+        self.stacks[1] += chips1
+        self.pot = 0  # pot is fully distributed
+
+        self._log(
+            f"All‑in equity split ⇒ P0 gets {chips0} chips ({equity0:.3%}), "
+            f"P1 gets {chips1} chips ({equity1:.3%})."
+        )
+
+        # award exact 50/50 to the button
+        if self.stacks[0] == self.stacks[1]:
+            btn = self.button_index
+            loser = self._opponent_idx(btn)
+            self._log(
+                f"Exact 50/50, awarded to button ⇒ Player {btn} (net 0 chips)."
+            )
+            self.game_active = False
+            self._save_log()
+            return (btn, [loser], self.round_log)
+
+        # otherwise normal equity winner
+        widx = 0 if self.stacks[0] > self.stacks[1] else 1
+        loser = self._opponent_idx(widx)
+        net_chips_won = self.stacks[widx] - self.STARTING_STACK
+
+        self._log(
+            f"Player {widx} ({self.players[widx].get_display_name()}) "
+            f"WINS net {net_chips_won} chips after equity split!"
+        )
+
+        # write to hand history
+        ts = time.strftime("%Y%m%d-%H%M%S")
+        hand_entry = {
+            "timestamp": ts,
+            "winner": self.players[widx].get_display_name(),
+            "losers": [self.players[loser].get_display_name()],
+            "round_log_file": getattr(self, "log_filename", ""),
+            "chips_won": net_chips_won,
+        }
+        try:
+            with open(HAND_HISTORY_JSON, "a+", encoding="utf-8") as f:
+                fcntl.flock(f, fcntl.LOCK_EX)
+                f.seek(0)
+                existing = f.read().strip()
+                hist = json.loads(existing) if existing else []
+                if not isinstance(hist, list):
+                    hist = []
+                hist.append(hand_entry)
+                f.seek(0)
+                f.truncate(0)
+                json.dump(hist, f, indent=2)
+                fcntl.flock(f, fcntl.LOCK_UN)
+        except Exception as e:
+            self._log(f"Error updating hand history: {e}")
+
+        self.game_active = False
+        self._save_log()
+        return (widx, [loser], self.round_log)
 
     # --- Betting Logic (with Standard Min-Raise, and Forced Action Each Round) ---
 
@@ -723,6 +806,10 @@ class HeadsUpTexasHoldEmGame:
             if not self._betting_round(street):
                 return self._fold_result()
             self._settle_bets()
+
+            # --- NEW: Detect mutual all-in and split pot by equity
+            if self.stacks[0] == 0 and self.stacks[1] == 0:
+                return self._ev_split_allin()
 
         board = flop + turn + river
         outcome = self.compare_final_hands(c0, c1, board)
