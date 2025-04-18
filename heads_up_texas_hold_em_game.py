@@ -103,7 +103,7 @@ COMMON_CONFIGS = [
 @dataclass
 class Player:
     player_id: int
-    strategy_type: str  # "naive", "llm", or "random"
+    strategy_type: str  # "llm", or "random"
     model_config: Optional[Dict[str, str]] = None
     client: Optional[LLMClient] = field(default=None, init=False)
     original_order: int = 0
@@ -608,7 +608,7 @@ class HeadsUpTexasHoldEmGame:
             return self._get_naive_action(pidx, to_call)
         elif pl.strategy_type == "random":
             if not pl.effective_strategy:
-                picks = [("naive", None)] + [
+                picks = [
                     ("llm", {"provider": cc["provider"], "model": cc["model"]})
                     for cc in COMMON_CONFIGS
                 ]
@@ -626,9 +626,10 @@ class HeadsUpTexasHoldEmGame:
                         )
                     except Exception as e:
                         self._log(
-                            f"LLM init error; falling back to naive. {e}"
+                            f"LLM init error; falling back to llm default. {e}"
                         )
-                        pl.effective_strategy = "naive"
+                        pl.effective_strategy = "llm"
+                        pl.effective_model_config = {"provider": COMMON_CONFIGS[0]["provider"], "model": COMMON_CONFIGS[0]["model"]}
             if pl.effective_strategy == "naive":
                 return self._get_naive_action(pidx, to_call)
             return self._get_llm_action(pl, pidx, to_call, street)
@@ -848,7 +849,37 @@ class HeadsUpTexasHoldEmGame:
         )
         winners = [res1[0], res2[0]]
         losers_lists = [res1[1], res2[1]]
-
+ 
+        # --- NEW: Persist paired‑hand aggregate log + single JSON entry ---
+        # 1) write one .log file for the whole paired round
+        pair_ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+        paired_log_filename = f"heads_up_holdem_pair_{pair_ts}.log"
+        with open(os.path.join(LOGS_DIR, paired_log_filename), "w", encoding="utf-8") as f:
+            f.write("\n".join(combined_log))
+        logger.info(f"Paired hand log saved => {paired_log_filename}")
+ 
+        # 2) collapse the two most‑recent sub‑hand JSON entries into one
+        try:
+            with open(HAND_HISTORY_JSON, "r+", encoding="utf-8") as fh:
+                fcntl.flock(fh, fcntl.LOCK_EX)
+                data_txt = fh.read().strip()
+                hist = json.loads(data_txt) if data_txt else []
+                if len(hist) >= 2:
+                    last2 = [hist.pop(), hist.pop()]  # sub‑hands 2 then 1
+                    last2.reverse()  # chronological order
+                    paired_entry = {
+                        "timestamp": pair_ts[:-7],  # drop microseconds to mimic old style
+                        "sub_hands": last2,
+                        "round_log_file": paired_log_filename,
+                    }
+                    hist.append(paired_entry)
+                    fh.seek(0)
+                    fh.truncate(0)
+                    json.dump(hist, fh, indent=2)
+                fcntl.flock(fh, fcntl.LOCK_UN)
+        except Exception as e:
+            logger.error(f"Failed to write paired‑hand history: {e}")
+ 
         # Restore original player order for future rounds
         self.players[0], self.players[1] = self.players[1], self.players[0]
 
@@ -864,15 +895,13 @@ def get_player_configurations() -> List[Dict[str, Any]]:
     configs = []
     for i in range(2):
         print(f"\nPlayer {i+1} config:")
-        print("  N => Naive All-In")
-        print("  R => Random (naive or LLM)")
+        print("  R => Random")
+        print("  Or choose from the following LLM list:")
         print("  Or choose from the following LLM list:")
         for idx, cc in enumerate(COMMON_CONFIGS, start=1):
             print(f"    {idx}: {cc['provider']}/{cc['model']}")
         choice = input("Your choice: ").strip().upper()
-        if choice == "N":
-            configs.append({"strategy_type": "naive"})
-        elif choice == "R":
+        if choice == "R":
             configs.append({"strategy_type": "random"})
         elif choice.isdigit() and 1 <= int(choice) <= len(COMMON_CONFIGS):
             c = COMMON_CONFIGS[int(choice) - 1]
@@ -884,8 +913,8 @@ def get_player_configurations() -> List[Dict[str, Any]]:
                 }
             )
         else:
-            print("Invalid input. Defaulting to naive.")
-            configs.append({"strategy_type": "naive"})
+            print("Invalid input. Defaulting to random.")
+            configs.append({"strategy_type": "random"})
     return configs
 
 
