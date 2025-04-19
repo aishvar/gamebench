@@ -122,15 +122,12 @@ class Player:
                 max_retries=2,
                 timeout=60,
             )
-        elif self.strategy_type in ("naive", "random"):
+        elif self.strategy_type == "random":
             pass
         else:
             raise ValueError(f"Unrecognized strategy '{self.strategy_type}'.")
 
     def get_display_name(self) -> str:
-        if self.strategy_type == "naive":
-            return "Naive All‑In"
-
         if self.strategy_type == "llm":
             p = self.model_config.get("provider", "?")
             m = self.model_config.get("model", "?")
@@ -139,8 +136,6 @@ class Player:
         if self.strategy_type == "random":
             if not self.effective_strategy:
                 return "Random(undecided)"
-            if self.effective_strategy == "naive":
-                return "Naive All‑In"
             if self.effective_strategy == "llm":
                 p = self.effective_model_config.get("provider", "?")
                 m = self.effective_model_config.get("model", "?")
@@ -165,7 +160,7 @@ class HeadsUpTexasHoldEmGame:
             raise ValueError("Heads-up game requires exactly 2 players.")
         self.players: List[Player] = []
         for i, cfg in enumerate(player_configs):
-            st = cfg.get("strategy_type", "naive")
+            st = cfg.get("strategy_type", "random")
             if st == "llm":
                 pl = Player(
                     player_id=i,
@@ -173,8 +168,6 @@ class HeadsUpTexasHoldEmGame:
                     model_config={"provider": cfg["provider"], "model": cfg["model"]},
                     original_order=i,
                 )
-            elif st == "naive":
-                pl = Player(player_id=i, strategy_type="naive", original_order=i)
             elif st == "random":
                 pl = Player(player_id=i, strategy_type="random", original_order=i)
             else:
@@ -199,12 +192,6 @@ class HeadsUpTexasHoldEmGame:
     # --- Random-strategy assignment (performed once at game start) ---
 
     def _assign_random_strategies(self):
-        naive_already_taken = any(
-            pl.strategy_type == "naive"
-            for pl in self.players
-            if pl.strategy_type != "random"
-        )
-
         reserved_models = {
             (pl.model_config["provider"], pl.model_config["model"])
             for pl in self.players
@@ -212,8 +199,6 @@ class HeadsUpTexasHoldEmGame:
         }
 
         available_picks: List[Tuple[str, Optional[Dict[str, str]]]] = []
-        if not naive_already_taken:
-            available_picks.append(("naive", None))
 
         for cc in COMMON_CONFIGS:
             mdl_sig = (cc["provider"], cc["model"])
@@ -226,8 +211,8 @@ class HeadsUpTexasHoldEmGame:
             if pl.strategy_type != "random":
                 continue
             if not available_picks:
-                logger.warning("Out of unique strategies; defaulting to naive.")
-                pl.effective_strategy = "naive"
+                logger.warning("Out of unique strategies; defaulting to llm.")
+                pl.effective_strategy = "llm"
                 pl.effective_model_config = None
                 continue
 
@@ -247,8 +232,8 @@ class HeadsUpTexasHoldEmGame:
                         timeout=60,
                     )
                 except Exception as e:
-                    logger.warning(f"LLM init error; falling back to naive. {e}")
-                    pl.effective_strategy = "naive"
+                    logger.warning(f"LLM init error; falling back to llm. {e}")
+                    pl.effective_strategy = "llm"
                     pl.effective_model_config = None
 
     # --- Card Dealing ---
@@ -604,8 +589,6 @@ class HeadsUpTexasHoldEmGame:
         pl = self.players[pidx]
         if pl.strategy_type == "llm":
             return self._get_llm_action(pl, pidx, to_call, street)
-        elif pl.strategy_type == "naive":
-            return self._get_naive_action(pidx, to_call)
         elif pl.strategy_type == "random":
             if not pl.effective_strategy:
                 picks = [
@@ -630,19 +613,8 @@ class HeadsUpTexasHoldEmGame:
                         )
                         pl.effective_strategy = "llm"
                         pl.effective_model_config = {"provider": COMMON_CONFIGS[0]["provider"], "model": COMMON_CONFIGS[0]["model"]}
-            if pl.effective_strategy == "naive":
-                return self._get_naive_action(pidx, to_call)
             return self._get_llm_action(pl, pidx, to_call, street)
         return None
-
-    def _get_naive_action(self, pidx: int, to_call: int) -> str:
-        stack = self.stacks[pidx]
-        if to_call >= stack:
-            return "CALL"
-        if to_call == 0:
-            return f"BET: {stack}"
-        needed = stack - to_call
-        return f"RAISE: {needed}"
 
     def _get_llm_action(
         self, pl: Player, pidx: int, to_call: int, street: str
