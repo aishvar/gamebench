@@ -180,6 +180,9 @@ class HeadsUpTexasHoldEmGame:
         self.public_action_history: List[str] = []
         self.game_active = False
 
+        # pending sub‑hand records (only flushed after paired round finishes)
+        self.pending_hand_entries: List[Dict[str, Any]] = []
+
     # --- Utility Methods ---
 
     def _log(self, msg: str):
@@ -413,30 +416,14 @@ class HeadsUpTexasHoldEmGame:
             f"WINS net {net_chips_won} chips after equity split!"
         )
 
-        # write to hand history
-        ts = time.strftime("%Y%m%d-%H%M%S")
         hand_entry = {
-            "timestamp": ts,
+            "timestamp": time.strftime("%Y%m%d-%H%M%S"),
             "winner": self.players[widx].get_display_name(),
             "losers": [self.players[loser].get_display_name()],
             "round_log_file": getattr(self, "log_filename", ""),
             "chips_won": net_chips_won,
         }
-        try:
-            with open(HAND_HISTORY_JSON, "a+", encoding="utf-8") as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
-                f.seek(0)
-                existing = f.read().strip()
-                hist = json.loads(existing) if existing else []
-                if not isinstance(hist, list):
-                    hist = []
-                hist.append(hand_entry)
-                f.seek(0)
-                f.truncate(0)
-                json.dump(hist, f, indent=2)
-                fcntl.flock(f, fcntl.LOCK_UN)
-        except Exception as e:
-            self._log(f"Error updating hand history: {e}")
+        self.pending_hand_entries.append(hand_entry)
 
         self.game_active = False
         self._save_log()
@@ -695,7 +682,7 @@ class HeadsUpTexasHoldEmGame:
         self.game_active = False
         self._save_log()
 
-        ts = time.strftime("%Y%m%d-%H%M%S")
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
         loser = self._opponent_idx(widx)
         hand_entry = {
             "timestamp": ts,
@@ -704,23 +691,7 @@ class HeadsUpTexasHoldEmGame:
             "round_log_file": self.log_filename,
             "chips_won": net_chips_won,
         }
-
-        try:
-            with open(HAND_HISTORY_JSON, "a+", encoding="utf-8") as f:
-                fcntl.flock(f, fcntl.LOCK_EX)
-                f.seek(0)
-                cont = f.read().strip()
-                hist = json.loads(cont) if cont else []
-                if not isinstance(hist, list):
-                    logger.warning("Corrupt hand history; overwriting.")
-                    hist = []
-                hist.append(hand_entry)
-                f.seek(0)
-                f.truncate(0)
-                json.dump(hist, f, indent=2)
-                fcntl.flock(f, fcntl.LOCK_UN)
-        except Exception as e:
-            self._log(f"Error updating hand history: {e}")
+        self.pending_hand_entries.append(hand_entry)
 
         return (
             widx,
@@ -821,7 +792,7 @@ class HeadsUpTexasHoldEmGame:
         )
         winners = [res1[0], res2[0]]
         losers_lists = [res1[1], res2[1]]
- 
+
         # --- NEW: Persist paired‑hand aggregate log + single JSON entry ---
         # 1) write one .log file for the whole paired round
         pair_ts = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
@@ -829,29 +800,33 @@ class HeadsUpTexasHoldEmGame:
         with open(os.path.join(LOGS_DIR, paired_log_filename), "w", encoding="utf-8") as f:
             f.write("\n".join(combined_log))
         logger.info(f"Paired hand log saved => {paired_log_filename}")
- 
-        # 2) collapse the two most‑recent sub‑hand JSON entries into one
-        try:
-            with open(HAND_HISTORY_JSON, "r+", encoding="utf-8") as fh:
-                fcntl.flock(fh, fcntl.LOCK_EX)
-                data_txt = fh.read().strip()
-                hist = json.loads(data_txt) if data_txt else []
-                if len(hist) >= 2:
-                    last2 = [hist.pop(), hist.pop()]  # sub‑hands 2 then 1
-                    last2.reverse()  # chronological order
-                    paired_entry = {
-                        "timestamp": pair_ts[:-7],  # drop microseconds to mimic old style
-                        "sub_hands": last2,
-                        "round_log_file": paired_log_filename,
-                    }
+
+        # 2) write the combined JSON entry once the paired round is complete
+        sub_entries = self.pending_hand_entries[:]
+        self.pending_hand_entries = []
+
+        if sub_entries:
+            paired_entry = {
+                "timestamp": pair_ts[:-7],  # drop micros for consistency
+                "sub_hands": sub_entries,
+                "round_log_file": paired_log_filename,
+            }
+            try:
+                with open(HAND_HISTORY_JSON, "a+", encoding="utf-8") as fh:
+                    fcntl.flock(fh, fcntl.LOCK_EX)
+                    fh.seek(0)
+                    data_txt = fh.read().strip()
+                    hist = json.loads(data_txt) if data_txt else []
+                    if not isinstance(hist, list):
+                        hist = []
                     hist.append(paired_entry)
                     fh.seek(0)
                     fh.truncate(0)
                     json.dump(hist, fh, indent=2)
-                fcntl.flock(fh, fcntl.LOCK_UN)
-        except Exception as e:
-            logger.error(f"Failed to write paired‑hand history: {e}")
- 
+                    fcntl.flock(fh, fcntl.LOCK_UN)
+            except Exception as e:
+                logger.error(f"Failed to write paired‑hand history: {e}")
+
         # Restore original player order for future rounds
         self.players[0], self.players[1] = self.players[1], self.players[0]
 
@@ -868,7 +843,6 @@ def get_player_configurations() -> List[Dict[str, Any]]:
     for i in range(2):
         print(f"\nPlayer {i+1} config:")
         print("  R => Random")
-        print("  Or choose from the following LLM list:")
         print("  Or choose from the following LLM list:")
         for idx, cc in enumerate(COMMON_CONFIGS, start=1):
             print(f"    {idx}: {cc['provider']}/{cc['model']}")
