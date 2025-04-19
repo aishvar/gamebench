@@ -92,7 +92,6 @@ COMMON_CONFIGS = [
     # {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
     # {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
     # {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
-
 ]
 
 # ----------------------------------------------------------------------------
@@ -762,8 +761,22 @@ class HeadsUpTexasHoldEmGame:
         if outcome < 0:
             return self._end_hand_with_winner(1)
 
+        # --- TIE CASE HANDLING ---
         self._log("Tie at showdown => no single winner.")
         self._save_log()
+
+        # Log a neutral entry: randomly assign winner/loser, 0 chips.
+        widx = random.randint(0, 1)
+        loser = self._opponent_idx(widx)
+        hand_entry = {
+            "timestamp": datetime.now().strftime("%Y%m%d-%H%M%S-%f"),
+            "winner": self.players[widx].get_display_name(),
+            "losers": [self.players[loser].get_display_name()],
+            "round_log_file": self.log_filename,
+            "chips_won": 0,
+        }
+        self.pending_hand_entries.append(hand_entry)
+
         return (None, [0, 1], self.round_log)
 
     # --- Paired Rounds Orchestrator ---
