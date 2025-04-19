@@ -9,7 +9,7 @@ COUNT=${1:-2}  # default to 2 games if not specified
 #   line2: Player 2 choice (N, R or number)
 #   line3: How many paired rounds? [1]
 
-CONFIG_INPUT=$'R\nR\n1'
+CONFIG_INPUT=$'R\nR\n3'
 
 TEMP_DIR="./.tmp_hu_game_status"
 mkdir -p "$TEMP_DIR"
