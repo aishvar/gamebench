@@ -161,11 +161,15 @@ class LiarsPokerGame:
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-flash-preview:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-flash-preview:thinking"},
 
+        # === Qwen ===
+        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-30b-a3b-04-28:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-235b-a22b-04-28:free"},
+
         # === Miscellaneous ===
         {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "x-ai/grok-3-beta:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "mistralai/mistral-small-3.1-24b-instruct:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
     ]
 
     def __init__(self, player_configs: List[Dict[str, Any]]):
