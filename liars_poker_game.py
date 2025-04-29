@@ -164,7 +164,7 @@ class LiarsPokerGame:
         # === Qwen ===
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-30b-a3b-04-28:floor"},
-        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-235b-a22b-04-28:free"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-235b-a22b-04-28:floor"},
 
         # === Miscellaneous ===
         {"strategy_type": "llm", "provider": "openrouter", "model": "cohere/command-a:floor"},
