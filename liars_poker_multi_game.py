@@ -136,7 +136,7 @@ class LiarsPokerGame:
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-nano-2025-04-14"},
         #{"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
         {"strategy_type": "llm", "provider": "openai", "model": "o4-mini-2025-04-16"},
-        {"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
+        #{"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
 
         # === Anthropic ===
         {"strategy_type": "llm", "provider": "anthropic", "model": "claude-3-5-sonnet-20241022"},
