@@ -1,12 +1,10 @@
 #!/bin/bash
-# Usage: ./run_parallel_games_liars_poker_hu.sh [count]
-# Example: ./run_parallel_games_liars_poker_hu.sh 10
-
-COUNT=${1:-2}  # Default to 2 if not provided
+# Usage: ./run_parallel_games_liars_poker_multi.sh [count]
+# Example: ./run_parallel_games_liars_poker_multi.sh 10
 
 #CONFIG_INPUT=$'2\\nR\\nC\\nopenai\\no1-2024-12-17\\n1'
 
-CONFIG_INPUT=$'R\\nR\\nR\\nR\\nR\\nR'
+CONFIG_INPUT=$'4\\nR\\nR\\nR\\nR\\nR'
 
 TEMP_DIR="./.tmp_game_status"
 
