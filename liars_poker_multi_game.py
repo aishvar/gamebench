@@ -129,12 +129,12 @@ class LiarsPokerGame:
     MAX_ACTION_PARSE_ATTEMPTS = 2
     COMMON_CONFIGS = [
         # === OpenAI ===
-        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
-        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
+        #{"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
+        #{"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-2025-04-14"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-mini-2025-04-14"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-nano-2025-04-14"},
-        {"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
+        #{"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
         {"strategy_type": "llm", "provider": "openai", "model": "o4-mini-2025-04-16"},
         {"strategy_type": "llm", "provider": "openai", "model": "o3-2025-04-16"},
 
@@ -164,6 +164,7 @@ class LiarsPokerGame:
         # === Qwen ===
         #{"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwq-32b:nitro"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-30b-a3b-04-28:floor"},
+        {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-32b:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "qwen/qwen3-235b-a22b-04-28:floor"},
 
         # === Miscellaneous ===
@@ -188,7 +189,6 @@ class LiarsPokerGame:
                 self.players.append(Player(player_id=i, strategy_type='intelligent', original_order=i))
             else:
                 raise ValueError(f"Invalid player configuration at index {i}: missing or unknown strategy_type. Config: {config}")
-        self.initial_players_list = self.players.copy() # Store initial config
         self.current_player_index: int = 0
         self.current_bid: Optional[Bid] = None
         self.bid_history: List[Tuple[int, Bid]] = []
@@ -198,6 +198,8 @@ class LiarsPokerGame:
         self.active_players: List[Player] = []
         self.ranks: Dict[int, int] = {} # Maps original_order -> rank (1st, 2nd, etc.)
         self.next_rank_to_assign: int = 6
+        # Stores {'type': 'EVENT_TYPE', 'details': {...}} dicts chronologically for the whole game
+        self.event_history: List[Dict[str, Any]] = field(default_factory=list)
 
     def _log_round_event(self, message: str):
         logger.info(message)
@@ -410,41 +412,72 @@ class LiarsPokerGame:
             f"  - 'Higher' means: higher quantity (e.g., 3 9s -> 4 0s) OR same quantity but higher digit (e.g., 3 5s -> 3 6s).\n"
             f"- Instead of bidding, you can challenge the current bid by saying 'CHALLENGE'. You can only challenge the immediately preceding bid.\n"
             f"- If a bid is challenged, the actual count of the digit is revealed. If count >= bid quantity, the bidder wins. If count < bid quantity, the challenger wins.\n"
+            f"- The loser of a challenge is eliminated.\n"
             f"- The maximum possible quantity for any digit is {self.total_digits_in_play}.\n"
             f"Output Format:\n"
             f"Respond with a valid JSON object containing 'reasoning' and 'action' keys.\n"
             f"Example 1 (Making a bid):\n"
             f"{{\n"
-            f'  "reasoning": "I have two 6s in my hand. The current bid is only 3 5s. Bidding 4 6s seems reasonable, increasing both quantity and digit based on my hand.",\n'
+            f'  "reasoning": "I have two 6s in my hand. Player 3 previously bid 3 5s. Bidding 4 6s seems reasonable, increasing both quantity and digit based on my hand.",\n'
             f'  "action": "BID: 4 6s"\n'
             f"}}\n"
             f"Example 2 (Challenging):\n"
             f"{{\n"
-            f'  "reasoning": "The current bid is 11 8s. With only {self.total_digits_in_play} total digits in play, this seems extremely unlikely, even if I have one 8. I should challenge.",\n'
+            f'  "reasoning": "The current bid is 11 8s made by Player 2. With only {self.total_digits_in_play} total digits remaining, this seems extremely unlikely, even if I have one 8. I should challenge.",\n'
             f'  "action": "CHALLENGE"\n'
             f"}}\n"
             f"Ensure the 'action' value is *exactly* 'BID: [quantity] [digit]s' or 'CHALLENGE'."
             " IMPORTANT: Do not include any text or Markdown formatting outside the JSON. Only return the JSON object."
         )
         hand_str = "".join(map(str, player.hand))
-        player_list_str = ", ".join([f"Player {p.player_id}(Orig:{p.original_order}) ({p.get_display_name()})" for p in self.active_players])
-        history_str = ("\n".join([f"  - Player {pid} bid: {bid}" for pid, bid in self.bid_history]) if self.bid_history else "  - No bids yet.")
+        # Anonymize player list
+        player_list_str = ", ".join([f"Player {p.player_id}" for p in self.active_players])
+
+        # Generate persistent history string (limited to last 30 events)
+        game_history_lines = ["Game History:"]
+        history_to_show = self.event_history[-30:]
+        for event in history_to_show:
+            event_type = event.get('type')
+            if event_type == 'BID':
+                game_history_lines.append(f"- Player {event['player_id']} bid: {event['bid']}")
+            elif event_type == 'CHALLENGE':
+                game_history_lines.append(f"- Player {event['challenger_id']} challenged Player {event['challenged_id']}'s bid of {event['bid']}.")
+            elif event_type == 'RESULT':
+                game_history_lines.append(f"  - Outcome: Actual count was {event['actual_count']}. {event['outcome']}.")
+            elif event_type == 'ELIMINATION':
+                game_history_lines.append(f"  - Player {event['player_id']} was eliminated (Rank {event['rank']}).")
+            elif event_type == 'NEXT_ROUND_INFO':
+                game_history_lines.append(f"--- Next Round Started ({event['players_left']} players) ---")
+                game_history_lines.append(f"  - Total Digits: {event['total_digits']}")
+                game_history_lines.append(f"  - Player {event['starting_player_id']} starts bidding.")
+                game_history_lines.append(f"-------------------------")
+
+        # Add bids from the *current* round (if any) - distinct from event_history
+        if self.bid_history:
+            game_history_lines.append("Current Round Bids:")
+            for pid, bid in self.bid_history:
+                 game_history_lines.append(f"- Player {pid} bid: {bid}")
+        elif not self.current_bid: # Only show if no bids made yet in this round
+             game_history_lines.append("Current Round Bids: No bids yet.")
+
+        history_str = "\n".join(game_history_lines)
+
+        # Construct user message with anonymized info and new history
         user_message = (
             f"Game State:\n"
             f"- Your Hand: {hand_str}\n"
-            f"- Active Players ({len(self.active_players)}): {player_list_str}\n"
-            f"- Your Turn: Player {player.player_id} ({player.get_display_name()})\n"
+            f"- Your ID: Player {player.player_id}\n"
+            f"- Active Players: {player_list_str}\n" # Anonymized list
+            f"- Number of Digits per Player: {self.MAX_DIGITS_PER_HAND}\n"
+            f"- Total Digits Remaining: {self.total_digits_in_play}\n"
             f"- Current Bid: {self.current_bid or 'None'}"
         )
-        if self.current_bid:
-            last_bidder_id = self.bid_history[-1][0]
-            last_bidder = next((p for p in self.active_players if p.player_id == last_bidder_id), None)
-            if last_bidder:
-                user_message += f" (made by Player {last_bidder_id} - {last_bidder.get_display_name()})"
-            else:
-                user_message += f" (made by Player {last_bidder_id} - Unknown/Eliminated)"
+        if self.current_bid and self.bid_history: # Check bid_history is not empty
+             last_bidder_id = self.bid_history[-1][0]
+             user_message += f" (made by Player {last_bidder_id})" # Anonymized ID
+
         user_message += (
-            f"\n- Bid History:\n{history_str}\n\n"
+            f"\n{history_str}\n\n"
             "What is your action? Provide your reasoning and action in the specified JSON format."
         )
         return developer_message, user_message, system_message
@@ -664,6 +697,18 @@ class LiarsPokerGame:
             loser_player = self.active_players[self.current_player_index]
             winner_player = None # No clear winner
             self._log_round_event(f"Error state: Eliminating challenger Player {loser_player.player_id} due to missing bid.")
+            # Need to log elimination event here for forfeit case
+            loser_original_order = loser_player.original_order
+            assigned_rank = self.next_rank_to_assign
+            self.ranks[loser_original_order] = assigned_rank
+            self.next_rank_to_assign -= 1
+            self.event_history.append({
+                'type': 'ELIMINATION',
+                'player_id': loser_player.player_id,
+                'rank': assigned_rank
+            })
+            self._log_round_event(f"Player {loser_player.player_id}(Orig:{loser_original_order} - {loser_player.get_display_name()}) is ELIMINATED due to error/invalid challenge. Assigned Rank: {assigned_rank}")
+
         else:
             challenger_player = self.active_players[self.current_player_index]
             challenged_bidder_id, challenged_bid = self.bid_history[-1]
@@ -676,8 +721,33 @@ class LiarsPokerGame:
                 self._log_round_event(f"Error: Challenged bidder (Player ID {challenged_bidder_id}) not found among active players. Eliminating challenger.")
                 loser_player = challenger_player
                 winner_player = None # No clear winner
+                # Log challenge attempt
+                self.event_history.append({
+                    'type': 'CHALLENGE',
+                    'challenger_id': challenger_player.player_id,
+                    'challenged_id': challenged_bidder_id, # ID is known even if player isn't active
+                    'bid': str(challenged_bid)
+                })
+                # Log elimination event for challenger due to error
+                loser_original_order = loser_player.original_order
+                assigned_rank = self.next_rank_to_assign
+                self.ranks[loser_original_order] = assigned_rank
+                self.next_rank_to_assign -= 1
+                self.event_history.append({
+                    'type': 'ELIMINATION',
+                    'player_id': loser_player.player_id,
+                    'rank': assigned_rank
+                })
+                self._log_round_event(f"Player {loser_player.player_id}(Orig:{loser_original_order} - {loser_player.get_display_name()}) is ELIMINATED due to bidder not found error. Assigned Rank: {assigned_rank}")
             else:
                 self._log_round_event(f"Player {challenger_player.player_id}(Orig:{challenger_player.original_order} - {challenger_player.get_display_name()}) challenges Player {challenged_bidder_player.player_id}(Orig:{challenged_bidder_player.original_order} - {challenged_bidder_player.get_display_name()})'s bid of {challenged_bid}.")
+                # Log challenge event
+                self.event_history.append({
+                    'type': 'CHALLENGE',
+                    'challenger_id': challenger_player.player_id,
+                    'challenged_id': challenged_bidder_player.player_id,
+                    'bid': str(challenged_bid)
+                })
 
                 # Reveal hands of active players
                 hands_reveal_log = "Revealed Hands: " + " | ".join([f"P{p.player_id}(Orig:{p.original_order}-{p.get_display_name()}):{''.join(map(str,p.hand))}" for p in self.active_players])
@@ -691,57 +761,89 @@ class LiarsPokerGame:
                     # Bid stands, challenger loses
                     loser_player = challenger_player
                     winner_player = challenged_bidder_player
+                    challenge_outcome_str = "Bidder Wins"
                     self._log_round_event(f"Challenge failed: count({actual_count}) >= {challenged_bid.quantity}. Bidder (Player {winner_player.player_id}) wins the challenge.")
                 else:
                     # Challenge succeeds, bidder loses
                     loser_player = challenged_bidder_player
                     winner_player = challenger_player
+                    challenge_outcome_str = "Challenger Wins"
                     self._log_round_event(f"Challenge successful: count({actual_count}) < {challenged_bid.quantity}. Challenger (Player {winner_player.player_id}) wins the challenge.")
 
-        # Eliminate the loser
-        loser_original_order = loser_player.original_order
-        assigned_rank = self.next_rank_to_assign
-        self.ranks[loser_original_order] = assigned_rank
-        self.next_rank_to_assign -= 1
-        self._log_round_event(f"Player {loser_player.player_id}(Orig:{loser_original_order} - {loser_player.get_display_name()}) is ELIMINATED. Assigned Rank: {assigned_rank}")
+                # Log challenge result
+                self.event_history.append({
+                    'type': 'RESULT',
+                    'bid': str(challenged_bid),
+                    'actual_count': actual_count,
+                    'outcome': challenge_outcome_str,
+                    'winner_id': winner_player.player_id, # ID of player who won the challenge resolution
+                    'loser_id': loser_player.player_id    # ID of player who lost the challenge resolution
+                })
 
-        # Update total digits in play
-        self.total_digits_in_play -= self.MAX_DIGITS_PER_HAND
-        self._log_round_event(f"Total digits remaining in play: {self.total_digits_in_play}")
+                # Eliminate the loser (log event before removal)
+                loser_original_order = loser_player.original_order
+                assigned_rank = self.next_rank_to_assign
+                self.ranks[loser_original_order] = assigned_rank
+                self.next_rank_to_assign -= 1
+                self.event_history.append({
+                    'type': 'ELIMINATION',
+                    'player_id': loser_player.player_id,
+                    'rank': assigned_rank
+                })
+                self._log_round_event(f"Player {loser_player.player_id}(Orig:{loser_original_order} - {loser_player.get_display_name()}) is ELIMINATED. Assigned Rank: {assigned_rank}")
+
+        # --- Common Logic after loser determined (either by error or challenge result) ---
+
+        # Update total digits in play (only if a player was actually eliminated)
+        if loser_player:
+             self.total_digits_in_play -= self.MAX_DIGITS_PER_HAND
+             self._log_round_event(f"Total digits remaining in play: {self.total_digits_in_play}")
 
         # Remove loser from active players list
         loser_index = -1
-        for idx, p in enumerate(self.active_players):
-            if p.player_id == loser_player.player_id:
-                loser_index = idx
-                break
-        if loser_index != -1:
-            self.active_players.pop(loser_index)
-            self._log_round_event(f"Removed player {loser_player.player_id} from active list. {len(self.active_players)} players remain.")
-        else:
-            self._log_round_event(f"Error: Could not find loser player {loser_player.player_id} in active list for removal.") # Should not happen
+        if loser_player: # Check if a loser was identified
+            for idx, p in enumerate(self.active_players):
+                if p.player_id == loser_player.player_id:
+                    loser_index = idx
+                    break
+            if loser_index != -1:
+                self.active_players.pop(loser_index)
+                self._log_round_event(f"Removed player {loser_player.player_id} from active list. {len(self.active_players)} players remain.")
+            else:
+                self._log_round_event(f"Error: Could not find loser player {loser_player.player_id} in active list for removal.") # Should not happen
 
         # Reset bid state for the next round of bidding among remaining players
         self.current_bid = None
-        self.bid_history = []
-        self._log_round_event("Current bid and history cleared.")
+        self.bid_history = [] # Clear the per-round bid history
+        self._log_round_event("Current bid and per-round history cleared.")
 
-        # Set the next player index (the winner of the challenge starts the next round)
-        if winner_player and len(self.active_players) > 0:
-            try:
-                # Find the index of the winner in the *updated* active_players list
-                winner_current_index = self.active_players.index(winner_player)
-                self.current_player_index = winner_current_index
-                self._log_round_event(f"Player {winner_player.player_id}(Orig:{winner_player.original_order} - {winner_player.get_display_name()}) starts the next bidding round.")
-            except ValueError:
-                # This might happen if the winner was somehow the loser (e.g., error state)
-                # Or if the list is empty (game should end)
-                self._log_round_event("Error: Winner not found in updated active list. Resetting index to 0.")
-                self.current_player_index = 0 % len(self.active_players) if len(self.active_players) > 0 else 0
-        elif len(self.active_players) > 0:
-             # If no clear winner from challenge (error state), default to player 0 of remaining
-             self._log_round_event("No clear winner from challenge or error state. Player at index 0 starts next.")
-             self.current_player_index = 0
+        # Log NEXT_ROUND_INFO and set the next player index
+        if len(self.active_players) > 0:
+            next_player_id_to_start = -1
+            if winner_player:
+                try:
+                    # Find the index of the winner in the *updated* active_players list
+                    winner_current_index = self.active_players.index(winner_player)
+                    self.current_player_index = winner_current_index
+                    next_player_id_to_start = winner_player.player_id
+                    self._log_round_event(f"Player {winner_player.player_id}(Orig:{winner_player.original_order} - {winner_player.get_display_name()}) starts the next bidding round.")
+                except ValueError:
+                    self._log_round_event("Error: Winner not found in updated active list. Resetting index to 0.")
+                    self.current_player_index = 0
+                    next_player_id_to_start = self.active_players[0].player_id
+            else:
+                 # If no clear winner from challenge (error state), default to player 0 of remaining
+                 self._log_round_event("No clear winner from challenge or error state. Player at index 0 starts next.")
+                 self.current_player_index = 0
+                 next_player_id_to_start = self.active_players[0].player_id
+
+            # Log the start of the next round info
+            self.event_history.append({
+                'type': 'NEXT_ROUND_INFO',
+                'players_left': len(self.active_players),
+                'starting_player_id': next_player_id_to_start,
+                'total_digits': self.total_digits_in_play
+            })
         else:
              # Game might be over if only 1 player left after elimination
              self._log_round_event("Challenge resolved, less than 2 players remaining.")
@@ -750,6 +852,8 @@ class LiarsPokerGame:
     def play_elimination_game(self) -> Dict[int, int]:
         """Plays a full game of Liar's Poker with progressive elimination until one winner remains."""
         self._initial_setup() # Sets up self.players, deals hands, sets initial player index
+        # Capture actual player configurations (including random sub-strategies chosen)
+        self.initial_players_list = self.players.copy()
 
         # Initialize game state for elimination
         self.active_players = self.players.copy() # Start with all configured players
@@ -757,11 +861,21 @@ class LiarsPokerGame:
         self.next_rank_to_assign = len(self.active_players)
         self.total_digits_in_play = len(self.active_players) * self.MAX_DIGITS_PER_HAND
         self.current_bid = None
-        self.bid_history = []
+        self.bid_history = [] # Per-round bid history
+        self.event_history = [] # Persistent game event history
         self.round_log = self.round_log[-3:] # Keep only recent setup logs
         self.game_active = True # Game is active
 
         self._log_round_event(f"--- Starting Elimination Game with {len(self.active_players)} players. Total digits: {self.total_digits_in_play} ---")
+
+        # Log initial round info
+        initial_player_id = self.active_players[0].player_id if self.active_players else -1
+        self.event_history.append({
+            'type': 'NEXT_ROUND_INFO',
+            'players_left': len(self.active_players),
+            'starting_player_id': initial_player_id,
+            'total_digits': self.total_digits_in_play
+        })
 
         while len(self.active_players) > 1:
             if not self.game_active:
@@ -800,6 +914,12 @@ class LiarsPokerGame:
                 assigned_rank = self.next_rank_to_assign
                 self.ranks[current_player.original_order] = assigned_rank
                 self.next_rank_to_assign -= 1
+                # Log Elimination Event
+                self.event_history.append({
+                    'type': 'ELIMINATION',
+                    'player_id': current_player.player_id,
+                    'rank': assigned_rank
+                })
                 self._log_round_event(f"Player {current_player.player_id}(Orig:{current_player.original_order}) is ELIMINATED due to forfeit/error. Assigned Rank: {assigned_rank}")
 
                 self.total_digits_in_play -= self.MAX_DIGITS_PER_HAND
@@ -809,7 +929,7 @@ class LiarsPokerGame:
 
                 # Reset bid state as the round ends here
                 self.current_bid = None
-                self.bid_history = []
+                self.bid_history = [] # Clear per-round history
                 self._log_round_event("Bid state reset due to elimination.")
 
                 # The next player in the list (at the same index) starts the new round
@@ -817,54 +937,90 @@ class LiarsPokerGame:
                 if len(self.active_players) > 0:
                     next_p = self.active_players[self.current_player_index]
                     self._log_round_event(f"Player {next_p.player_id}(Orig:{next_p.original_order}) starts the next bidding round.")
+                    # Log Next Round Info Event
+                    self.event_history.append({
+                        'type': 'NEXT_ROUND_INFO',
+                        'players_left': len(self.active_players),
+                        'starting_player_id': next_p.player_id,
+                        'total_digits': self.total_digits_in_play
+                    })
 
             elif action == "CHALLENGE":
                 if self.current_bid is None:
                     self._log_round_event("Error: Player challenged with no current bid. Treating as forfeit.")
-                    # Repeat forfeit logic
+                    # Repeat forfeit logic (including ELIMINATION and NEXT_ROUND_INFO logging)
                     assigned_rank = self.next_rank_to_assign
                     self.ranks[current_player.original_order] = assigned_rank
                     self.next_rank_to_assign -= 1
+                    self.event_history.append({
+                        'type': 'ELIMINATION',
+                        'player_id': current_player.player_id,
+                        'rank': assigned_rank
+                    })
                     self._log_round_event(f"Player {current_player.player_id}(Orig:{current_player.original_order}) is ELIMINATED due to invalid challenge. Assigned Rank: {assigned_rank}")
                     self.total_digits_in_play -= self.MAX_DIGITS_PER_HAND
                     eliminated_player_index = self.current_player_index
                     eliminated_player = self.active_players.pop(eliminated_player_index)
                     self._log_round_event(f"Removed player {eliminated_player.player_id}. {len(self.active_players)} players remain. Total digits: {self.total_digits_in_play}")
                     self.current_bid = None
-                    self.bid_history = []
+                    self.bid_history = [] # Clear per-round history
                     self.current_player_index %= len(self.active_players) if len(self.active_players) > 0 else 0
                     if len(self.active_players) > 0:
                         next_p = self.active_players[self.current_player_index]
                         self._log_round_event(f"Player {next_p.player_id}(Orig:{next_p.original_order}) starts the next bidding round.")
+                        self.event_history.append({
+                            'type': 'NEXT_ROUND_INFO',
+                            'players_left': len(self.active_players),
+                            'starting_player_id': next_p.player_id,
+                            'total_digits': self.total_digits_in_play
+                        })
                 else:
-                    self._resolve_elimination_challenge() # This handles elimination, rank, reset, and setting next player
+                    self._resolve_elimination_challenge() # This handles elimination, rank, reset, event logging, and setting next player
                     # The index is set within _resolve_elimination_challenge
 
             elif isinstance(action, Bid):
                 # Validate bid (already partially done in parse, but double check here)
                 if action.is_higher_than(self.current_bid) and action.quantity <= self.total_digits_in_play:
                     self.current_bid = action
+                    # Log BID event to persistent history
+                    self.event_history.append({
+                        'type': 'BID',
+                        'player_id': current_player.player_id,
+                        'bid': str(action)
+                    })
+                    # Also append to the current round's self.bid_history
                     self.bid_history.append((current_player.player_id, action))
                     self._log_round_event(f"Player {current_player.player_id} bids: {action}")
                     # Advance to the next player
                     self.current_player_index = (self.current_player_index + 1) % len(self.active_players)
                 else:
                     self._log_round_event(f"Error: Player {current_player.player_id} proposed invalid bid {action} (Current: {self.current_bid}, Max Qty: {self.total_digits_in_play}). Treating as forfeit.")
-                    # Repeat forfeit logic
+                    # Repeat forfeit logic (including ELIMINATION and NEXT_ROUND_INFO logging)
                     assigned_rank = self.next_rank_to_assign
                     self.ranks[current_player.original_order] = assigned_rank
                     self.next_rank_to_assign -= 1
+                    self.event_history.append({
+                        'type': 'ELIMINATION',
+                        'player_id': current_player.player_id,
+                        'rank': assigned_rank
+                    })
                     self._log_round_event(f"Player {current_player.player_id}(Orig:{current_player.original_order}) is ELIMINATED due to invalid bid. Assigned Rank: {assigned_rank}")
                     self.total_digits_in_play -= self.MAX_DIGITS_PER_HAND
                     eliminated_player_index = self.current_player_index
                     eliminated_player = self.active_players.pop(eliminated_player_index)
                     self._log_round_event(f"Removed player {eliminated_player.player_id}. {len(self.active_players)} players remain. Total digits: {self.total_digits_in_play}")
                     self.current_bid = None
-                    self.bid_history = []
+                    self.bid_history = [] # Clear per-round history
                     self.current_player_index %= len(self.active_players) if len(self.active_players) > 0 else 0
                     if len(self.active_players) > 0:
                         next_p = self.active_players[self.current_player_index]
                         self._log_round_event(f"Player {next_p.player_id}(Orig:{next_p.original_order}) starts the next bidding round.")
+                        self.event_history.append({
+                            'type': 'NEXT_ROUND_INFO',
+                            'players_left': len(self.active_players),
+                            'starting_player_id': next_p.player_id,
+                            'total_digits': self.total_digits_in_play
+                        })
 
             # Add delay based on player type
             if effective_strategy == 'llm':
@@ -911,14 +1067,97 @@ class LiarsPokerGame:
         log_filename = os.path.join(GAME_LOGS_DIR, f"liars_poker_elimination_game_{timestamp}.log")
         try:
             with open(log_filename, "w", encoding='utf-8') as f:
-                f.write("\n".join(self.round_log))
+                # Apply file lock
+                try:
+                    fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    f.write("\n".join(self.round_log))
+                    fcntl.flock(f, fcntl.LOCK_UN)
+                except BlockingIOError:
+                    logger.warning(f"Could not acquire lock for {log_filename}, skipping write.")
+                except Exception as lock_e:
+                    logger.error(f"Error locking/unlocking {log_filename}: {lock_e}")
+                    # Still attempt to write if locking fails but isn't BlockingIOError
+                    try:
+                        f.seek(0) # Ensure we are at the beginning if error occurred after partial write attempt
+                        f.truncate(0)
+                        f.write("\n".join(self.round_log))
+                    except Exception as write_e:
+                         logger.error(f"Failed to write to {log_filename} after lock error: {write_e}")
+
             logger.info(f"Full game log saved to {log_filename}")
         except Exception as e:
             logger.error(f"Failed to save game log: {e}")
 
-        # Update hands_log.json (consider revising format later if needed)
+        # --- Build and Persist Summary Data ---
+        summary_timestamp = time.strftime("%Y%m%d-%H%M%S") # Use a consistent timestamp or a new one
+        summary_data = {
+            "timestamp": summary_timestamp,
+            "rank1": None,
+            "rank2": None,
+            "rank3": None,
+            "rank4": None,
+            "rank5": None,
+            "rank6": None,
+        }
+
+        # Fill in each rank from the sorted final ranks
+        for pos in range(1, 7):
+            for original_order, rank_val in self.ranks.items():
+                if rank_val == pos:
+                    player_obj = next((p for p in self.initial_players_list if p.original_order == original_order), None)
+                    if player_obj:
+                        summary_data[f"rank{pos}"] = player_obj.get_display_name()
+                    else:
+                         logger.warning(f"Could not find player details for rank {pos} (original_order {original_order}) in summary.")
+                    break # Found the player for this rank position
+
+        # --- Open and Write to hands_log_multi_liars_poker.json ---
         summary_log_filename = "hands_log_multi_liars_poker.json"
-        print(f"\nElimination game finished. Full game log in {GAME_LOGS_DIR}, summary in {os.path.join(LOGS_DIR, summary_log_filename)}")
+        summary_path = os.path.join(LOGS_DIR, summary_log_filename)
+        try:
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(summary_path), exist_ok=True)
+            with open(summary_path, "a+", encoding="utf-8") as f:
+                fcntl.flock(f, fcntl.LOCK_EX) # Acquire exclusive lock
+                f.seek(0) # Move to the beginning to read content
+                content = f.read().strip()
+                log_entries = []
+                if content:
+                    try:
+                        # Try parsing existing content as JSON list
+                        data = json.loads(content)
+                        if isinstance(data, list):
+                            log_entries = data
+                        else:
+                             # Handle case where file exists but isn't a valid JSON list (e.g., contains single object)
+                            logger.warning(f"Existing content in {summary_path} is not a list. Resetting log.")
+                            log_entries = [] # Or potentially [data] if you want to wrap it
+                    except json.JSONDecodeError:
+                        # Handle case where file exists but isn't valid JSON
+                        logger.warning(f"Could not decode JSON from {summary_path}. Resetting log.")
+                        log_entries = []
+                # else: log_entries is already initialized as []
+
+                log_entries.append(summary_data) # Add the new summary
+
+                # Prepare to overwrite the file
+                f.seek(0)
+                f.truncate(0)
+                json.dump(log_entries, f, indent=2) # Write the updated list back
+                fcntl.flock(f, fcntl.LOCK_UN) # Release lock
+            logger.info(f"Summary log updated: {summary_path}")
+        except BlockingIOError:
+             logger.error(f"Could not acquire lock for {summary_path}. Summary not saved.")
+        except Exception as e:
+            logger.error(f"Failed to write summary to {summary_path}: {e}")
+            # Attempt to release lock if held, though it might fail if the error was before lock release
+            try:
+                fcntl.flock(f, fcntl.LOCK_UN)
+            except Exception:
+                 pass # Ignore errors during unlock attempt after another error
+
+        # Update misleading print statement
+        print(f"\nElimination game finished. Logs saved:\n- Full game log: {log_filename}\n- Summary JSON: {summary_path}")
 
         return self.ranks
 
