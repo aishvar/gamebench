@@ -1,6 +1,8 @@
 #!/bin/bash
-# Usage: ./run_parallel_games_liars_poker_multi.sh [count]
-# Example: ./run_parallel_games_liars_poker_multi.sh 10
+# Usage: ./run_parallel_games_liars_poker_hu.sh [count]
+# Example: ./run_parallel_games_liars_poker_hu.sh 10
+
+COUNT=${1:-2}  # Default to 2 if not provided
 
 #CONFIG_INPUT=$'2\\nR\\nC\\nopenai\\no1-2024-12-17\\n1'
 
