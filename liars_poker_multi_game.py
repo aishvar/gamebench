@@ -252,8 +252,8 @@ class LiarsPokerGame:
                 possible_choices = []
                 if ('naive_5050', None) not in used_strategies:
                     possible_choices.append({"strategy_type": "naive_5050"})
-                if ('intelligent', None) not in used_strategies:
-                    possible_choices.append({"strategy_type": "intelligent"})
+                #if ('intelligent', None) not in used_strategies:
+                #    possible_choices.append({"strategy_type": "intelligent"})
                 for cfg in self.COMMON_CONFIGS:
                     if cfg['strategy_type'] == 'llm':
                         model_key = (cfg['provider'], cfg['model'])
@@ -328,8 +328,8 @@ class LiarsPokerGame:
                 possible_choices = []
                 if ('naive_5050', None) not in used_strategies:
                     possible_choices.append({"strategy_type": "naive_5050"})
-                if ('intelligent', None) not in used_strategies:
-                    possible_choices.append({"strategy_type": "intelligent"})
+                #if ('intelligent', None) not in used_strategies:
+                #    possible_choices.append({"strategy_type": "intelligent"})
                 for cfg in self.COMMON_CONFIGS:
                     if cfg['strategy_type'] == 'llm':
                         model_key = (cfg['provider'], cfg['model'])
