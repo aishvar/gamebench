@@ -1,0 +1,276 @@
+Generated 6 hands.
+Hands dealt to 6 players.
+Initial setup complete. Starting elimination game.
+--- Starting Elimination Game with 6 players. Total digits: 48 ---
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [6 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 4s in my hand. By bidding 3 4s, I only need one more 4 among the other 40 unknown digits. The probability of at least one 4 in the remaining cards is about 1 - 0.9^40 ≈ 0.985, making this a very safe opening bid.
+Attempting to parse extracted action string: 'BID: 3 4S'
+Player 0 bids: 3 4s
+
+--- Turn: Player 1(Orig:1 - meta-llama/llama-4-maverick:floor) [6 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 4s. I have one 7 and no 4s in my visible hand. To make a higher bid, I can either increase the quantity or the digit. Since I don't have any 4s, I'm inclined to believe the count of 4s is less than 3 * 6 = 18 (if all other players had 3 or more 4s). However, I still need to make a bid higher than 3 4s. I can bid 3 5s, increasing the digit. Alternatively, I can bid 4 of any digit. Given my hand, I see two 7s, so bidding 4 7s seems plausible as it increases the quantity and is based on a digit I have some information about.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 1 bids: 3 5s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: I have one 5 in my hand and the current bid is 3 5s. Increasing the digit to 6 while keeping the quantity the same is a valid move and reasonable since I have one 6 in my hand. Bidding 3 6s puts pressure on the next player while staying within a believable range.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 2 bids: 3 6s
+
+--- Turn: Player 3(Orig:4 - Naive 50/50) [6 players left] ---
+Calculating action for Player 3 (Naive 50/50)
+Naive chooses BID: 3 7s
+Player 3 bids: 3 7s
+
+--- Turn: Player 4(Orig:5 - gpt-4.1-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 4 Reasoning: I have two 7s and one 9 in my hand. The current bid is 3 7s. With 48 digits in play and only a bid of 3 for 7s, it is very likely that there are at least three 7s among all hands. Challenging now would be unwise. I can make a higher bid by increasing the digit to 8, since I have a 9 but not an 8, or I can increase the digit to 9, where I have one myself. Alternatively, I could increase the quantity to 4 for any digit. Given that I have one 9, and 48 digits are in play, bidding 3 9s is a reasonable next step that is higher than 3 7s.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 4 bids: 3 9s
+
+--- Turn: Player 5(Orig:2 - meta-llama/llama-3.1-8b-instruct:floor) [6 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is 3 9s. I have two 9s in my hand. Since I have a strong indication of the digit's presence, I should increase both quantity and digit to make a valid higher bid.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 5 bids: 4 9s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [6 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I hold two 4s. With 40 unknown digits, I expect about 4 more 4s, giving around 6 total 4s. Raising to 5 4s is plausible and correctly outbids 4 9s by increasing quantity.
+Attempting to parse extracted action string: 'BID: 5 4S'
+Player 0 bids: 5 4s
+
+--- Turn: Player 1(Orig:1 - meta-llama/llama-4-maverick:floor) [6 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 5 4s. I have one 4 in my hand. To make a higher bid, I can either increase the quantity or the digit. Increasing the quantity to 6 4s seems plausible because it is still relatively low compared to the total number of digits (48). However, I should also consider the distribution and the fact that Player 0 made the bid, possibly indicating they have a strong hand in 4s. I will increase the quantity to make a higher bid.
+Attempting to parse extracted action string: 'BID: 6 4S'
+Player 1 bids: 6 4s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 6 4s. I have one 4 in my hand. Considering there are 48 digits total and 6 players, the average count for each digit is around 4.8. A bid of 6 4s is plausible but on the higher side. To raise, I need to bid at least 6 5s or 7 0s. Since I have no 5s, and no 0s, bidding 6 5s is risky. Bidding 7 0s is a large jump and may be unlikely. Therefore, challenging the current bid may be the best move as it could be an overbid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) challenges Player 1(Orig:1 - meta-llama/llama-4-maverick:floor)'s bid of 6 4s.
+Revealed Hands: P0(Orig:0-o4-mini-2025-04-16):45007946 | P1(Orig:1-meta-llama/llama-4-maverick:floor):67957710 | P2(Orig:3-gpt-4.1-mini-2025-04-14):30568821 | P3(Orig:4-Naive 50/50):12022229 | P4(Orig:5-gpt-4.1-2025-04-14):15936197 | P5(Orig:2-meta-llama/llama-3.1-8b-instruct:floor):08113333
+Actual count of 4s across 6 active players: 2
+Challenge successful: count(2) < 6. Challenger (Player 2) wins the challenge.
+Player 1(Orig:1 - meta-llama/llama-4-maverick:floor) is ELIMINATED. Assigned Rank: 6
+Total digits remaining in play: 40
+Removed player 1 from active list. 5 players remain.
+Current bid and per-round history cleared.
+Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) starts the next bidding round.
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [5 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: I have one 6 and one 8 in my hand, but no 4s or 9s. The previous round showed that 6 4s was an overbid, so I will start conservatively. The lowest possible bid is 1 0s, but that is too weak. I will bid 2 4s, as 4s are common and this is a reasonable opening bid to build from.
+Attempting to parse extracted action string: 'BID: 2 4S'
+Player 2 bids: 2 4s
+
+--- Turn: Player 3(Orig:4 - Naive 50/50) [5 players left] ---
+Calculating action for Player 3 (Naive 50/50)
+Naive chooses BID: 2 5s
+Player 3 bids: 2 5s
+
+--- Turn: Player 4(Orig:5 - gpt-4.1-2025-04-14) [5 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 4 Reasoning: The current bid is 2 5s. In my hand (15936197), I have one 5. With 40 total digits and 2 needed, it is likely there are at least two 5s among all hands, so challenging is not optimal. The minimum valid raise is either 2 6s or 3 0s. I have one 6 and two 9s. Bidding 2 6s is reasonable since I hold one 6, and it only requires one more among the remaining 32 digits. This is a safe, incremental bid that keeps the pressure low.
+Attempting to parse extracted action string: 'BID: 2 6S'
+Player 4 bids: 2 6s
+
+--- Turn: Player 5(Orig:2 - meta-llama/llama-3.1-8b-instruct:floor) [5 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: Given the current bid is 2 6s, I can make a higher bid by increasing both quantity and digit. I have a single 6 in my hand, which increases the likelihood of my bid. I will bid 3 6s.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 5 bids: 3 6s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [5 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 4s in my hand. To raise the bid above 3 6s, bidding 4 4s leverages my hand and has a high probability (over 80%) that the remaining cards contain at least two more 4s to meet the bid.
+Attempting to parse extracted action string: 'BID: 4 4S'
+Player 0 bids: 4 4s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [5 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 4 4s, and I must bid higher. I have one 4 in my hand. The previous bids show cautious increments, and bidding 4 5s is the next valid step with the same quantity but higher digit. Given the total of 40 digits, 4 occurrences of a digit is plausible, and increasing the digit to 5s is reasonable.
+Attempting to parse extracted action string: 'BID: 4 5S'
+Player 2 bids: 4 5s
+
+--- Turn: Player 3(Orig:4 - Naive 50/50) [5 players left] ---
+Calculating action for Player 3 (Naive 50/50)
+Naive chooses BID: 4 6s
+Player 3 bids: 4 6s
+
+--- Turn: Player 4(Orig:5 - gpt-4.1-2025-04-14) [5 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 4 Reasoning: I have one 6 in my hand. The current bid is 4 6s. With 40 digits in play and 8 in my hand, I only know of one 6. Statistically, there are likely to be more 6s among the other 32 digits, but the bid of 4 6s is not unreasonable. However, I don't have enough information to confidently challenge. The next legal bid is either 4 7s or 5 0s. I have two 7s in my hand, so bidding 4 7s is a reasonable incremental increase, leveraging my strong holding in 7s.
+Attempting to parse extracted action string: 'BID: 4 7S'
+Player 4 bids: 4 7s
+
+--- Turn: Player 5(Orig:2 - meta-llama/llama-3.1-8b-instruct:floor) [5 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: I have 8 digits in my hand, and the current bid is 4 7s. With the maximum possible quantity being 40, I can safely increase the digit to 8, as it's unlikely to reach 40 7s. I have no 7s in my hand, but I have three 3s, which are not as high as 8. I should make a bid with a higher digit.
+Attempting to parse extracted action string: 'BID: 4 8S'
+Player 5 bids: 4 8s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [5 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have zero 8s in my hand. With 32 unknown digits among the other players, the probability of at least four 8s is only around 40%, making the bid of 4 8s unlikely.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0(Orig:0 - o4-mini-2025-04-16) challenges Player 5(Orig:2 - meta-llama/llama-3.1-8b-instruct:floor)'s bid of 4 8s.
+Revealed Hands: P0(Orig:0-o4-mini-2025-04-16):45007946 | P2(Orig:3-gpt-4.1-mini-2025-04-14):30568821 | P3(Orig:4-Naive 50/50):12022229 | P4(Orig:5-gpt-4.1-2025-04-14):15936197 | P5(Orig:2-meta-llama/llama-3.1-8b-instruct:floor):08113333
+Actual count of 8s across 5 active players: 3
+Challenge successful: count(3) < 4. Challenger (Player 0) wins the challenge.
+Player 5(Orig:2 - meta-llama/llama-3.1-8b-instruct:floor) is ELIMINATED. Assigned Rank: 5
+Total digits remaining in play: 32
+Removed player 5 from active list. 4 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:0 - o4-mini-2025-04-16) starts the next bidding round.
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [4 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 4s in my hand. With 32 total digits and an expected ~4.4 fours, bidding 3 4s is a safe opening bid leveraging my pocket fours with over 90% chance of success.
+Attempting to parse extracted action string: 'BID: 3 4S'
+Player 0 bids: 3 4s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [4 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 3 4s. I have one 4 in my hand (30568821). Since the bid is low and only requires three 4s total, it is reasonable to increase the bid. The next valid higher bid could be either 3 5s or 4 0s. I have one 5 in my hand as well, so bidding 3 5s is a safe incremental increase and more believable than jumping quantity. This maintains pressure on the next players while reflecting my hand.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 2 bids: 3 5s
+
+--- Turn: Player 3(Orig:4 - Naive 50/50) [4 players left] ---
+Calculating action for Player 3 (Naive 50/50)
+Naive chooses BID: 3 6s
+Player 3 bids: 3 6s
+
+--- Turn: Player 4(Orig:5 - gpt-4.1-2025-04-14) [4 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 4 Reasoning: My hand is 15936197, which contains one 6. With 32 digits in play and three 6s already bid, it's plausible that there are at least three 6s in total. However, I only have one, so I can't be confident enough to challenge yet. The next valid bid must be either 3 7s or 4 0s (or higher). I have two 7s and two 9s in my hand, making 3 7s a safe incremental bid based on my hand. This keeps the pressure on others without overcommitting.
+Attempting to parse extracted action string: 'BID: 3 7S'
+Player 4 bids: 3 7s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [4 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have one 9 in my hand. The current bid is 3 7s. Raising to 3 9s is the smallest allowable increase (same quantity, higher digit) and requires two more 9s among the 24 unknown cards. The probability of at least two 9s in those 24 cards is about 70%, making this a reasonable and safe raise.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 0 bids: 3 9s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [4 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 3 9s. I have one 9 in my hand (30568821). To make a valid higher bid, I must either increase the quantity or keep the quantity at 3 and increase the digit. The next valid bids after 3 9s would be 4 0s or higher quantity with any digit. Since I have no 0s in my hand, but I do have one 8, bidding 4 0s is the lowest possible increment and reasonable given the total digits. Bidding 4 0s is a safer increase than challenging at this point.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 2 bids: 4 0s
+
+--- Turn: Player 3(Orig:4 - Naive 50/50) [4 players left] ---
+Calculating action for Player 3 (Naive 50/50)
+Player 3 chose to CHALLENGE.
+Player 3(Orig:4 - Naive 50/50) challenges Player 2(Orig:3 - gpt-4.1-mini-2025-04-14)'s bid of 4 0s.
+Revealed Hands: P0(Orig:0-o4-mini-2025-04-16):45007946 | P2(Orig:3-gpt-4.1-mini-2025-04-14):30568821 | P3(Orig:4-Naive 50/50):12022229 | P4(Orig:5-gpt-4.1-2025-04-14):15936197
+Actual count of 0s across 4 active players: 4
+Challenge failed: count(4) >= 4. Bidder (Player 2) wins the challenge.
+Player 3(Orig:4 - Naive 50/50) is ELIMINATED. Assigned Rank: 4
+Total digits remaining in play: 24
+Removed player 3 from active list. 3 players remain.
+Current bid and per-round history cleared.
+Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) starts the next bidding round.
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [3 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: I have the digits 3, 0, 5, 6, 8, 8, 2, 1 in my hand. Since no bids have been made yet this round, I want to start with a moderate bid. I have two 8s, which is the highest count of any digit in my hand. Starting with 2 8s is reasonable and conservative, as it is likely there are more 8s across all players. This bid is also a good baseline for others to raise or challenge.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 2 bids: 2 8s
+
+--- Turn: Player 4(Orig:5 - gpt-4.1-2025-04-14) [3 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 4 Reasoning: My hand is 15936197, which contains no 8s. The current bid is 2 8s, and with 24 digits in play, it's plausible that the other two players could collectively have at least 2 8s. Challenging now is risky. To make a higher bid, I can either increase the quantity or keep the quantity at 2 and move to a higher digit (9). I have two 9s in my hand, so bidding 2 9s is safe and puts some pressure on the next player.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Player 4 bids: 2 9s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [3 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 4s in my hand. To meet a bid of 3 4s, I need only one more among the 16 unknown digits, which has about an 81% chance. Challenging 2 9s is risky since I have one 9 and it’s likely there’s another. Bidding 3 4s leverages my strong holding and forces opponents to raise the quantity further.
+Attempting to parse extracted action string: 'BID: 3 4S'
+Player 0 bids: 3 4s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [3 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 3 4s, and I must bid higher. I have one 4 in my hand. To raise the bid, I can either increase the quantity to 4 or keep the quantity at 3 and increase the digit. Bidding 3 5s is a valid increase, but given my hand and the current bids, a safer higher bid is 4 0s, as 0s are not yet claimed and I have one 0 in my hand. This bid is higher in quantity and plausible.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 2 bids: 4 0s
+
+--- Turn: Player 4(Orig:5 - gpt-4.1-2025-04-14) [3 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 4 Reasoning: The current bid is 4 0s. I have no 0s in my hand (15936197). With 24 digits in play and only 8 known to me, it's possible but not certain there are 4 zeros among the remaining 16 digits. Since the bid is not extreme and there is a reasonable chance the other two players have some zeros, a challenge is risky. I should make a higher bid. I have two 9s in my hand, so bidding 4 9s is a reasonable and legal higher bid (same quantity, higher digit), and my own hand supports it.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 4 bids: 4 9s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [3 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I only have one 9 in my hand, so for the bid of 4 9s to be true there must be at least three 9s among the other 16 cards. The probability of that is only about 21%, making the claim unlikely. It’s a good spot to call their bluff and eliminate Player 4.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0(Orig:0 - o4-mini-2025-04-16) challenges Player 4(Orig:5 - gpt-4.1-2025-04-14)'s bid of 4 9s.
+Revealed Hands: P0(Orig:0-o4-mini-2025-04-16):45007946 | P2(Orig:3-gpt-4.1-mini-2025-04-14):30568821 | P4(Orig:5-gpt-4.1-2025-04-14):15936197
+Actual count of 9s across 3 active players: 3
+Challenge successful: count(3) < 4. Challenger (Player 0) wins the challenge.
+Player 4(Orig:5 - gpt-4.1-2025-04-14) is ELIMINATED. Assigned Rank: 3
+Total digits remaining in play: 16
+Removed player 4 from active list. 2 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:0 - o4-mini-2025-04-16) starts the next bidding round.
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [2 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 4s in my hand, guaranteeing at least two 4s in play. Opening with 2 4s is a safe bid and forces the opponent to raise the quantity or pick a higher digit at the same quantity.
+Attempting to parse extracted action string: 'BID: 2 4S'
+Player 0 bids: 2 4s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 2 4s. I have one '4' in my hand (30568821). To make a higher bid, I need to either increase the quantity or keep the quantity the same and increase the digit. Since I only have one '4', bidding 3 4s might be risky. However, I have two '8's and one '6' and one '5' in my hand. The next higher bid after 2 4s can be 2 5s or 3 0s. Bidding 2 5s is a safer increment and I have one '5', so it is plausible. Therefore, I will bid 2 5s.
+Attempting to parse extracted action string: 'BID: 2 5S'
+Player 2 bids: 2 5s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [2 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have one 9 in my hand. Raising to “2 9s” only requires one more 9 from the opponent’s 8 unknown digits, which has a probability of about 1−(9/10)^8 ≈ 57%. This increases the digit without raising the quantity, keeping the bid plausible.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Player 0 bids: 2 9s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 2 9s. I have one 9 in my hand. To make a valid higher bid, I can either increase the quantity or keep the quantity the same and increase the digit. Since the quantity is 2, I can bid 3 0s or higher. I have one 0 in my hand, so bidding 3 0s seems reasonable. It increases the quantity and is a valid bid.
+Attempting to parse extracted action string: 'BID: 3 0S'
+Player 2 bids: 3 0s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [2 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 4s in my hand. The current bid is 3 0s; bidding 3 4s is a valid raise (same quantity, higher digit), and I need only one more 4 from my opponent. The probability of at least one 4 in their 8 cards (~57%) makes this a reasonable bid.
+Attempting to parse extracted action string: 'BID: 3 4S'
+Player 0 bids: 3 4s
+
+--- Turn: Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 2 (gpt-4.1-mini-2025-04-14), Attempt 1/3
+Player 2 Reasoning: The current bid is 3 4s, meaning there are at least three 4s in total. I have one 4 in my hand (30568821). To raise the bid, I must either increase the quantity or keep the quantity and increase the digit. Since 3 5s would be a valid higher bid and I have one 5, bidding 3 5s seems reasonable. Increasing the digit by one while keeping the quantity the same is a cautious but valid move given the current bid and my hand.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 2 bids: 3 5s
+
+--- Turn: Player 0(Orig:0 - o4-mini-2025-04-16) [2 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have one 5 in my hand and the opponent only has eight cards. The probability of there being at least two more 5s among them (to reach three total) is under 20%, making the bid very unlikely. I should challenge.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0(Orig:0 - o4-mini-2025-04-16) challenges Player 2(Orig:3 - gpt-4.1-mini-2025-04-14)'s bid of 3 5s.
+Revealed Hands: P0(Orig:0-o4-mini-2025-04-16):45007946 | P2(Orig:3-gpt-4.1-mini-2025-04-14):30568821
+Actual count of 5s across 2 active players: 2
+Challenge successful: count(2) < 3. Challenger (Player 0) wins the challenge.
+Player 2(Orig:3 - gpt-4.1-mini-2025-04-14) is ELIMINATED. Assigned Rank: 2
+Total digits remaining in play: 8
+Removed player 2 from active list. 1 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:0 - o4-mini-2025-04-16) starts the next bidding round.
+
+--- Elimination Game Over ---
+Winner: Player 0(Orig:0 - o4-mini-2025-04-16) is Rank 1!
