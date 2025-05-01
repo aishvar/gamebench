@@ -26,8 +26,8 @@ def main():
         processed_timestamps = set(stored.get("processed_timestamps", []))
         # Deserialize Rating objects
         model_ratings = {
-            name: env.create_rating(mu=mu, sigma=sigma)
-            for name, (mu, sigma) in stored.get("model_ratings", {}).items()
+            name: env.create_rating(mu=float(rating_data["mu"]), sigma=float(rating_data["sigma"]))
+            for name, rating_data in stored.get("model_ratings", {}).items()
         }
     except FileNotFoundError:
         model_ratings = {}
