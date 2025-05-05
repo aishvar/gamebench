@@ -1,0 +1,203 @@
+Generated 6 hands.
+Hands dealt to 6 players.
+Initial setup complete. Starting elimination game.
+--- Starting Elimination Game with 6 players. Total digits: 48 ---
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [6 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: As the first bidder, I need to establish a starting bid. My hand contains two 8s, which is the highest digit I have. Bidding 3 8s is a reasonable opening because it's slightly above my own count and leverages the high digit value. With 48 total digits, 3 is a conservative starting quantity that allows for escalation while giving me a chance to control the narrative around 8s.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 0 bids: 3 8s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 1 Reasoning: I have one 8 in my hand. With 48 digits in play, it's likely there are more 8s among all players. The current bid is only 3 8s, which is a conservative estimate. Rather than challenge, I'll raise the bid to 4 9s because I have two 9s, making it plausible that there are at least four 9s in total.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 1 bids: 4 9s
+
+--- Turn: Player 2(Orig:4 - claude-3-7-sonnet-20250219) [6 players left] ---
+Requesting LLM action from Player 2 (claude-3-7-sonnet-20250219), Attempt 1/3
+Player 2 Reasoning: I need to decide whether to challenge Player 1's bid of 4 9s or make a higher bid. Looking at my hand (64381869), I have one 9. This means there are 3 more 9s needed among the other 5 players (40 digits) to meet the current bid. That's not unreasonable - the probability is decent that 3 more 9s exist among 40 random digits. Since I can't confidently challenge, I should make a higher bid. I have two 8s in my hand, which gives me some confidence in bidding on 8s. I could bid 5 8s, which would require 3 more 8s among the other players' 40 digits. Alternatively, I could bid 5 0s, 5 1s, etc., but I have less information about those digits. I'll bid 5 8s since I already have 2 in my hand.
+Attempting to parse extracted action string: 'BID: 5 8S'
+Player 2 bids: 5 8s
+
+--- Turn: Player 3(Orig:1 - google/gemma-3-27b-it:floor) [6 players left] ---
+Requesting LLM action from Player 3 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 5 8s. I have no 8s in my hand. Bidding higher in 8s is unwise. Bidding on a different digit seems more strategic. I have two 5s, one 9, and two 4s. Bidding 6 4s is a reasonable increase from 5 8s, as it increases the quantity. Alternatively, I could bid 5 9s, which maintains the quantity but increases the digit. Given the previous bid of 4 9s, bidding 5 9s is a relatively safe increase, and I have one 9 in my hand. However, bidding 6 4s is likely safer as 9s were already bid on.
+Attempting to parse extracted action string: 'BID: 6 4S'
+Player 3 bids: 6 4s
+
+--- Turn: Player 4(Orig:3 - qwen/qwen3-235b-a22b-04-28:floor) [6 players left] ---
+Requesting LLM action from Player 4 (qwen/qwen3-235b-a22b-04-28:floor), Attempt 1/3
+Player 4 Reasoning: The current bid is 6 4s. With 48 total digits and an average expectation of ~4.8 of any digit, 6 4s is above average. I hold only one 4, leaving at most five other 4s across five opponents. Considering the bid's high quantity relative to statistical likelihood and my limited personal 4s, challenging is justified.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 4(Orig:3 - qwen/qwen3-235b-a22b-04-28:floor) challenges Player 3(Orig:1 - google/gemma-3-27b-it:floor)'s bid of 6 4s.
+Revealed Hands: P0(Orig:2-qwen/qwen3-32b:floor):73741588 | P1(Orig:0-gpt-4.1-2025-04-14):95548260 | P2(Orig:4-claude-3-7-sonnet-20250219):64381869 | P3(Orig:1-google/gemma-3-27b-it:floor):96543543 | P4(Orig:3-qwen/qwen3-235b-a22b-04-28:floor):19216433 | P5(Orig:5-x-ai/grok-3-beta:floor):64642006
+Actual count of 4s across 6 active players: 8
+Challenge failed: count(8) >= 6. Bidder (Player 3) wins the challenge.
+Player 4(Orig:3 - qwen/qwen3-235b-a22b-04-28:floor) is ELIMINATED. Assigned Rank: 6
+Total digits remaining in play: 40
+Removed player 4 from active list. 5 players remain.
+Current bid and per-round history cleared.
+Player 3(Orig:1 - google/gemma-3-27b-it:floor) starts the next bidding round.
+
+--- Turn: Player 3(Orig:1 - google/gemma-3-27b-it:floor) [5 players left] ---
+Requesting LLM action from Player 3 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is None. I have two 3s, one 4, one 5, one 6, and two 9s. Given the previous round's bidding, 8s and 9s were bid high. I will start with a conservative bid of 1 9s to test the waters, as I have two 9s in my hand.
+Attempting to parse extracted action string: 'BID: 1 9S'
+Player 3 bids: 1 9s
+
+--- Turn: Player 5(Orig:5 - x-ai/grok-3-beta:floor) [5 players left] ---
+Requesting LLM action from Player 5 (x-ai/grok-3-beta:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is 1 9s by Player 3, which is a very low bid and likely conservative. In my hand, I have no 9s, but with 5 players and 40 total digits, it's plausible that at least one 9 exists across all hands. Since the bid is so low, challenging it carries high risk as it's likely to be met or exceeded. I can safely make a higher bid. Looking at my hand (64642006), I have three 6s, which is a strong count for a single digit. Bidding 2 9s is a modest increase in quantity while keeping a high digit, and it’s a reasonable escalation without overcommitting, allowing me to gauge other players' reactions.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Player 5 bids: 2 9s
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [5 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 2 9s. My hand contains no 9s but has two 8s. Bidding 3 8s increases the quantity while leveraging my known 8s, making it a plausible and defensible higher bid. Challenging would risk elimination if the bid is valid, which is likely given 5 players and 40 digits.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 0 bids: 3 8s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-2025-04-14) [5 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 1 Reasoning: My hand is 95548260, which contains one 8. With 5 players and 8 digits each, there are 40 digits in play. The current bid is 3 8s. Since I have one 8, it's reasonable to expect that at least two more 8s could be distributed among the remaining 32 digits (across 4 players). Statistically, each digit appears about 4 times in 40 digits, so 3 8s is a plausible bid. I do not have enough information to confidently challenge, so I will make a higher bid. I also have two 9s, so I can safely bid 4 9s, increasing both the quantity and picking a digit I have more of.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 1 bids: 4 9s
+
+--- Turn: Player 2(Orig:4 - claude-3-7-sonnet-20250219) [5 players left] ---
+Requesting LLM action from Player 2 (claude-3-7-sonnet-20250219), Attempt 1/3
+Player 2 Reasoning: Looking at my hand (64381869), I have zero 9s. Player 1 has bid 4 9s, claiming there are at least 4 nines among all 40 digits in play. With 5 players having 8 digits each, there are 40 total digits. Since I have 0 nines, there would need to be at least 4 nines among the other 32 digits held by other players. This is certainly possible but not guaranteed. However, since my hand contains two 8s, I could reasonably bid 5 8s, which is higher than 4 9s. In the previous round, I successfully bid 5 8s, and we know from the challenge that there were at least 8 fours in the previous round (when there were 48 total digits). Given that I have two 8s and Player 0 just bid 3 8s (suggesting they might have some 8s), bidding 5 8s seems reasonable.
+Attempting to parse extracted action string: 'BID: 5 8S'
+Player 2 bids: 5 8s
+
+--- Turn: Player 3(Orig:1 - google/gemma-3-27b-it:floor) [5 players left] ---
+Requesting LLM action from Player 3 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 5 8s. I have zero 8s in my hand. Given that there are 5 players with 8 digits each, totaling 40 digits, and the previous bids suggest some 8s are present, 5 8s is plausible but not guaranteed. However, increasing the quantity to 6 8s seems risky given my hand. I can bid 1 9s, which is lower than the current bid, or bid a higher digit with a lower quantity. Since I have two 5s, I could bid 2 5s, but that's lower. I have two 9s, so I can bid 3 9s, which is a valid bid. Alternatively, I can challenge the 5 8s. Considering the prior history of challenges being successful when a bid seems high, and I have no 8s, challenging seems like the best option. It's a gamble, but potentially worthwhile.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 3(Orig:1 - google/gemma-3-27b-it:floor) challenges Player 2(Orig:4 - claude-3-7-sonnet-20250219)'s bid of 5 8s.
+Revealed Hands: P0(Orig:2-qwen/qwen3-32b:floor):73741588 | P1(Orig:0-gpt-4.1-2025-04-14):95548260 | P2(Orig:4-claude-3-7-sonnet-20250219):64381869 | P3(Orig:1-google/gemma-3-27b-it:floor):96543543 | P5(Orig:5-x-ai/grok-3-beta:floor):64642006
+Actual count of 8s across 5 active players: 5
+Challenge failed: count(5) >= 5. Bidder (Player 2) wins the challenge.
+Player 3(Orig:1 - google/gemma-3-27b-it:floor) is ELIMINATED. Assigned Rank: 5
+Total digits remaining in play: 32
+Removed player 3 from active list. 4 players remain.
+Current bid and per-round history cleared.
+Player 2(Orig:4 - claude-3-7-sonnet-20250219) starts the next bidding round.
+
+--- Turn: Player 2(Orig:4 - claude-3-7-sonnet-20250219) [4 players left] ---
+Requesting LLM action from Player 2 (claude-3-7-sonnet-20250219), Attempt 1/3
+Player 2 Reasoning: I'm starting this round and need to make the first bid. Looking at my hand (64381869), I have two 8s and one 9. Since I have two 8s already, there's a good chance there are more 8s among the other players. With 32 total digits across 4 players (8 digits each), I'll start with a conservative bid that I'm confident about based on my own hand. A bid of 3 8s is reasonable - I already have 2 in my hand, so I only need one more 8 among the 24 digits held by other players, which is quite likely.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 2 bids: 3 8s
+
+--- Turn: Player 5(Orig:5 - x-ai/grok-3-beta:floor) [4 players left] ---
+Requesting LLM action from Player 5 (x-ai/grok-3-beta:floor), Attempt 1/3
+Player 5 Reasoning: My hand is 64642006, which contains two 6s, two 4s, one 2, and three 0s. The current bid is 3 8s made by Player 2. I have no 8s in my hand, so I must rely on the likelihood of 8s in other players' hands. With 32 total digits across 4 players, an average of 3.2 digits per digit type (0-9) is expected. A bid of 3 8s is slightly below average and seems plausible, but since I have none, I’m inclined to bid higher to avoid an immediate challenge risk. I can bid higher by increasing the quantity or the digit. Given my hand has three 0s, bidding 4 0s feels safer as it aligns with my stronger digit count, though it's a different digit. Alternatively, bidding 4 8s keeps the digit but increases quantity, though I have no 8s to support it. Since the bid is low (3 8s), I think it's safer to bid up to 4 9s, increasing both quantity and digit slightly, as a conservative move to test the waters without overcommitting.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 5 bids: 4 9s
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [4 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 4 9s. I have no 9s in my hand, but two 8s. Bidding 5 8s increases the quantity and leverages the more common 8s. With 32 total digits, 5 8s is plausible given my two and potential distribution among others. Challenging risks losing if Player 5's bid is accurate, while bidding 5 8s maintains pressure without high risk.
+Attempting to parse extracted action string: 'BID: 5 8S'
+Player 0 bids: 5 8s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-2025-04-14) [4 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 1 Reasoning: I have one 8 in my hand. The current bid is 5 8s, meaning there must be at least five 8s among all 32 digits. Given I have only one, the remaining three players would need to collectively hold at least four more 8s, averaging over 1.3 per hand. This is possible, but not highly likely, especially since in the last round, a bid of 5 8s was just barely met. However, challenging now could be risky if the others are holding more 8s this round. To play it safe and keep the pressure on, I will make a higher bid on a digit I am strong in. I have two 9s, so bidding 5 9s is reasonable.
+Attempting to parse extracted action string: 'BID: 5 9S'
+Player 1 bids: 5 9s
+
+--- Turn: Player 2(Orig:4 - claude-3-7-sonnet-20250219) [4 players left] ---
+Requesting LLM action from Player 2 (claude-3-7-sonnet-20250219), Attempt 1/3
+Player 2 Reasoning: I need to decide whether to challenge Player 1's bid of 5 9s or make a higher bid. Looking at my hand (64381869), I have one 9. For Player 1's bid to be valid, there need to be at least 4 more 9s among the other three players' hands. With 32 total digits and 4 players, each having 8 digits, this is certainly possible. Since I already know I have one 9, the remaining players would need to have about 1.33 nines each on average, which is reasonable. I could bid 6 0s, 6 1s, etc., but I don't have strong evidence that there are that many of any digit. Given the bidding pattern, where Player 0 bid 5 8s and Player 1 raised to 5 9s, it suggests Player 1 might have multiple 9s. I'll make a conservative higher bid of 6 0s, which requires finding 6 zeros among all players.
+Attempting to parse extracted action string: 'BID: 6 0S'
+Player 2 bids: 6 0s
+
+--- Turn: Player 5(Orig:5 - x-ai/grok-3-beta:floor) [4 players left] ---
+Requesting LLM action from Player 5 (x-ai/grok-3-beta:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is 6 0s made by Player 2. In my hand, I have two 0s, which contributes to the total count. With 32 total digits across 4 players, an average of 3.2 zeros per player would be needed to reach a total of 13 zeros, but a bid of 6 is below this average expectation. Bids have been escalating, and previous challenges on lower counts have failed, indicating players might have strong hands. Given that I have two 0s myself, it's plausible that the total could reach 6. I don't want to risk a challenge yet. Instead, I'll make a higher bid of 6 1s, increasing the digit while keeping the quantity the same, as I have no 1s in my hand but it's a safe incremental bid to avoid a challenge.
+Attempting to parse extracted action string: 'BID: 6 1S'
+Player 5 bids: 6 1s
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [4 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 6 1s. I hold one 1 in my hand, requiring at least five more 1s across the remaining 24 digits of three players. The expected number of 1s in 24 random digits is 2.4, making 6 1s highly improbable. Challenging is optimal, as the bid is statistically unlikely to hold.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0(Orig:2 - qwen/qwen3-32b:floor) challenges Player 5(Orig:5 - x-ai/grok-3-beta:floor)'s bid of 6 1s.
+Revealed Hands: P0(Orig:2-qwen/qwen3-32b:floor):73741588 | P1(Orig:0-gpt-4.1-2025-04-14):95548260 | P2(Orig:4-claude-3-7-sonnet-20250219):64381869 | P5(Orig:5-x-ai/grok-3-beta:floor):64642006
+Actual count of 1s across 4 active players: 2
+Challenge successful: count(2) < 6. Challenger (Player 0) wins the challenge.
+Player 5(Orig:5 - x-ai/grok-3-beta:floor) is ELIMINATED. Assigned Rank: 4
+Total digits remaining in play: 24
+Removed player 5 from active list. 3 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:2 - qwen/qwen3-32b:floor) starts the next bidding round.
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [3 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: Starting the round as Player 0 with two 8s in my hand. Bidding 3 8s is a logical opening bid that accounts for my own digits and leaves room for at least one additional 8 in the other players' hands. This bid is conservative yet defensible given the 24 total digits in play.
+Attempting to parse extracted action string: 'BID: 3 8S'
+Player 0 bids: 3 8s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-2025-04-14) [3 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 1 Reasoning: I have two 9s and one 8 in my hand. The current bid is 3 8s. With 3 players and 24 digits, the expected average per digit is 2.4. Since I have one 8, it's plausible there are at least two more 8s among the other players. However, I have two 9s, which makes a bid on 9s safer for me. To outbid, I can either bid 3 9s (same quantity, higher digit) or 4 8s (higher quantity). Bidding 3 9s is the safest increment and keeps options open.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 1 bids: 3 9s
+
+--- Turn: Player 2(Orig:4 - claude-3-7-sonnet-20250219) [3 players left] ---
+Requesting LLM action from Player 2 (claude-3-7-sonnet-20250219), Attempt 1/3
+Player 2 Reasoning: Looking at my hand (64381869), I have one 9 in it. The current bid is '3 9s', meaning Player 1 believes there are at least three 9s among all players. I already know I have one 9, so there would need to be at least two more 9s between Player 0 and Player 1 for this bid to be valid. This is certainly possible. I could challenge, but it's risky since the bid is relatively low (only 3 out of 24 possible digits). Looking at my hand, I have two 8s, so I could confidently bid '4 8s'. However, since 8 is lower than 9, I would need to increase the quantity. Another option is to bid on a different digit. I have one 6, so I could bid '4 6s', but that would be risky. I think the safest option is to bid '4 0s' since I have no 0s in my hand, but the quantity is low enough that it's still plausible there are 4 zeros among the other players.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 2 bids: 4 0s
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [3 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 4 0s. I have no 0s in my hand. The expected number of 0s across 24 digits is 2.4, making 4 0s unlikely. Challenging this bid has a reasonable chance of succeeding if the actual count is less than 4, which aligns with statistical probability and the lack of prior evidence supporting a high 0 count.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0(Orig:2 - qwen/qwen3-32b:floor) challenges Player 2(Orig:4 - claude-3-7-sonnet-20250219)'s bid of 4 0s.
+Revealed Hands: P0(Orig:2-qwen/qwen3-32b:floor):73741588 | P1(Orig:0-gpt-4.1-2025-04-14):95548260 | P2(Orig:4-claude-3-7-sonnet-20250219):64381869
+Actual count of 0s across 3 active players: 1
+Challenge successful: count(1) < 4. Challenger (Player 0) wins the challenge.
+Player 2(Orig:4 - claude-3-7-sonnet-20250219) is ELIMINATED. Assigned Rank: 3
+Total digits remaining in play: 16
+Removed player 2 from active list. 2 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:2 - qwen/qwen3-32b:floor) starts the next bidding round.
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [2 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: Starting the bid as Player 0 with a conservative yet plausible bid. My hand contains two 7s and two 8s. Bidding '3 7s' leverages my existing 7s and assumes Player 1 has at least one 7, which is reasonable given the randomness of their hand. This bid is low enough to be defensible but high enough to apply pressure.
+Attempting to parse extracted action string: 'BID: 3 7S'
+Player 0 bids: 3 7s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 1 Reasoning: My hand is 95548260, which contains one 7. The current bid is 3 7s, so there must be at least two 7s in Player 0's hand for the bid to be valid. Since each player has 8 digits and the probability of having two or more 7s in Player 0's hand is not negligible, challenging here is risky. Instead, I can safely increase the digit while keeping the quantity the same. I have two 9s, so bidding 3 9s is reasonable and keeps pressure on my opponent.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 1 bids: 3 9s
+
+--- Turn: Player 0(Orig:2 - qwen/qwen3-32b:floor) [2 players left] ---
+Requesting LLM action from Player 0 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 0 Reasoning: The current bid is 3 9s by Player 1. I have two 8s in my hand (73741588). Bidding 4 8s increases the quantity (from 3 to 4) while leveraging my existing 8s. Since the maximum possible 9s in Player 1's hand is 8, 3 9s is plausible but less certain than 4 8s, which could be supported by my two 8s plus two in Player 1's hand. Challenging 3 9s risks losing if Player 1 actually has three 9s, which is possible but less likely than the bid I can confidently support.
+Attempting to parse extracted action string: 'BID: 4 8S'
+Player 0 bids: 4 8s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 1 Reasoning: My hand is 95548260, which contains one 8. The current bid is 4 8s, meaning there must be at least 4 eights among the 16 digits between both players. Since I only have one 8, Player 0 would need to have at least three 8s for the bid to be valid. This is unlikely, as that would require Player 0 to have almost half of their hand as 8s. It's a risky and improbable bid, so I should challenge.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1(Orig:0 - gpt-4.1-2025-04-14) challenges Player 0(Orig:2 - qwen/qwen3-32b:floor)'s bid of 4 8s.
+Revealed Hands: P0(Orig:2-qwen/qwen3-32b:floor):73741588 | P1(Orig:0-gpt-4.1-2025-04-14):95548260
+Actual count of 8s across 2 active players: 3
+Challenge successful: count(3) < 4. Challenger (Player 1) wins the challenge.
+Player 0(Orig:2 - qwen/qwen3-32b:floor) is ELIMINATED. Assigned Rank: 2
+Total digits remaining in play: 8
+Removed player 0 from active list. 1 players remain.
+Current bid and per-round history cleared.
+Player 1(Orig:0 - gpt-4.1-2025-04-14) starts the next bidding round.
+
+--- Elimination Game Over ---
+Winner: Player 1(Orig:0 - gpt-4.1-2025-04-14) is Rank 1!

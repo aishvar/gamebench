@@ -131,7 +131,7 @@ class LiarsPokerGame:
         # === OpenAI ===
         #{"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-2024-11-20"},
         #{"strategy_type": "llm", "provider": "openai", "model": "gpt-4o-mini-2024-07-18"},
-        {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-2025-04-14"},
+        #{"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-2025-04-14"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-mini-2025-04-14"},
         {"strategy_type": "llm", "provider": "openai", "model": "gpt-4.1-nano-2025-04-14"},
         #{"strategy_type": "llm", "provider": "openai", "model": "o3-mini-2025-01-31"},
@@ -155,7 +155,7 @@ class LiarsPokerGame:
         {"strategy_type": "llm", "provider": "openrouter", "model": "meta-llama/llama-4-scout:floor"},
 
         # === Google ===
-        {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
+        #{"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-pro-preview-03-25:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemma-3-27b-it:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.0-flash-001:floor"},
         {"strategy_type": "llm", "provider": "openrouter", "model": "google/gemini-2.5-flash-preview:floor"},

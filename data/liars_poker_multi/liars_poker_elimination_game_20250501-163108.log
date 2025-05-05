@@ -1,0 +1,208 @@
+Generated 6 hands.
+Hands dealt to 6 players.
+Initial setup complete. Starting elimination game.
+--- Starting Elimination Game with 6 players. Total digits: 48 ---
+
+--- Turn: Player 0(Orig:2 - gpt-4.1-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 0 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 0 Reasoning: As the starting player, there is no current bid, so I must make the opening bid. My hand contains three 1s, two 5s, two 0s, and one 3. It's reasonable to start with a conservative opening bid based on my hand. I'll bid 3 1s, since I hold three 1s myself, making it a safe and credible opening bid.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 0 bids: 3 1s
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [6 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 1s. I have one 1 in my hand. To make a valid higher bid, I need to either increase the quantity or the digit. Since I only have one 1, increasing the quantity seems risky without more information. However, I can see that bidding a higher digit with a low quantity could be a strategy. I have a 9 in my hand, and bidding 1 9s seems reasonable as it's a higher digit.
+Attempting to parse extracted action string: 'BID: 1 9S'
+Parse Error: Bid 1 9s is not higher than current bid 3 1s.
+Player 1 provided invalid action or malformed JSON. Re-prompting...
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 2/3
+Player 1 Reasoning: The current bid is 3 1s made by Player 0. I have one 1 in my hand. To make a valid higher bid, I need to either increase the quantity or the digit. Since my goal is to make a reasonable bid, I will increase the quantity and bid on a digit that seems plausible given my hand and the total digits remaining.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 1 bids: 4 1s
+
+--- Turn: Player 2(Orig:5 - google/gemini-2.5-flash-preview:floor) [6 players left] ---
+Requesting LLM action from Player 2 (google/gemini-2.5-flash-preview:floor), Attempt 1/3
+Player 2 Reasoning: The current bid is 4 1s. I have one 1 in my hand. With 6 players and 48 total digits, the expected number of 1s is around 48/10 = 4.8. The current bid is close to the expected value. However, I have two 2s, two 7s, and two 8s. I can make a bid based on one of these digits. Bidding 5 2s is a valid higher bid based on my two 2s. Bidding 5 7s or 5 8s are also options. 5 2s seems reasonable as it's a direct increase in quantity over the current bid of 4 1s, and I have two of them.
+Attempting to parse extracted action string: 'BID: 5 2S'
+Player 2 bids: 5 2s
+
+--- Turn: Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor) [6 players left] ---
+Requesting LLM action from Player 3 (google/gemini-2.5-pro-preview-03-25:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 5 2s. There are 48 total digits, so the expected average for any digit is 4.8. The bid of 5 is slightly above average. I have zero 2s in my hand (49610303), which slightly lowers the probability of the bid being true, but doesn't make it impossible (5 2s needed from the other 40 digits is plausible). Challenging seems risky this early. I should make a higher bid. My hand contains two 0s and two 3s. Bidding based on my own digits is safer. A bid of 5 3s is a valid increase (same quantity, higher digit). With two 3s myself, needing only three more 3s from the remaining 40 digits (where the expected number is 4) makes this a statistically reasonable and relatively safe bid.
+Attempting to parse extracted action string: 'BID: 5 3S'
+Player 3 bids: 5 3s
+
+--- Turn: Player 4(Orig:4 - gpt-4.1-nano-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 4 (gpt-4.1-nano-2025-04-14), Attempt 1/3
+Player 4 Reasoning: The current bid is 5 3s. I have the digits 3, 8, 9, 5, 2, 5, 3, 9 in my hand, which includes two 3s. Given that only 48 total digits are in play, and the previous bid is 5 3s, it is unlikely that there are at least 6 3s across all players' hands. Challenging the bid seems safe and justified based on the low count of 3s I hold and the total digits remaining.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 4(Orig:4 - gpt-4.1-nano-2025-04-14) challenges Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor)'s bid of 5 3s.
+Revealed Hands: P0(Orig:2-gpt-4.1-2025-04-14):11312550 | P1(Orig:0-meta-llama/llama-4-scout:floor):96540326 | P2(Orig:5-google/gemini-2.5-flash-preview:floor):22778581 | P3(Orig:3-google/gemini-2.5-pro-preview-03-25:floor):49610303 | P4(Orig:4-gpt-4.1-nano-2025-04-14):38952539 | P5(Orig:1-deepseek/deepseek-chat-v3-0324:floor):51804789
+Actual count of 3s across 6 active players: 6
+Challenge failed: count(6) >= 5. Bidder (Player 3) wins the challenge.
+Player 4(Orig:4 - gpt-4.1-nano-2025-04-14) is ELIMINATED. Assigned Rank: 6
+Total digits remaining in play: 40
+Removed player 4 from active list. 5 players remain.
+Current bid and per-round history cleared.
+Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor) starts the next bidding round.
+
+--- Turn: Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor) [5 players left] ---
+Requesting LLM action from Player 3 (google/gemini-2.5-pro-preview-03-25:floor), Attempt 1/3
+Player 3 Reasoning: I am Player 3 and I start the bidding this round. The current bid is 'None', so I must make a bid. I have 8 digits: 49610303. This includes two 0s and two 3s. With 5 active players and 8 digits each, there are 40 total digits. The expected number of any specific digit is 40 / 10 = 4. Since I have two 0s, the expected total number of 0s across all hands is 2 (my hand) + (32 other digits / 10) = 2 + 3.2 = 5.2. Similarly, the expected number of 3s is 5.2. An opening bid should be relatively safe but establish a baseline. Bidding '4 0s' is a solid choice: it's based on one of my strongest digits (0s), it's below the statistically expected total count (5.2), and bidding on the lowest digit (0) leaves maximum room for future bids.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 3 bids: 4 0s
+
+--- Turn: Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) [5 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 5 Reasoning: I have one 0 in my hand. The current bid is 4 0s, which seems plausible given the previous round's high counts. Since I have one 0, and the bid is not excessively high, I will make a higher bid by increasing the digit to 1s, which I also have one of in my hand. This keeps the quantity the same but increases the digit.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 5 bids: 4 1s
+
+--- Turn: Player 0(Orig:2 - gpt-4.1-2025-04-14) [5 players left] ---
+Requesting LLM action from Player 0 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 0 Reasoning: My hand is 11312550, so I have three 1s. With 5 players and 8 digits each, there are 40 digits total. The current bid is 4 1s. Statistically, each digit should appear about 4 times (40/10). Since I alone have three 1s, it's highly likely there are at least 4 1s among all hands, making the bid plausible. To make a strictly higher bid, I can either increase the quantity or keep the quantity and increase the digit. I don't have many of any other digit, but I do have two 0s and two 5s, so raising to 4 2s or 4 5s would be risky. The safest next bid is 4 2s, since I also have one 2, and it's a minimal increase.
+Attempting to parse extracted action string: 'BID: 4 2S'
+Player 0 bids: 4 2s
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [5 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 4 2s made by Player 0. I have 8 secret digits: 9, 6, 5, 4, 0, 3, 2, 6. I see that I have two 6s and one 2. Given that the maximum possible quantity for any digit is 40 and there are 40 total digits remaining, bidding a higher quantity or digit seems reasonable. I will bid 5 2s as it is a higher quantity than the current bid and I have one 2 in my hand.
+Attempting to parse extracted action string: 'BID: 5 2S'
+Player 1 bids: 5 2s
+
+--- Turn: Player 2(Orig:5 - google/gemini-2.5-flash-preview:floor) [5 players left] ---
+Requesting LLM action from Player 2 (google/gemini-2.5-flash-preview:floor), Attempt 1/3
+Player 2 Reasoning: My hand contains two 2s. The current bid is 5 2s. With 40 total digits and 5 players, the average occurrence of any digit is 4 (40 / 10 digits). A bid of 5 2s is slightly above average but not unreasonable, especially considering Player 1 might have several 2s. I have two 2s, so if Player 1 has three or more, the bid is met. Increasing the bid to 6 2s seems plausible given my hand, and it's a valid higher bid.
+Attempting to parse extracted action string: 'BID: 6 2S'
+Player 2 bids: 6 2s
+
+--- Turn: Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor) [5 players left] ---
+Requesting LLM action from Player 3 (google/gemini-2.5-pro-preview-03-25:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 6 2s. There are 40 total digits among 5 players. The expected number of any digit is 4. I have zero 2s in my hand (49610303). This means the other 4 players (32 digits) must hold at least six 2s. While 6 is above the average of 4, the bidding history shows three consecutive players bidding on 2s (Player 0: 4 2s, Player 1: 5 2s, Player 2: 6 2s), suggesting a potential concentration of 2s among them. Challenging seems risky due to this pattern. I need to make a higher bid. Options are 6 3s or higher, or 7 0s or higher. My hand contains two 0s and two 3s. Bidding 6 3s requires four 3s among the other 32 digits (expected value is 3.2), which is plausible. I have two 3s to support this bid. Bidding 7 0s would require five 0s among the other 32 digits, which is less likely than needing four 3s. Bidding 6 3s is a minimal increase from 6 2s and is well-supported by my hand. Additionally, I successfully defended a bid of 5 3s in the previous round (actual count was 6), which might make others hesitant to challenge my 3s bid.
+Attempting to parse extracted action string: 'BID: 6 3S'
+Player 3 bids: 6 3s
+
+--- Turn: Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) [5 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 5 Reasoning: I have one 3 in my hand. The current bid is 6 3s, which is already quite high. With 5 players remaining and each having 8 digits, the total digits are 40. The previous challenge on 5 3s revealed there were actually 6 3s, but now the bid is 6 3s again. Given that, and considering the risk, I think it's better to challenge this bid rather than make a higher bid that might be too risky.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) challenges Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor)'s bid of 6 3s.
+Revealed Hands: P0(Orig:2-gpt-4.1-2025-04-14):11312550 | P1(Orig:0-meta-llama/llama-4-scout:floor):96540326 | P2(Orig:5-google/gemini-2.5-flash-preview:floor):22778581 | P3(Orig:3-google/gemini-2.5-pro-preview-03-25:floor):49610303 | P5(Orig:1-deepseek/deepseek-chat-v3-0324:floor):51804789
+Actual count of 3s across 5 active players: 4
+Challenge successful: count(4) < 6. Challenger (Player 5) wins the challenge.
+Player 3(Orig:3 - google/gemini-2.5-pro-preview-03-25:floor) is ELIMINATED. Assigned Rank: 5
+Total digits remaining in play: 32
+Removed player 3 from active list. 4 players remain.
+Current bid and per-round history cleared.
+Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) starts the next bidding round.
+
+--- Turn: Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) [4 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 5 Reasoning: I have one 1, one 5, one 8, one 0, one 4, one 7, and two 8s in my hand. Since the current bid is None and I'm the first to bid in this round, I should make a conservative bid based on my hand. Bidding 2 8s is reasonable as I have two 8s myself, and it's likely others have at least one more.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 5 bids: 2 8s
+
+--- Turn: Player 0(Orig:2 - gpt-4.1-2025-04-14) [4 players left] ---
+Requesting LLM action from Player 0 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 0 Reasoning: My hand is 11312550, which contains no 8s. The current bid is only 2 8s, and since there are 24 unknown digits among the other 3 players, it's quite plausible that there are at least 2 eights among all hands. Challenging now is risky. The safest move is to make a minimal higher bid. I have three 1s in my hand, so bidding 2 9s (the next legal bid) would be arbitrary, but bidding 3 1s leverages my hand's strength and is a safe incremental raise.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 0 bids: 3 1s
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [4 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 1s made by Player 0. I have one 1 in my hand. Given that there are 4 active players and each has 8 secret digits, there are a total of 32 digits. The maximum possible quantity for any digit is 32. Since I have one 1, and assuming the other players might have some 1s as well, bidding 4 1s seems reasonable and higher than the current bid. However, I should also consider the likelihood of there being at least 4 1s in total. Alternatively, I could challenge if I think 3 1s is unlikely, but given my 1 and the total possible digits, bidding seems safer.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 1 bids: 4 1s
+
+--- Turn: Player 2(Orig:5 - google/gemini-2.5-flash-preview:floor) [4 players left] ---
+Requesting LLM action from Player 2 (google/gemini-2.5-flash-preview:floor), Attempt 1/3
+Player 2 Reasoning: My hand is 22778581. The current bid is 4 1s. I have one 1 in my hand. With 4 players and 32 total digits, the average count for any digit is 3.2.  A bid of 4 1s is slightly above average but not unreasonable, especially since Player 0 and Player 1 both bid on 1s. I have two 2s, two 7s, and two 8s. Bidding on one of these digits seems like a good strategy as I have above-average counts of them.  Bidding 5 2s is a valid higher bid and I have two 2s to support it.
+Attempting to parse extracted action string: 'BID: 5 2S'
+Player 2 bids: 5 2s
+
+--- Turn: Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) [4 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 5 Reasoning: I have one '2' in my hand. The current bid is 5 '2's, which means there would need to be at least 4 more '2's among the other three players' hands (total of 24 digits). Given that the previous round had a bid of 6 '3's that was challenged and found to have only 4 '3's, it's unlikely that there are 5 '2's in this round. Therefore, challenging seems like the best move.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) challenges Player 2(Orig:5 - google/gemini-2.5-flash-preview:floor)'s bid of 5 2s.
+Revealed Hands: P0(Orig:2-gpt-4.1-2025-04-14):11312550 | P1(Orig:0-meta-llama/llama-4-scout:floor):96540326 | P2(Orig:5-google/gemini-2.5-flash-preview:floor):22778581 | P5(Orig:1-deepseek/deepseek-chat-v3-0324:floor):51804789
+Actual count of 2s across 4 active players: 4
+Challenge successful: count(4) < 5. Challenger (Player 5) wins the challenge.
+Player 2(Orig:5 - google/gemini-2.5-flash-preview:floor) is ELIMINATED. Assigned Rank: 4
+Total digits remaining in play: 24
+Removed player 2 from active list. 3 players remain.
+Current bid and per-round history cleared.
+Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) starts the next bidding round.
+
+--- Turn: Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) [3 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is None, and I am the first to bid in this round. I have two 8s in my hand (from 51804789). Starting with a conservative bid of 2 8s seems reasonable, as it's based on my own hand and leaves room for others to bid higher.
+Attempting to parse extracted action string: 'BID: 2 8S'
+Player 5 bids: 2 8s
+
+--- Turn: Player 0(Orig:2 - gpt-4.1-2025-04-14) [3 players left] ---
+Requesting LLM action from Player 0 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 0 Reasoning: My hand is 11312550, which contains no 8s. The current bid is only 2 8s out of 24 digits. Since I have 0 8s, it's possible that the other two players could collectively have at least 2 8s (each has 8 digits, so 16 unknown digits). Statistically, it's not unlikely for there to be 2 or more 8s among 16 digits. Challenging now would be risky. I should make a minimal higher bid. I have three 1s in my hand, so bidding 3 1s is a safe and reasonable next bid.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 0 bids: 3 1s
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [3 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 1s made by Player 0. I have one 1 in my hand. Given that there are 3 active players and 8 secret digits each, the total number of digits is 24. The maximum possible quantity for any digit is 24. I should consider the likelihood of there being at least 3 1s. Since I only have one 1, I need to think if bidding higher or challenging is more strategic. Bidding 4 1s seems reasonable as it increases the quantity slightly based on my own hand, but I should also consider if challenging could be more beneficial if I suspect the bid might be unlikely.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 1 bids: 4 1s
+
+--- Turn: Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) [3 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 5 Reasoning: I have one '1' in my hand. The current bid is '4 1s' by Player 1. With only 24 digits remaining and three players, it's unlikely there are four '1's in total. I should challenge this bid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) challenges Player 1(Orig:0 - meta-llama/llama-4-scout:floor)'s bid of 4 1s.
+Revealed Hands: P0(Orig:2-gpt-4.1-2025-04-14):11312550 | P1(Orig:0-meta-llama/llama-4-scout:floor):96540326 | P5(Orig:1-deepseek/deepseek-chat-v3-0324:floor):51804789
+Actual count of 1s across 3 active players: 4
+Challenge failed: count(4) >= 4. Bidder (Player 1) wins the challenge.
+Player 5(Orig:1 - deepseek/deepseek-chat-v3-0324:floor) is ELIMINATED. Assigned Rank: 3
+Total digits remaining in play: 16
+Removed player 5 from active list. 2 players remain.
+Current bid and per-round history cleared.
+Player 1(Orig:0 - meta-llama/llama-4-scout:floor) starts the next bidding round.
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [2 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current round has just started with no bids yet. My hand is 96540326. I see that I have 2 1s, 1 2, and other digits. Since there are no bids yet, I can make a conservative bid to start. I notice I have 2 1s, so bidding 2 1s seems reasonable as a starting point.
+Attempting to parse extracted action string: 'BID: 2 1S'
+Player 1 bids: 2 1s
+
+--- Turn: Player 0(Orig:2 - gpt-4.1-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 0 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 0 Reasoning: My hand is 11312550, which contains three 1s. The current bid is 2 1s, which is low given that I alone have three 1s. It's safe to raise the bid. I will increase the quantity to 3 1s, which is a higher bid and well supported by my hand.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 0 bids: 3 1s
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [2 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 3 1s made by Player 0. I have the digits 1, 2, 6, 5, 4, 0, 3 in my hand, which means I have one 1. Given that there are only 16 digits in total and we are down to 2 players, I should consider the possibility of challenging or bidding conservatively. Since my bid must be strictly higher than the current bid, I can either increase the quantity or the digit. Bidding 4 1s seems reasonable as it increases the quantity and takes into account that I have one 1 in my hand.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 1 bids: 4 1s
+
+--- Turn: Player 0(Orig:2 - gpt-4.1-2025-04-14) [2 players left] ---
+Requesting LLM action from Player 0 (gpt-4.1-2025-04-14), Attempt 1/3
+Player 0 Reasoning: My hand is 11312550, which contains three 1s. The current bid is 4 1s, meaning there must be at least one more 1 in Player 1's hand for the bid to be valid. With 8 digits per player and only two players left, it's plausible Player 1 has at least one 1, but not guaranteed. However, since I have three 1s myself, it's risky for Player 1 to bid 4 1s unless they have at least one or two 1s. Given the history, Player 1 may be bluffing, but the odds are not overwhelmingly against the bid. Instead of challenging, I can safely raise to 4 2s, since I have two 2s in my hand, making it possible that there are two more in Player 1's hand. This keeps the pressure on and gives me more information.
+Attempting to parse extracted action string: 'BID: 4 2S'
+Player 0 bids: 4 2s
+
+--- Turn: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) [2 players left] ---
+Requesting LLM action from Player 1 (meta-llama/llama-4-scout:floor), Attempt 1/3
+Player 1 Reasoning: The current bid is 4 2s made by Player 0. I have the hand 96540326, which contains one 2. Given that there are only 16 digits in total and we are down to 2 players, I should consider the likelihood of there being more than 4 2s. Since I only have one 2, and Player 0 must have at least 4 2s for their bid to be valid, I find it highly unlikely. I should challenge this bid.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1(Orig:0 - meta-llama/llama-4-scout:floor) challenges Player 0(Orig:2 - gpt-4.1-2025-04-14)'s bid of 4 2s.
+Revealed Hands: P0(Orig:2-gpt-4.1-2025-04-14):11312550 | P1(Orig:0-meta-llama/llama-4-scout:floor):96540326
+Actual count of 2s across 2 active players: 2
+Challenge successful: count(2) < 4. Challenger (Player 1) wins the challenge.
+Player 0(Orig:2 - gpt-4.1-2025-04-14) is ELIMINATED. Assigned Rank: 2
+Total digits remaining in play: 8
+Removed player 0 from active list. 1 players remain.
+Current bid and per-round history cleared.
+Player 1(Orig:0 - meta-llama/llama-4-scout:floor) starts the next bidding round.
+
+--- Elimination Game Over ---
+Winner: Player 1(Orig:0 - meta-llama/llama-4-scout:floor) is Rank 1!

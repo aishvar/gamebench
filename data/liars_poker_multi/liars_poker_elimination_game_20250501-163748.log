@@ -1,0 +1,196 @@
+Generated 6 hands.
+Hands dealt to 6 players.
+Initial setup complete. Starting elimination game.
+--- Starting Elimination Game with 6 players. Total digits: 48 ---
+
+--- Turn: Player 0(Orig:1 - Naive 50/50) [6 players left] ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 making initial bid: 1 0s
+Player 0 bids: 1 0s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-nano-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-nano-2025-04-14), Attempt 1/3
+Player 1 Reasoning: My hand contains the digits 1, 4, 3, 0, 3, 9, 9, 1. Counting the 0s, I have two. The previous bid was 1 0s, so I need to bid higher. Bidding 2 0s seems reasonable since I have at least 2 zeros, and increasing the quantity is a safe move to challenge the current bid. Alternatively, challenging might be risky given I have two zeros. Bidding 2 0s is the best move to stay in the game and increase the bid.
+Attempting to parse extracted action string: 'BID: 2 0S'
+Player 1 bids: 2 0s
+
+--- Turn: Player 2(Orig:3 - google/gemma-3-27b-it:floor) [6 players left] ---
+Requesting LLM action from Player 2 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 2 Reasoning: The current bid is 2 0s. I have one 0 in my hand. I can either increase the quantity of 0s or bid on a different digit. Increasing the quantity to 3 0s is a viable option. Alternatively, I could bid on a digit I have more of, such as 3s (I have three 3s). However, given the low initial bid, increasing the quantity of 0s seems safer. Bidding 3 0s is a reasonable next step.
+Attempting to parse extracted action string: 'BID: 3 0S'
+Player 2 bids: 3 0s
+
+--- Turn: Player 3(Orig:4 - o3-2025-04-16) [6 players left] ---
+Requesting LLM action from Player 3 (o3-2025-04-16), Attempt 1/3
+Player 3 Reasoning: I see two 9s in my own eight digits. The current bid is 3 0s. To out-bid it I can keep the quantity at 3 but choose a higher digit. If I bid 3 9s, I would only need one more 9 among the 40 unknown digits across the other five players’ hands, which is extremely likely (probability above 98%). This is a safe, minimal raise that pressures the table without exposing me to an easy challenge.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 3 bids: 3 9s
+
+--- Turn: Player 4(Orig:2 - deepseek/deepseek-chat-v3-0324:floor) [6 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 4 Reasoning: I have no 9s in my hand (21525504). The current bid is 3 9s, which seems high given that I have none. However, with 5 other players, it's possible that 3 9s exist in total. To be safe, I'll make a minimal higher bid by increasing the digit to 0, which is a lower digit but allows me to pass the challenge risk to the next player.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 4 bids: 4 0s
+
+--- Turn: Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) [6 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is 4 0s. I have two 0s in my hand. Bidding 3 0s is a strategic choice, as it's a lower quantity but same digit, which could potentially be a safer bet and might not be challenged.
+Attempting to parse extracted action string: 'BID: 3 0S'
+Parse Error: Bid 3 0s is not higher than current bid 4 0s.
+Player 5 provided invalid action or malformed JSON. Re-prompting...
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 2/3
+Player 5 Reasoning: The current bid is 4 0s. Since I have 2 0s in my hand and it's the current digit being bid, I should increase the quantity to 5 and the digit to 0 to make a valid bid.
+Attempting to parse extracted action string: 'BID: 5 0S'
+Player 5 bids: 5 0s
+
+--- Turn: Player 0(Orig:1 - Naive 50/50) [6 players left] ---
+Calculating action for Player 0 (Naive 50/50)
+Naive chooses BID: 5 1s
+Player 0 bids: 5 1s
+
+--- Turn: Player 1(Orig:0 - gpt-4.1-nano-2025-04-14) [6 players left] ---
+Requesting LLM action from Player 1 (gpt-4.1-nano-2025-04-14), Attempt 1/3
+Player 1 Reasoning: The current bid is 5 1s, which implies at least five '1's across all hands. My hand contains only one '1', so the total number of '1's cannot reach 5. Bidding higher on '1's is invalid because I cannot possibly meet that bid. Challenging now is logical, as the bid is clearly impossible given my hand and the total digits. Challenging will reveal the actual count of '1's, which I expect to be less than 5, resulting in my victory.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 1(Orig:0 - gpt-4.1-nano-2025-04-14) challenges Player 0(Orig:1 - Naive 50/50)'s bid of 5 1s.
+Revealed Hands: P0(Orig:1-Naive 50/50):93684831 | P1(Orig:0-gpt-4.1-nano-2025-04-14):14303991 | P2(Orig:3-google/gemma-3-27b-it:floor):61370339 | P3(Orig:4-o3-2025-04-16):84090937 | P4(Orig:2-deepseek/deepseek-chat-v3-0324:floor):21525504 | P5(Orig:5-meta-llama/llama-3.1-8b-instruct:floor):52980423
+Actual count of 1s across 6 active players: 5
+Challenge failed: count(5) >= 5. Bidder (Player 0) wins the challenge.
+Player 1(Orig:0 - gpt-4.1-nano-2025-04-14) is ELIMINATED. Assigned Rank: 6
+Total digits remaining in play: 40
+Removed player 1 from active list. 5 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:1 - Naive 50/50) starts the next bidding round.
+
+--- Turn: Player 0(Orig:1 - Naive 50/50) [5 players left] ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 making initial bid: 1 0s
+Player 0 bids: 1 0s
+
+--- Turn: Player 2(Orig:3 - google/gemma-3-27b-it:floor) [5 players left] ---
+Requesting LLM action from Player 2 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 2 Reasoning: The current bid is 1 0s. I have two 0s in my hand. Bidding 2 0s is a safe and logical next step, increasing the quantity. Alternatively, I could bid on a digit I have more of, like 3s (three 3s) or 6s (one 6). However, since the previous round saw a lot of 0s bids and successful challenges, sticking with 0s seems strategically sound. Bidding 2 0s is a minimal increase but likely achievable.
+Attempting to parse extracted action string: 'BID: 2 0S'
+Player 2 bids: 2 0s
+
+--- Turn: Player 3(Orig:4 - o3-2025-04-16) [5 players left] ---
+Requesting LLM action from Player 3 (o3-2025-04-16), Attempt 1/3
+Player 3 Reasoning: I can’t challenge 2 0s because I already hold two 0s myself, so the bid is certainly true. To raise, I want to lean on a digit I’m strong in. I have two 9s, so bidding 3 9s only needs one more 9 among the 32 unknown digits. The chance of at least one 9 in 32 random digits is about 96%, making this a safe but higher bid.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 3 bids: 3 9s
+
+--- Turn: Player 4(Orig:2 - deepseek/deepseek-chat-v3-0324:floor) [5 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 4 Reasoning: I have no 9s in my hand (21525504). The current bid is 3 9s, which seems high given that 9s are less common and I have none. However, with 4 other players, it's possible there are 3 9s in total. To be safe, I'll make a conservative bid of 4 0s, increasing the quantity from the previous bid of 3 9s.
+Attempting to parse extracted action string: 'BID: 4 0S'
+Player 4 bids: 4 0s
+
+--- Turn: Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) [5 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is 4 0s. I have 2 0s in my hand, which is a relatively low number. Considering the bid is about the digit 0, I should increase the digit since my hand has no other high-value digits. I'll bid 2 9s.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Parse Error: Bid 2 9s is not higher than current bid 4 0s.
+Player 5 provided invalid action or malformed JSON. Re-prompting...
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 2/3
+Player 5 Reasoning: The current bid is 4 0s made by Player 4. I have two 0s in my hand. Given the current bid, I should make a bid with a higher quantity or the same quantity but a higher digit. Since I have a 9 in my hand, I can make a bid with a higher digit.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Parse Error: Bid 2 9s is not higher than current bid 4 0s.
+Player 5 provided invalid action or malformed JSON. Re-prompting...
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 3/3
+Player 5 Reasoning: The current bid is 4 0s, and Player 4 made it. I have 2 0s in my hand. I can bid 4 0s to maintain the current digit, but since I have less than the quantity, I should increase the digit to a higher number that I have in my hand. I have a 2, so I can bid 4 2s.
+Attempting to parse extracted action string: 'BID: 4 2S'
+Player 5 bids: 4 2s
+
+--- Turn: Player 0(Orig:1 - Naive 50/50) [5 players left] ---
+Calculating action for Player 0 (Naive 50/50)
+Player 0 chose to CHALLENGE.
+Player 0(Orig:1 - Naive 50/50) challenges Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor)'s bid of 4 2s.
+Revealed Hands: P0(Orig:1-Naive 50/50):93684831 | P2(Orig:3-google/gemma-3-27b-it:floor):61370339 | P3(Orig:4-o3-2025-04-16):84090937 | P4(Orig:2-deepseek/deepseek-chat-v3-0324:floor):21525504 | P5(Orig:5-meta-llama/llama-3.1-8b-instruct:floor):52980423
+Actual count of 2s across 5 active players: 4
+Challenge failed: count(4) >= 4. Bidder (Player 5) wins the challenge.
+Player 0(Orig:1 - Naive 50/50) is ELIMINATED. Assigned Rank: 5
+Total digits remaining in play: 32
+Removed player 0 from active list. 4 players remain.
+Current bid and per-round history cleared.
+Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) starts the next bidding round.
+
+--- Turn: Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) [4 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is None. I have two 2s and one 9 in my hand. Given the previous bids and the total digits remaining, bidding 1 9s seems like a reasonable starting point, increasing the digit based on my hand.
+Attempting to parse extracted action string: 'BID: 1 9S'
+Player 5 bids: 1 9s
+
+--- Turn: Player 2(Orig:3 - google/gemma-3-27b-it:floor) [4 players left] ---
+Requesting LLM action from Player 2 (google/gemma-3-27b-it:floor), Attempt 1/3
+Player 2 Reasoning: The current bid is 1 9s. I have one 9 in my hand. Bidding 2 9s would be a reasonable increase, but I'm uncertain about the other players' hands. Bidding 1 0s would be a valid bid, but feels too conservative given the game state. The previous rounds saw bids escalate quickly. I think challenging the 1 9s is a good option. With only 32 digits total and 4 players, it's unlikely there are two 9s. It's a calculated risk.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 2(Orig:3 - google/gemma-3-27b-it:floor) challenges Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor)'s bid of 1 9s.
+Revealed Hands: P2(Orig:3-google/gemma-3-27b-it:floor):61370339 | P3(Orig:4-o3-2025-04-16):84090937 | P4(Orig:2-deepseek/deepseek-chat-v3-0324:floor):21525504 | P5(Orig:5-meta-llama/llama-3.1-8b-instruct:floor):52980423
+Actual count of 9s across 4 active players: 4
+Challenge failed: count(4) >= 1. Bidder (Player 5) wins the challenge.
+Player 2(Orig:3 - google/gemma-3-27b-it:floor) is ELIMINATED. Assigned Rank: 4
+Total digits remaining in play: 24
+Removed player 2 from active list. 3 players remain.
+Current bid and per-round history cleared.
+Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) starts the next bidding round.
+
+--- Turn: Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) [3 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is None. Considering my hand 52980423, I have one 9 and one 2. Since there are 24 total digits remaining, bidding 2 9s or 1 9s seems reasonable. However, I can also try to bid 1 2s, as it's a lower digit and I have one 2 in my hand. Bidding 1 9s seems like a safer choice.
+Attempting to parse extracted action string: 'BID: 1 9S'
+Player 5 bids: 1 9s
+
+--- Turn: Player 3(Orig:4 - o3-2025-04-16) [3 players left] ---
+Requesting LLM action from Player 3 (o3-2025-04-16), Attempt 1/3
+Player 3 Reasoning: In my 8-digit hand I have two 9s (…0 9 0 9…). That alone guarantees at least two 9s among the 24 total digits in play. Raising the bid to 2 9s is strictly higher than the current 1 9s and is challenge-proof for me, while forcing the next player to go to at least three of some digit if they want to continue.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Player 3 bids: 2 9s
+
+--- Turn: Player 4(Orig:2 - deepseek/deepseek-chat-v3-0324:floor) [3 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 4 Reasoning: I have zero 9s in my hand. The current bid is 2 9s, which seems plausible given the previous bids and eliminations. However, with only 24 digits remaining and my hand lacking any 9s, I can either bid higher or challenge. Bidding 3 9s would be risky since I have no 9s, but challenging now might be premature as other players could have 9s. I'll make a conservative bid to keep the game going.
+Attempting to parse extracted action string: 'BID: 3 9S'
+Player 4 bids: 3 9s
+
+--- Turn: Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) [3 players left] ---
+Requesting LLM action from Player 5 (meta-llama/llama-3.1-8b-instruct:floor), Attempt 1/3
+Player 5 Reasoning: The current bid is 3 9s. I have one 9 in my hand. Bidding 4 9s increases the quantity, which seems reasonable based on the current bid and my hand.
+Attempting to parse extracted action string: 'BID: 4 9S'
+Player 5 bids: 4 9s
+
+--- Turn: Player 3(Orig:4 - o3-2025-04-16) [3 players left] ---
+Requesting LLM action from Player 3 (o3-2025-04-16), Attempt 1/3
+Player 3 Reasoning: I see exactly two 9s in my hand. For Player 5’s bid of 4 9s to be true, at least two more 9s must be hiding in the 16 unknown digits. With each digit having roughly a 10% chance of being a 9, the chance there are two or more additional 9s is only about 50%. That’s basically a coin-flip. Any legal raise would have to go to 5 of some digit; the odds of there being five 9s (or five of any other digit) are far worse, meaning I’d almost certainly be challenged and likely lose. Challenging now gives me roughly even odds to knock out Player 5 and reach heads-up, which is better than raising into a very unfavorable position.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 3(Orig:4 - o3-2025-04-16) challenges Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor)'s bid of 4 9s.
+Revealed Hands: P3(Orig:4-o3-2025-04-16):84090937 | P4(Orig:2-deepseek/deepseek-chat-v3-0324:floor):21525504 | P5(Orig:5-meta-llama/llama-3.1-8b-instruct:floor):52980423
+Actual count of 9s across 3 active players: 3
+Challenge successful: count(3) < 4. Challenger (Player 3) wins the challenge.
+Player 5(Orig:5 - meta-llama/llama-3.1-8b-instruct:floor) is ELIMINATED. Assigned Rank: 3
+Total digits remaining in play: 16
+Removed player 5 from active list. 2 players remain.
+Current bid and per-round history cleared.
+Player 3(Orig:4 - o3-2025-04-16) starts the next bidding round.
+
+--- Turn: Player 3(Orig:4 - o3-2025-04-16) [2 players left] ---
+Requesting LLM action from Player 3 (o3-2025-04-16), Attempt 1/3
+Player 3 Reasoning: I see two 9s in my own eight digits, which guarantees at least two 9s in the full set of 16. Opening with ‘2 9s’ is completely safe for me—any immediate challenge would fail—yet it pressures Player 4 to raise to a higher and less certain bid.
+Attempting to parse extracted action string: 'BID: 2 9S'
+Player 3 bids: 2 9s
+
+--- Turn: Player 4(Orig:2 - deepseek/deepseek-chat-v3-0324:floor) [2 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-chat-v3-0324:floor), Attempt 1/3
+Player 4 Reasoning: I have zero 9s in my hand. The current bid is 2 9s, and there are only 16 digits remaining. Given that I have no 9s, it's unlikely that Player 3 has two or more 9s in their hand. Challenging seems like the best move.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 4(Orig:2 - deepseek/deepseek-chat-v3-0324:floor) challenges Player 3(Orig:4 - o3-2025-04-16)'s bid of 2 9s.
+Revealed Hands: P3(Orig:4-o3-2025-04-16):84090937 | P4(Orig:2-deepseek/deepseek-chat-v3-0324:floor):21525504
+Actual count of 9s across 2 active players: 2
+Challenge failed: count(2) >= 2. Bidder (Player 3) wins the challenge.
+Player 4(Orig:2 - deepseek/deepseek-chat-v3-0324:floor) is ELIMINATED. Assigned Rank: 2
+Total digits remaining in play: 8
+Removed player 4 from active list. 1 players remain.
+Current bid and per-round history cleared.
+Player 3(Orig:4 - o3-2025-04-16) starts the next bidding round.
+
+--- Elimination Game Over ---
+Winner: Player 3(Orig:4 - o3-2025-04-16) is Rank 1!
