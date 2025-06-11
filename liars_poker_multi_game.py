@@ -230,9 +230,19 @@ class LiarsPokerGame:
         self._log_round_event("--- Starting New Round ---")
         original_players = self.players.copy()
         random.shuffle(original_players)
-        players_for_round = []
-        used_strategies = set()
 
+        # Pre-populate used_strategies with all non-random players so random
+        # players cannot pick an already taken model.
+        used_strategies = set()
+        for p in original_players:
+            if p.strategy_type == 'naive_5050':
+                used_strategies.add(('naive_5050', None))
+            elif p.strategy_type == 'llm':
+                used_strategies.add(('llm', (p.model_config['provider'], p.model_config['model'])))
+            elif p.strategy_type == 'intelligent':
+                used_strategies.add(('intelligent', None))
+
+        players_for_round = []
         for i, original_player in enumerate(original_players):
             new_player = Player(
                 player_id=i,
@@ -240,22 +250,13 @@ class LiarsPokerGame:
                 model_config=(original_player.model_config.copy() if original_player.model_config else None),
                 original_order=original_player.original_order,
             )
-            if new_player.strategy_type != 'random':
-                if new_player.strategy_type == 'naive_5050':
-                    used_strategies.add(('naive_5050', None))
-                elif new_player.strategy_type == 'llm':
-                    provider = new_player.model_config["provider"]
-                    model = new_player.model_config["model"]
-                    used_strategies.add(('llm', (provider, model)))
-                elif new_player.strategy_type == 'intelligent':
-                    used_strategies.add(('intelligent', None))
-                players_for_round.append(new_player)
-            else:
+
+            if new_player.strategy_type == 'random':
                 possible_choices = []
                 if ('naive_5050', None) not in used_strategies:
-                    possible_choices.append({"strategy_type": "naive_5050"})
-                #if ('intelligent', None) not in used_strategies:
-                #    possible_choices.append({"strategy_type": "intelligent"})
+                    possible_choices.append({'strategy_type': 'naive_5050'})
+                # if ('intelligent', None) not in used_strategies:
+                #     possible_choices.append({'strategy_type': 'intelligent'})
                 for cfg in self.COMMON_CONFIGS:
                     if cfg['strategy_type'] == 'llm':
                         model_key = (cfg['provider'], cfg['model'])
@@ -277,21 +278,39 @@ class LiarsPokerGame:
                     self._log_round_event(f"Random player {i} chose sub-strategy: Intelligent")
                 else:
                     new_player.effective_strategy = 'llm'
-                    new_player.effective_model_config = {'provider': selected_cfg['provider'], 'model': selected_cfg['model']}
+                    new_player.effective_model_config = {
+                        'provider': selected_cfg['provider'],
+                        'model': selected_cfg['model']
+                    }
                     used_strategies.add(('llm', (selected_cfg['provider'], selected_cfg['model'])))
-                    self._log_round_event(f"Random player {i} chose LLM: {selected_cfg['provider']}/{selected_cfg['model']}")
+                    self._log_round_event(
+                        f"Random player {i} chose LLM: {selected_cfg['provider']}/{selected_cfg['model']}"
+                    )
                     try:
                         new_player.client = LLMClient(
-                            provider=selected_cfg["provider"],
-                            model=selected_cfg["model"],
+                            provider=selected_cfg['provider'],
+                            model=selected_cfg['model'],
                             max_tokens=8192,
                             temperature=0.5,
                             max_retries=2,
-                            timeout=60
+                            timeout=60,
                         )
                     except Exception as e:
-                        self._log_round_event(f"Error initializing LLM client for random player {i}: {e}")
-                players_for_round.append(new_player)
+                        self._log_round_event(
+                            f"Error initializing LLM client for random player {i}: {e}"
+                        )
+            else:
+                # Non-random players keep their configured strategy.
+                if new_player.strategy_type == 'naive_5050':
+                    used_strategies.add(('naive_5050', None))
+                elif new_player.strategy_type == 'llm':
+                    provider = new_player.model_config['provider']
+                    model = new_player.model_config['model']
+                    used_strategies.add(('llm', (provider, model)))
+                elif new_player.strategy_type == 'intelligent':
+                    used_strategies.add(('intelligent', None))
+
+            players_for_round.append(new_player)
 
         self.players = players_for_round
         self._log_round_event(f"Player order: {[p.get_display_name() for p in self.players]}")
@@ -311,10 +330,21 @@ class LiarsPokerGame:
     def _initial_setup(self):
         """Sets up the initial players, strategies, and hands for the elimination game."""
         self._log_round_event("--- Initial Game Setup ---")
-        original_players = self.players.copy() # Use the initially configured players
+        original_players = self.players.copy()  # Use the initially configured players
         random.shuffle(original_players)
-        players_for_game = []
+
+        # Determine strategies already fixed for non-random players before
+        # assigning choices to random players.
         used_strategies = set()
+        for p in original_players:
+            if p.strategy_type == 'naive_5050':
+                used_strategies.add(('naive_5050', None))
+            elif p.strategy_type == 'llm':
+                used_strategies.add(('llm', (p.model_config['provider'], p.model_config['model'])))
+            elif p.strategy_type == 'intelligent':
+                used_strategies.add(('intelligent', None))
+
+        players_for_game = []
 
         for i, original_player in enumerate(original_players):
             # Create new Player instances to ensure clean state, but keep original_order
