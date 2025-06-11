@@ -1,0 +1,223 @@
+Generated 6 hands.
+Hands dealt to 6 players.
+Initial setup complete. Starting elimination game.
+--- Starting Elimination Game with 6 players. Total digits: 48 ---
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [6 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 3s in my hand. There are 40 unknown digits among the other players, so I expect about 4 more 3s, for a total around 6. Bidding 5 3s is below that expectation and gives me a strong, plausible opening bid.
+Attempting to parse extracted action string: 'BID: 5 3S'
+Player 0 bids: 5 3s
+
+--- Turn: Player 1(Orig:4 - qwen/qwen3-32b:floor) [6 players left] ---
+Requesting LLM action from Player 1 (qwen/qwen3-32b:floor), Attempt 1/3
+Player 1 Reasoning: My hand contains two 0s, and the current bid is 5 3s. Bidding 6 0s increases the quantity from 5 to 6, which is a valid higher bid. While I don’t have 3s, I have 0s to support a plausible bid. Challenging the 5 3s bid risks elimination if others hold 3s, so a cautious bid is safer.
+Attempting to parse extracted action string: 'BID: 6 0S'
+Player 1 bids: 6 0s
+
+--- Turn: Player 2(Orig:5 - Naive 50/50) [6 players left] ---
+Calculating action for Player 2 (Naive 50/50)
+Player 2 chose to CHALLENGE.
+Player 2(Orig:5 - Naive 50/50) challenges Player 1(Orig:4 - qwen/qwen3-32b:floor)'s bid of 6 0s.
+Revealed Hands: P0(Orig:1-o4-mini-2025-04-16):53143872 | P1(Orig:4-qwen/qwen3-32b:floor):86065220 | P2(Orig:5-Naive 50/50):31468899 | P3(Orig:2-meta-llama/llama-4-maverick:floor):08067439 | P4(Orig:3-deepseek/deepseek-r1-0528:floor):12253756 | P5(Orig:0-deepseek/deepseek-r1-0528:floor):83261311
+Actual count of 0s across 6 active players: 4
+Challenge successful: count(4) < 6. Challenger (Player 2) wins the challenge.
+Player 1(Orig:4 - qwen/qwen3-32b:floor) is ELIMINATED. Assigned Rank: 6
+Total digits remaining in play: 40
+Removed player 1 from active list. 5 players remain.
+Current bid and per-round history cleared.
+Player 2(Orig:5 - Naive 50/50) starts the next bidding round.
+
+--- Turn: Player 2(Orig:5 - Naive 50/50) [5 players left] ---
+Calculating action for Player 2 (Naive 50/50)
+Player 2 making initial bid: 1 0s
+Player 2 bids: 1 0s
+
+--- Turn: Player 3(Orig:2 - meta-llama/llama-4-maverick:floor) [5 players left] ---
+Requesting LLM action from Player 3 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 1 0s. I have one 0 in my hand. To make a higher bid, I can either increase the quantity or keep the quantity the same and bid on a higher digit. Since there's only one 0 in my hand and there are 4 other players, it's reasonable to assume there could be more 0s or other digits that I can bid on with a slightly higher quantity or a different digit. Bidding 1 1s is a valid higher bid because it bids on a higher digit.
+Attempting to parse extracted action string: 'BID: 1 1S'
+Player 3 bids: 1 1s
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [5 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: I have two 5s in my hand, so bidding '2 5s' is a safe increase in quantity from the current '1 1s' and ensures I win if challenged. Challenging is not viable because I have a 1, confirming at least one exists.
+Attempting to parse extracted action string: 'BID: 2 5S'
+Player 4 bids: 2 5s
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [5 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have three 1s in my hand, so bidding 3 1s guarantees that the total count is at least three, making it a safe bid if challenged. The current bid is 2 5s, and since I have no 5s, but the expected number of 5s across all players is around 3-4, challenging is risky as it is likely true. Bidding 3 1s is strictly higher due to the increased quantity.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 5 bids: 3 1s
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [5 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 3s in my hand. The current bid is 3 1s. By bidding 3 3s, I only need at least one more 3 among the 32 unknown cards, which has about a 96.6% chance. This is the safest minimal raise.
+Attempting to parse extracted action string: 'BID: 3 3S'
+Player 0 bids: 3 3s
+
+--- Turn: Player 2(Orig:5 - Naive 50/50) [5 players left] ---
+Calculating action for Player 2 (Naive 50/50)
+Naive chooses BID: 3 4s
+Player 2 bids: 3 4s
+
+--- Turn: Player 3(Orig:2 - meta-llama/llama-4-maverick:floor) [5 players left] ---
+Requesting LLM action from Player 3 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 3 4s. I have one 4 in my hand. To make a higher bid, I can either increase the quantity or keep the quantity the same and increase the digit. Given that there are 40 total digits and the current bid is 3 4s, it's plausible that there are at least 3 4s or more. I see that I have one 4, so there are at least 1 (mine) + unknown others = potentially 3 or more 4s. I can bid 3 5s, increasing the digit. Alternatively, bidding 4 4s or more is also an option but seems slightly aggressive without more information about other digits. Bidding 3 5s is a reasonable next step as it increases the digit and is a relatively safe bid.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 3 bids: 3 5s
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [5 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: I have two 5s in my hand, making the current bid of 3 5s plausible since only one more 5 is needed across four other players' 32 digits. Challenging carries high risk given the low bid quantity and probability of additional 5s. I have one 6, so bidding 3 6s increases the digit while keeping the quantity manageable, allowing room for future bids or challenges.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 4 bids: 3 6s
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [5 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have three 1s in my hand, and Player 3's earlier bid of 1 1s indicates they likely have at least one, making the total 1s at least four. Bidding 4 1s is a valid higher bid by increasing the quantity. Challenging the current bid of 3 6s is risky because, with an expected average of four 6s across 40 digits and my hand containing only one, the total could easily meet or exceed three.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 5 bids: 4 1s
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [5 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 3s in my hand. To reach a total of four 3s, I need at least two more among the 32 unknown digits. The probability of that is around 84%, making 4 3s a strong and legal increase over 4 1s.
+Attempting to parse extracted action string: 'BID: 4 3S'
+Player 0 bids: 4 3s
+
+--- Turn: Player 2(Orig:5 - Naive 50/50) [5 players left] ---
+Calculating action for Player 2 (Naive 50/50)
+Player 2 chose to CHALLENGE.
+Player 2(Orig:5 - Naive 50/50) challenges Player 0(Orig:1 - o4-mini-2025-04-16)'s bid of 4 3s.
+Revealed Hands: P0(Orig:1-o4-mini-2025-04-16):53143872 | P2(Orig:5-Naive 50/50):31468899 | P3(Orig:2-meta-llama/llama-4-maverick:floor):08067439 | P4(Orig:3-deepseek/deepseek-r1-0528:floor):12253756 | P5(Orig:0-deepseek/deepseek-r1-0528:floor):83261311
+Actual count of 3s across 5 active players: 7
+Challenge failed: count(7) >= 4. Bidder (Player 0) wins the challenge.
+Player 2(Orig:5 - Naive 50/50) is ELIMINATED. Assigned Rank: 5
+Total digits remaining in play: 32
+Removed player 2 from active list. 4 players remain.
+Current bid and per-round history cleared.
+Player 0(Orig:1 - o4-mini-2025-04-16) starts the next bidding round.
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [4 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 3s in my hand. With 24 unknown digits and a 0.1 chance per digit, there's roughly a 91% chance at least one more 3 appears, making a total of three 3s very plausible. Opening with 3 3s is a strong, reasonable bid.
+Attempting to parse extracted action string: 'BID: 3 3S'
+Player 0 bids: 3 3s
+
+--- Turn: Player 3(Orig:2 - meta-llama/llama-4-maverick:floor) [4 players left] ---
+Requesting LLM action from Player 3 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 3 3s. I have the hand 08067439, which contains one 3. With 24 digits from other players and my own 8 digits, there's a total of 32 digits. The current bid of 3 3s is relatively low considering the total number of digits. I can see that I have one 3, so the count of 3s is at least 1. To make a higher bid, I can either increase the quantity or keep the quantity the same and increase the digit. Since my hand has a 6 and an 8 and no other high digits in abundance, and considering the previous bids, bidding 3 6s seems reasonable as it increases the digit. However, I should also consider the likelihood of the count being higher. Given that the previous bid was 3 3s, and there's a reasonable chance that there are more 3s or other digits, I will increase the digit to make a new bid.
+Attempting to parse extracted action string: 'BID: 3 6S'
+Player 3 bids: 3 6s
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [4 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: The current bid is 3 6s by Player 3. I have one 6 in my hand (12253756), so at least two more 6s are needed across the other three players' 24 digits. Given the uniform distribution expectation (~2.4 of any digit in 24 digits), the probability of having at least two more 6s is approximately 73%, making a challenge too risky. Instead, I can bid higher by keeping the quantity at 3 but increasing the digit to 7. I have one 7, so I need at least two more 7s from others, which has a similar probability (~73%) as the 6s bid. This is a conservative minimal increase that leverages my hand and avoids a quantity jump, reducing the risk of a challenge.
+Attempting to parse extracted action string: 'BID: 3 7S'
+Player 4 bids: 3 7s
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [4 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have three 1s in my hand, making a bid of 4 1s highly plausible as it requires only one more 1 from the other players' 24 digits. Challenging the current bid of 3 7s is risky because, although I have no 7s, there is a reasonable chance that at least three 7s exist across the other hands, and a challenge could lead to elimination if incorrect.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 5 bids: 4 1s
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [4 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 3s in my hand. To beat 4 1s I can bid 4 3s: with 32 digits and 8 shown, the expected number of 3s among the other 24 is about 2.4, giving a ~70% chance of at least two more 3s to reach four total. This is a stronger move than challenging a plausible bid of four 1s (~56% chance).
+Attempting to parse extracted action string: 'BID: 4 3S'
+Player 0 bids: 4 3s
+
+--- Turn: Player 3(Orig:2 - meta-llama/llama-4-maverick:floor) [4 players left] ---
+Requesting LLM action from Player 3 (meta-llama/llama-4-maverick:floor), Attempt 1/3
+Player 3 Reasoning: The current bid is 4 3s. My hand is 08067439, which contains one 3. I need to make a bid that is higher than 4 3s. I can either increase the quantity or keep the quantity the same and increase the digit. Since I have information about my own hand, I see that I have a total of 1 '3', and there are 3 other players. It is possible that the total count of '3's is around 4 or slightly higher, but it's not extremely high. I can make a reasonable bid by either increasing the quantity or the digit. Bidding 4 4s seems reasonable as it increases the digit, making it a valid higher bid.
+Attempting to parse extracted action string: 'BID: 4 4S'
+Player 3 bids: 4 4s
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [4 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: I have no 4s in my hand (12253756), and with only three other players holding 24 digits total, the expected number of 4s is low (around 2.4). The probability of there being at least four 4s is approximately 21.4%, making it unlikely. Given this, challenging the bid of 4 4s by Player 3 is strategically sound, as it has a high chance of success and eliminates a player if correct.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) challenges Player 3(Orig:2 - meta-llama/llama-4-maverick:floor)'s bid of 4 4s.
+Revealed Hands: P0(Orig:1-o4-mini-2025-04-16):53143872 | P3(Orig:2-meta-llama/llama-4-maverick:floor):08067439 | P4(Orig:3-deepseek/deepseek-r1-0528:floor):12253756 | P5(Orig:0-deepseek/deepseek-r1-0528:floor):83261311
+Actual count of 4s across 4 active players: 2
+Challenge successful: count(2) < 4. Challenger (Player 4) wins the challenge.
+Player 3(Orig:2 - meta-llama/llama-4-maverick:floor) is ELIMINATED. Assigned Rank: 4
+Total digits remaining in play: 24
+Removed player 3 from active list. 3 players remain.
+Current bid and per-round history cleared.
+Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) starts the next bidding round.
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [3 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: I have two 5s in my hand. As the first bidder with no current bid, I am making a conservative opening bid based on my hand to ensure safety. Bidding 2 5s is truthful and minimizes the risk of losing a challenge, as the total count must be at least 2 given my hand.
+Attempting to parse extracted action string: 'BID: 2 5S'
+Player 4 bids: 2 5s
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [3 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have three 1s in my hand (digits: 8,3,2,6,1,3,1,1), which guarantees that the total count of 1s across all players is at least three. The current bid is 2 5s, and since I have no 5s, challenging could be risky as Player 4 might have 5s or Player 0 could contribute. Bidding 3 1s is strictly higher due to the increased quantity and is a safe move based on my hand.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 5 bids: 3 1s
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [3 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have two 3s in my hand. Bidding 3 3s is allowed (same quantity, higher digit than 1) and there’s over an 80% chance at least one more 3 exists among the other 16 cards, making this a safe upward bid.
+Attempting to parse extracted action string: 'BID: 3 3S'
+Player 0 bids: 3 3s
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [3 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: I have two 5s in my hand, making it plausible that there are at least three 5s total given the 16 unknown digits from other players. The current bid of 3 3s by Player 0 is likely true based on the history of high 3s counts (e.g., 7 in the first round) and the elimination of players who may have held fewer 3s. Challenging now is risky, so bidding 3 5s is a conservative and logical next move.
+Attempting to parse extracted action string: 'BID: 3 5S'
+Player 4 bids: 3 5s
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [3 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have three 1s in my hand, and in the previous round with four players, my bid of 4 1s was not challenged, suggesting it may be plausible. With only one additional 1 needed from the other players' 16 digits, the probability is high. Bidding 4 1s increases the quantity, making it a safer move than challenging the 3 5s bid, especially since I have no 5s and the estimated probability of at least three 5s is low but not negligible.
+Attempting to parse extracted action string: 'BID: 4 1S'
+Player 5 bids: 4 1s
+
+--- Turn: Player 0(Orig:1 - o4-mini-2025-04-16) [3 players left] ---
+Requesting LLM action from Player 0 (o4-mini-2025-04-16), Attempt 1/3
+Player 0 Reasoning: I have one '1' in my hand and there are only 16 unknown digits. To meet 4 1s I need at least 3 more among those 16, which has only about a 21% chance. The current bid is unlikely, so I should challenge.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 0(Orig:1 - o4-mini-2025-04-16) challenges Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor)'s bid of 4 1s.
+Revealed Hands: P0(Orig:1-o4-mini-2025-04-16):53143872 | P4(Orig:3-deepseek/deepseek-r1-0528:floor):12253756 | P5(Orig:0-deepseek/deepseek-r1-0528:floor):83261311
+Actual count of 1s across 3 active players: 5
+Challenge failed: count(5) >= 4. Bidder (Player 5) wins the challenge.
+Player 0(Orig:1 - o4-mini-2025-04-16) is ELIMINATED. Assigned Rank: 3
+Total digits remaining in play: 16
+Removed player 0 from active list. 2 players remain.
+Current bid and per-round history cleared.
+Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) starts the next bidding round.
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [2 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have three 1s in my hand, and with only two players totaling 16 digits, the minimum possible count of 1s is three (if Player 4 has none). Bidding 3 1s is safe and conservative, ensuring the bid is valid while allowing me to observe Player 4's response. Starting with a digit I have strength in reduces immediate risk.
+Attempting to parse extracted action string: 'BID: 3 1S'
+Player 5 bids: 3 1s
+
+--- Turn: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) [2 players left] ---
+Requesting LLM action from Player 4 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 4 Reasoning: My hand contains two 2s, and the current bid is 3 1s by Player 5. Challenging is risky because previous bids on 1s were validated (e.g., 4 1s had a count of 5 with three players), and with only two players now, Player 5 likely has sufficient 1s to make 3 1s plausible. Bidding 3 2s is a valid higher bid (same quantity, higher digit) and leverages my hand strength, as I have two 2s, increasing the chance that at least three 2s exist if Player 5 has at least one.
+Attempting to parse extracted action string: 'BID: 3 2S'
+Player 4 bids: 3 2s
+
+--- Turn: Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) [2 players left] ---
+Requesting LLM action from Player 5 (deepseek/deepseek-r1-0528:floor), Attempt 1/3
+Player 5 Reasoning: I have only one 2 in my hand (from digits 83261311). The current bid is 3 2s by Player 4, meaning at least three 2s must exist across both hands. With only 16 total digits, the probability that Player 4 has two or more 2s (to reach a total of three) is low, approximately 18.7% based on a binomial distribution. Player 4's minimal bid increase from my 3 1s to 3 2s also suggests possible bluffing. Challenging has a high success probability of about 81.3%.
+Attempting to parse extracted action string: 'CHALLENGE'
+Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) challenges Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor)'s bid of 3 2s.
+Revealed Hands: P4(Orig:3-deepseek/deepseek-r1-0528:floor):12253756 | P5(Orig:0-deepseek/deepseek-r1-0528:floor):83261311
+Actual count of 2s across 2 active players: 3
+Challenge failed: count(3) >= 3. Bidder (Player 4) wins the challenge.
+Player 5(Orig:0 - deepseek/deepseek-r1-0528:floor) is ELIMINATED. Assigned Rank: 2
+Total digits remaining in play: 8
+Removed player 5 from active list. 1 players remain.
+Current bid and per-round history cleared.
+Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) starts the next bidding round.
+
+--- Elimination Game Over ---
+Winner: Player 4(Orig:3 - deepseek/deepseek-r1-0528:floor) is Rank 1!
