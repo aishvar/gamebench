@@ -2,17 +2,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import json
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--ratings', default='model_ratings.json')
+parser.add_argument('--output', default='model_rankings.png')
+parser.add_argument('--method', choices=['elo', 'bt'], default='elo')
+args = parser.parse_args()
 
 # Load the data from the JSON file
-with open('model_ratings.json', 'r') as file:
+with open(args.ratings, 'r') as file:
     data = json.load(file)
 
 # The "model_ratings" object is expected to be { "modelA": rating, "modelB": rating, ... }
 rating_data = data.get('model_ratings', {})
-num_rounds = len(data.get('processed_timestamps', []))
+num_rounds = data.get('num_rounds', len(data.get('processed_timestamps', [])))
+ci_data = data.get('ci95', {})
 
 models = []
 rating_values = []
+ci_values = []
 
 # Loop through the ratings, mapping raw model names to nicer display names
 for model_full, rating in rating_data.items():
@@ -83,11 +92,14 @@ for model_full, rating in rating_data.items():
         continue
     models.append(model_name)
     rating_values.append(rating)
+    ci_values.append(ci_data.get(model_full, [rating, rating]))
 
 # Create a DataFrame and sort by rating (ascending => highest at bottom)
 df = pd.DataFrame({
     'model': models,
-    'rating': rating_values
+    'rating': rating_values,
+    'ci_lo': [c[0] for c in ci_values],
+    'ci_hi': [c[1] for c in ci_values],
 })
 df = df.sort_values('rating', ascending=True).reset_index(drop=True)
 
@@ -124,6 +136,10 @@ y_pos = np.arange(len(df))
 for i, row in df.iterrows():
     ax.barh(y_pos[i], row['rating'], align='center', color=row['color'],
             height=0.7, alpha=0.8)
+    if ci_data:
+        ax.errorbar(row['rating'], y_pos[i],
+                    xerr=[[row['rating'] - row['ci_lo']], [row['ci_hi'] - row['rating']]],
+                    fmt='none', ecolor='#444444', elinewidth=0.8, capsize=2)
 
 # Label each bar
 for i, row in df.iterrows():
@@ -132,15 +148,20 @@ for i, row in df.iterrows():
     
     # Just display the rating on the bar
     label_text = f"({row['rating']:.1f})"
-    ax.text(row['rating'] + 5, y_pos[i], label_text, va='center', fontsize=9, color='black')
+    label_x = (row['ci_hi'] if ci_data else row['rating']) + 5
+    ax.text(label_x, y_pos[i], label_text, va='center', fontsize=9, color='black')
 
 # Customize axes
 ax.set_yticks([])
-ax.set_xlabel('Elo rating', fontsize=12)
-ax.set_title('GameBench: Liars Poker - Elo Rankings', fontsize=16)
+if args.method == 'bt':
+    ax.set_xlabel('Bradley-Terry rating (Elo scale, 95% CI)', fontsize=12)
+    ax.set_title('GameBench: Liars Poker - Bradley-Terry Rankings', fontsize=16)
+else:
+    ax.set_xlabel('Elo rating', fontsize=12)
+    ax.set_title('GameBench: Liars Poker - Elo Rankings', fontsize=16)
 
 # Set x-axis limits and grid
-x_max = max(df['rating']) + 80
+x_max = max(df['ci_hi'].max(), df['rating'].max()) + 80
 ax.set_xlim(0, x_max)
 ax.set_xticks(np.arange(0, int(x_max) + 1, 200))
 ax.grid(axis='x', linestyle='--', alpha=0.7)
@@ -150,8 +171,10 @@ plt.figtext(0.1, 0.02,
             "Liar's Poker Format\n"
             "• 2 LLMs start each round\n"
             "• Players either raise the bet or call the prior player on a bluff\n"
-            "• Winner is the one who calls a bluff correctly or isn't caught bluffing\n"
-            "• Elo ratings are updated from each winner-loser pair\n",
+            "• Winner is the one who calls a bluff correctly or isn't caught bluffing\n" +
+            ("• Bradley-Terry ratings fit jointly on all winner-loser pairs\n"
+             if args.method == 'bt' else
+             "• Elo ratings are updated from each winner-loser pair\n"),
             fontsize=8)
 
 # Add totals and attribution
@@ -160,5 +183,5 @@ plt.figtext(0.9, 0.02,
             fontsize=8, ha='right')
 
 plt.tight_layout(rect=[0, 0.08, 1, 0.95])
-plt.savefig('model_rankings.png', dpi=300, bbox_inches='tight')
+plt.savefig(args.output, dpi=300, bbox_inches='tight')
 plt.show()

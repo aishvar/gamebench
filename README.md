@@ -27,4 +27,18 @@ The TrueSkill Leaderboard represents models with 2 metrics:
 
 ![Scores](model_rankings.png)
 
+## Bradley-Terry Ratings (Heads-Up)
+
+Heads-up Liar's Poker results are also evaluated with a **Bradley-Terry** model (`evaluate_bradley_terry.py`). Unlike online Elo, Bradley-Terry is fit jointly on every winner-loser pair, so ratings don't depend on the order games were played in.
+
+* Ratings are on the Elo scale (400 points = 10x win odds) and centred at 1000.
+* Error bars are 95% bootstrap confidence intervals (500 resamples over games).
+
+```bash
+python evaluate_bradley_terry.py   # writes model_ratings_bt.json
+python elo_result_visualizer.py --ratings model_ratings_bt.json --method bt --output model_rankings_bt.png
+```
+
+![Bradley-Terry Scores](model_rankings_bt.png)
+
 Inspiration for using TrueSkill and Scoreboard design is from  [lechmazur](https://github.com/lechmazur) who has also tested LLMs on many games such as NYT Connections & The Elimination Game.
